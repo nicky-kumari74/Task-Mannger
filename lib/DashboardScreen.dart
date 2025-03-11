@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taskmanager/PersonalScreen.dart';
+import 'package:taskmanager/TeamScreen.dart';
 class Dashboard extends StatelessWidget{
 
-  var Email = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -12,8 +13,8 @@ class Dashboard extends StatelessWidget{
             backgroundColor: Colors.indigoAccent, // change color for better experience
             bottom: TabBar(
                 tabs: [
-                  Tab(text: 'tab1',icon: Icon(Icons.access_time_filled),),
-                  Tab(text: 'tab2',icon: Icon(Icons.access_time_filled),),
+                  Tab(text: 'Personal',icon: Icon(Icons.access_time_filled),),
+                  Tab(text: 'Team',icon: Icon(Icons.access_time_filled),),
                 ]
             ),
           ),
@@ -57,8 +58,8 @@ class Dashboard extends StatelessWidget{
           ),
           body: TabBarView(
               children:[
-                Center(child: Text('Tab 1 content'),),
-                Center(child: Text('Tab 2 content'),)
+                PersonalTask(),
+                TeamTask(),
               ]
           ),
         )

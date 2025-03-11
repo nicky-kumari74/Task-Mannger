@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taskmanager/DashboardScreen.dart';
 import 'package:taskmanager/forgetPasswdScreen.dart';
 
 class LoginScreen extends StatelessWidget{
@@ -21,7 +22,6 @@ class LoginScreen extends StatelessWidget{
      backgroundColor: Colors.white,
 
      body: Container(
-       color: Colors.purple[300],
        child: Center(
          child: Column(
            mainAxisAlignment: MainAxisAlignment.center,
@@ -96,7 +96,12 @@ class LoginScreen extends StatelessWidget{
 
              SizedBox(height: 18,),
 
-             ElevatedButton(onPressed: () {},
+             ElevatedButton(onPressed: () {
+               Navigator.push(
+                 context,
+                 MaterialPageRoute(builder: (context) => Dashboard()),
+               );
+             },
                  style: ElevatedButton.styleFrom(
                    backgroundColor: Colors.green,
                    padding: EdgeInsets.only(left: 30, right: 30),
@@ -108,6 +113,7 @@ class LoginScreen extends StatelessWidget{
              ),
 
              SizedBox(height: 18,),
+
              Row(
                children:
                [
