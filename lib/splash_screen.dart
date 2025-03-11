@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taskmanager/DashboardScreen.dart';
 import 'package:taskmanager/loginScreen.dart';
 import 'package:taskmanager/registration.dart';
 
@@ -17,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     Timer(Duration(seconds: 4), () {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard(),));
     }
     );
   }
