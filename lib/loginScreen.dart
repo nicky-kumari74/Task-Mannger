@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/DashboardScreen.dart';
 import 'package:taskmanager/forgetPasswdScreen.dart';
 
@@ -12,14 +13,15 @@ class LoginScreen extends StatelessWidget{
   Widget build(BuildContext context) {
    return Scaffold(
      appBar: AppBar(
-       backgroundColor: Colors.indigoAccent,
+       backgroundColor: appbarcolor,
+       toolbarHeight: 70,
        title: Text('Smart Planning for Busy Lives',
          style: TextStyle(
            color: Colors.white, // Change color for better visibility
          ),
        ),
      ),
-     backgroundColor: Colors.white,
+     backgroundColor: bgcolor,
 
      body: Container(
        child: Center(
@@ -38,7 +40,7 @@ class LoginScreen extends StatelessWidget{
                    labelStyle: TextStyle(color: Colors.black54, fontSize: 20 ),  // Change font color and fot size for better visibility
                    focusedBorder: OutlineInputBorder(
                      borderRadius: BorderRadius.circular(12),
-                     borderSide: BorderSide(color: Colors.green, width: 2)
+                     borderSide: BorderSide(color: Colors.white, width: 2)
                    ),
                    enabledBorder: OutlineInputBorder(
                      borderSide: BorderSide(color: Colors.black54, width: 2),
@@ -65,7 +67,7 @@ class LoginScreen extends StatelessWidget{
                      ),
                      focusedBorder: OutlineInputBorder(                             // When user clicked on it then the color of border will change
                          borderRadius: BorderRadius.circular(12),
-                         borderSide: BorderSide(color: Colors.green, width: 2)
+                         borderSide: BorderSide(color: Colors.white, width: 2)
                      ),
                      enabledBorder: OutlineInputBorder(                             // Default border color when login page will open.
                          borderSide: BorderSide(color: Colors.black54, width: 2),   // Change color for better experience
@@ -88,7 +90,7 @@ class LoginScreen extends StatelessWidget{
                    'Forget Password',
                    style: TextStyle(
                      fontSize: 14,
-                     color: Colors.black,
+                     color:appbarcolor,
                    ),
                  ),
                ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/PersonalScreen.dart';
 import 'package:taskmanager/TeamScreen.dart';
 class Dashboard extends StatelessWidget{
@@ -9,11 +10,15 @@ class Dashboard extends StatelessWidget{
         length: 2,
         child:Scaffold(
           appBar: AppBar(
-            title: Text('Task Manager'),
-            backgroundColor: Colors.indigoAccent, // change color for better experience
+            iconTheme: IconThemeData(color: Colors.white),
+            toolbarHeight: 50,
+            title: Text('Task Manager',style: TextStyle(color: Colors.white),),
+            backgroundColor: appbarcolor, // change color for better experience
             bottom: TabBar(
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.blueGrey,
                 tabs: [
-                  Tab(text: 'Personal',icon: Icon(Icons.access_time_filled),),
+                  Tab(text: 'Personal',icon: Icon(Icons.access_time_filled,),),
                   Tab(text: 'Team',icon: Icon(Icons.access_time_filled),),
                 ]
             ),

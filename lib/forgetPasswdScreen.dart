@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taskmanager/Colors.dart';
 
 class ForgetPasswdScreen extends StatelessWidget{
 
@@ -8,10 +9,11 @@ class ForgetPasswdScreen extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Task Manager'),
-        backgroundColor: Colors.indigoAccent,     // change color for better experience
+        toolbarHeight: 70,
+        title: Text('Task Manager',style: TextStyle(color: Colors.white),),
+        backgroundColor: appbarcolor,     // change color for better experience
       ),
-
+      backgroundColor: bgcolor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
 
