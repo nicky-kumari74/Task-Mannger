@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:taskmanager/Colors.dart';
+import 'package:taskmanager/registration.dart';
 
 class ForgetPasswdScreen extends StatelessWidget{
 
   var Email = TextEditingController();
+  var Submitbtn = ButtonActivateIntent();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,8 +48,10 @@ class ForgetPasswdScreen extends StatelessWidget{
               backgroundColor: Colors.green,
               elevation: 12,
             ),
-              child: Text('Submit', style: TextStyle(fontSize: 20,color: Colors.black),),
-          )
+              child:
+              Text('Submit', style: TextStyle(fontSize: 20,color: Colors.black),),
+          ),
+
         ],
       )
     );
