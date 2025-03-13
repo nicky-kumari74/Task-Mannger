@@ -200,6 +200,27 @@ class LoginScreen extends StatelessWidget{
            ],
          ),
        ),
+             SizedBox(width: 45,),
+             Container(
+               margin: EdgeInsets.only(left:17, top: 10),
+               width: 60, height: 60,   // Same height and width for square box.
+               decoration:BoxDecoration(
+                 border: Border.all(color: Colors.indigoAccent, width: 2),  // Border color and width
+                 borderRadius: BorderRadius.circular(10), // Optional, Rounded Border
+                 image: DecorationImage(
+                     image: AssetImage('assets/images/twitter.png')
+                 )
+               ),
+               child: GestureDetector(
+                 onTap: (){
+                   },       // Here we write that code that will execute when user click on the container/ twitter.
+               ),
+             ),
+           ],
+         ),
+
+
+       ],
      )
 
    );
