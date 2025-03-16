@@ -14,7 +14,7 @@ class PersonalTask extends StatelessWidget{
                     child: Text('personal task')
                 ),
                 Container(
-                    margin: EdgeInsets.only(left: 300,top: 400),
+                    margin: EdgeInsets.only(left: 0,top: 480),
                   child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -25,8 +25,10 @@ class PersonalTask extends StatelessWidget{
                         style: ElevatedButton.styleFrom(
                           shape: CircleBorder(),
                           backgroundColor: Colors.blue,
+                          padding: EdgeInsets.all(10),
+                          elevation: 10
                         ),
-                        child: Icon(Icons.add, color: Colors.white,size: 40,),
+                        child: Icon(Icons.add, color: Colors.white,size: 30,),
                       ),
                 ),
               ],

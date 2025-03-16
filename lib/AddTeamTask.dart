@@ -6,7 +6,7 @@ import 'package:taskmanager/TeamScreen.dart';
 
 class AddTeamTask extends StatelessWidget{
 
-  var assignTask = TextEditingController();
+  var assignTeamTask = TextEditingController();
   var assignTo = TextEditingController();
   var comment = TextEditingController();
 
@@ -26,18 +26,19 @@ class AddTeamTask extends StatelessWidget{
           Padding(
             padding: const EdgeInsets.all(20),
             child: TextField(
-              controller: assignTask,
+              controller: assignTeamTask,
+              style: TextStyle(fontSize: 20, color: Colors.black),    // increase font size
               decoration: InputDecoration(
                 labelText: 'Assign Task',
                 labelStyle: TextStyle(color: Colors.black87, fontSize: 20),
-                focusedBorder: OutlineInputBorder(
+                /*focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(color: borderColor, width:2)
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(color: Colors.black, width: 2)
-                )
+                )*/   // For Border
               ),
             ),
           ),
@@ -46,18 +47,19 @@ class AddTeamTask extends StatelessWidget{
           Padding(
             padding: const EdgeInsets.all(20),
             child: TextField(
-              controller: assignTask,
+              controller: assignTo,
+              style: TextStyle(fontSize: 20, color: Colors.black),    // increase font size
               decoration: InputDecoration(
                   labelText: 'Assign To',
                   labelStyle: TextStyle(color: Colors.black87, fontSize: 20),
-                  focusedBorder: OutlineInputBorder(
+               /*   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(color: borderColor, width:2)
                   ),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(color: Colors.black, width: 2)
-                  )
+                  )*/       // For Border
               ),
             ),
           ),
@@ -71,6 +73,7 @@ class AddTeamTask extends StatelessWidget{
             ),
             child: TextField(
               controller: comment,
+              style: TextStyle(fontSize: 20, color: Colors.black),    // increase font size
               maxLines: null,   // Allow multiple lines
               expands: true,    // Expands to fill the container
               decoration: InputDecoration(

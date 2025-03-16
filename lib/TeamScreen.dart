@@ -9,20 +9,25 @@ class TeamTask extends StatelessWidget{
       backgroundColor: bgcolor,
       body: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
                   child: Text('Team task')
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddTeamTask()));
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(15),
-                  backgroundColor: Colors.blue,
+              Container(
+                margin: EdgeInsets.only(top: 480),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => AddTeamTask()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    elevation: 10, shadowColor: Colors.blueGrey,
+                    padding: EdgeInsets.all(10),
+                    backgroundColor: Colors.blue,
+                  ),
+                  child: Icon(Icons.add, color: Colors.white,size: 30,),
                 ),
-                child: Icon(Icons.add, color: Colors.white,size: 30,),
               ),
 
             ],
