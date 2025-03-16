@@ -12,14 +12,15 @@ class Dashboard extends StatelessWidget{
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.white),
             toolbarHeight: 50,
-            title: Text('Task Manager',style: TextStyle(color: Colors.white),),
+            title: Text('Task Manager',
+              style: TextStyle(color: Colors.white),),
             backgroundColor: appbarcolor, // change color for better experience
             bottom: TabBar(
               labelColor: Colors.white,
               unselectedLabelColor: Colors.blueGrey,
                 tabs: [
-                  Tab(text: 'Personal',icon: Icon(Icons.access_time_filled,),),
-                  Tab(text: 'Team',icon: Icon(Icons.access_time_filled),),
+                  Tab(text: 'Personal',  icon: Icon(Icons.access_time_filled, color: Colors.black54,), ),
+                  Tab(text: 'Team',icon: Icon(Icons.access_time_filled, color: Colors.black54,),),
                 ]
             ),
           ),

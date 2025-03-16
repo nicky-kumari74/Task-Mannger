@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskmanager/AddTeamTask.dart';
 import 'package:taskmanager/Colors.dart';
 
 class TeamTask extends StatelessWidget{
@@ -13,13 +14,15 @@ class TeamTask extends StatelessWidget{
                   child: Text('Team task')
               ),
               ElevatedButton(
-                onPressed: () => print('hello'),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddTeamTask()));
+                },
                 style: ElevatedButton.styleFrom(
                   shape: CircleBorder(),
                   padding: EdgeInsets.all(15),
                   backgroundColor: Colors.blue,
                 ),
-                child: Icon(Icons.add, color: Colors.white,size: 40,),
+                child: Icon(Icons.add, color: Colors.white,size: 30,),
               ),
 
             ],
