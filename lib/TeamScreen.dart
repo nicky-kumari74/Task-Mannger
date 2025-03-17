@@ -15,7 +15,7 @@ class TeamTask extends StatelessWidget{
                   child: Text('Team task')
               ),
               Container(
-                margin: EdgeInsets.only(top: 480),
+                margin: EdgeInsets.only(top: 480, ),
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AddTeamTask()));
