@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taskmanager/AddTask.dart';
+import 'package:taskmanager/AddPersonalTask.dart';
 import 'package:taskmanager/Colors.dart';
 
 class PersonalTask extends StatelessWidget{
@@ -19,7 +19,7 @@ class PersonalTask extends StatelessWidget{
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => AddTask()),
+                            MaterialPageRoute(builder: (context) => AddPersonalTask()),
                           );
                         },
                         style: ElevatedButton.styleFrom(

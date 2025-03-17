@@ -17,10 +17,11 @@ class Dashboard extends StatelessWidget{
             backgroundColor: appbarcolor, // change color for better experience
             bottom: TabBar(
               labelColor: Colors.white,
+                indicatorColor: Colors.white,
               unselectedLabelColor: Colors.blueGrey,
                 tabs: [
-                  Tab(text: 'Personal',  icon: Icon(Icons.access_time_filled, color: Colors.black54,), ),
-                  Tab(text: 'Team',icon: Icon(Icons.access_time_filled, color: Colors.black54,),),
+                  Tab(text: 'Personal',  icon: Icon(Icons.access_time_filled,), ),
+                  Tab(text: 'Team',icon: Icon(Icons.access_time_filled,),),
                 ]
             ),
           ),
