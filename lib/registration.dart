@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanager/Colors.dart';
@@ -125,11 +126,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
               SizedBox(height: 18,),
 
-              ElevatedButton(onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Dashboard()),
+              ElevatedButton(onPressed: () async {
+                UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: Email.text.trim(),
+                  password: Password.text.trim(),
                 );
+                User? user = userCredential.user;
+                if(user!=null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Dashboard()),
+                  );
+                }
               },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: appbarcolor,    // change background color for better visibility.

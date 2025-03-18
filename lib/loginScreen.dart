@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanager/Colors.dart';
@@ -137,11 +138,27 @@ class _LoginScreenState extends State<LoginScreen> {
          
              SizedBox(height: 18,),
          
-             ElevatedButton(onPressed: () {
-               Navigator.push(
-                 context,
-                 MaterialPageRoute(builder: (context) => Dashboard()),
-               );
+             ElevatedButton(onPressed: () async {
+               try {
+                 UserCredential userCredential = await FirebaseAuth.instance
+                     .signInWithEmailAndPassword(
+                   email: Email.text.trim(),
+                   password: Password.text.trim(),
+                 );
+                 User? user = userCredential.user;
+                 if(user!=null){
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(builder: (context) => Dashboard()),
+                   );
+                 }
+               }
+               catch(e){
+                 ScaffoldMessenger.of(context).showSnackBar(
+                   SnackBar(content: Text(e.toString())),
+                 );
+               }
+
              },
                  style: ElevatedButton.styleFrom(
                    backgroundColor: appbarcolor,    // change background color for better visibility.
@@ -152,9 +169,9 @@ class _LoginScreenState extends State<LoginScreen> {
                    style: TextStyle(fontSize: 19, color: Colors.white),
                  )
              ),
-         
+
              SizedBox(height: 18,),
-         
+
              Row(
                children:
                [
