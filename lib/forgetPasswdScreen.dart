@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanager/Colors.dart';
@@ -10,6 +11,7 @@ class ForgetPasswdScreen extends StatefulWidget{
 
 class _ForgetPasswdScreenState extends State<ForgetPasswdScreen> {
   var Email = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,23 @@ class _ForgetPasswdScreenState extends State<ForgetPasswdScreen> {
           ),
 
           SizedBox(height: 20,),
-          ElevatedButton(onPressed: () {
+          ElevatedButton(onPressed: () async {
+            if (Email.text.isNotEmpty) {
+              try {
+                await _auth.sendPasswordResetEmail(email: Email.text);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Password reset email sent! Check your inbox.')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: ${e.toString()}')),
+                );
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Please enter your email')),
+              );
+            }
           },
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
