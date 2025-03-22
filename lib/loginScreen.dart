@@ -48,15 +48,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
    return Scaffold(
      appBar: AppBar(
-       backgroundColor: appbarcolor,
-       toolbarHeight: 70,       // Height of appbar
-       title: Text('Powering Personal and Team Tasks',
-         style: TextStyle(color: Colors.white, fontSize: 20 //  app bar text color, change for better visibility
-         ),
+       centerTitle: true,
+       toolbarHeight: 70, // Height of appbar
+       title: Text('Sign in',
+         style: TextStyle(color: txtcolor, fontSize: 25,fontWeight: FontWeight.bold),
        ),
      ),
-     backgroundColor: bgcolor,
-
      body: Center(
        child: SingleChildScrollView(
          child: Column(
@@ -72,16 +69,18 @@ class _LoginScreenState extends State<LoginScreen> {
                  focusNode: _focusNode,
                  decoration: InputDecoration(
                  labelText: 'Email',
-                   labelStyle: TextStyle(color: labelTextColor, fontSize: 20 ),  // Dynamic label text color
+                   labelStyle: TextStyle(
+                     color: Colors.black, fontSize: 20    // Change font color and fot size for better visibility
+                 ),  // Dynamic label text color labelTextColor
                    focusedBorder: OutlineInputBorder(
                      borderRadius: BorderRadius.circular(12),
-                     borderSide: BorderSide(color: enableborderColor, width: 2),    // Dynamic Border color
+                     borderSide: BorderSide(color:txtcolor, width: 2),    // Dynamic Border color
                    ),
                    enabledBorder: OutlineInputBorder(
-                     borderSide: BorderSide(color: Colors.black54, width: 2),
+                     borderSide: BorderSide(color: Colors.black38, width: 2),
                      borderRadius: BorderRadius.circular(16)
                    ),
-                   prefixIcon: Icon(Icons.email, color: Colors.black,)
+                   prefixIcon: Icon(Icons.email, color: iconColor,)
          
                  ),
                ),
@@ -102,13 +101,13 @@ class _LoginScreenState extends State<LoginScreen> {
                      ),
                      focusedBorder: OutlineInputBorder(                             // When user clicked on it then the color of border will change
                          borderRadius: BorderRadius.circular(12),
-                         borderSide: BorderSide(color: borderColor, width: 2)
+                         borderSide: BorderSide(color:txtcolor, width: 2)
                      ),
                      enabledBorder: OutlineInputBorder(                             // Default border color when login page will open.
-                         borderSide: BorderSide(color: Colors.black54, width: 2),   // Change color for better experience
+                         borderSide: BorderSide(color: Colors.black38, width: 2),   // Change color for better experience
                          borderRadius: BorderRadius.circular(16)
                      ),
-                     prefixIcon: Icon(Icons.lock, color: Colors.black,),
+                     prefixIcon: Icon(Icons.lock, color: iconColor,),
                      suffixIcon: IconButton(onPressed: () {
                        setState(() {
                          _isobscure = !_isobscure;
@@ -127,10 +126,10 @@ class _LoginScreenState extends State<LoginScreen> {
                    );
                  },
                  child: Text(
-                   'Forget Password',
+                   'Forget Password?',
                    style: TextStyle(
                      fontSize: 14,
-                     color:Colors.black87,   // Change Text color for better user experience.
+                     color:txtcolor,   // Change Text color for better user experience.
                    ),
                  ),
                ),
@@ -161,35 +160,54 @@ class _LoginScreenState extends State<LoginScreen> {
 
              },
                  style: ElevatedButton.styleFrom(
-                   backgroundColor: appbarcolor,    // change background color for better visibility.
-                   padding: EdgeInsets.only(left: 60, right: 60),
-                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                   backgroundColor: btncolor,    // change background color for better visibility.
+                   padding: EdgeInsets.only(left: 100,right: 100,top: 11,bottom: 11),
+                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
                  ),
                  child: Text('Login',
                    style: TextStyle(fontSize: 19, color: Colors.white),
                  )
              ),
 
-             SizedBox(height: 18,),
+             SizedBox(height: 80,),
+             Center(
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: [
+                   Text("Don't have an account? ", style: TextStyle(fontSize: 14, color: Colors.black87, ),),
 
-             Row(
-               children:
-               [
-                 Container(
-                  height: 2,
-                   color: Colors.blue,
-                   margin: EdgeInsets.only(left: 10, right: 3),
-                   padding: EdgeInsets.only(left: 170),
-                 ),
-                 Center(
-                     child: Text('or', style: TextStyle(fontSize: 20),)),
-                 Container(
-                   height: 2,
-                   color: Colors.blue,   // Color of horizontal lines
-                   margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
-                   padding: EdgeInsets.only(right: 177),
-                 ),
-                ]
+                   InkWell(
+                       onTap: () {
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=> RegistrationScreen()));
+                       },
+
+                       child: Text('Sign Up', style: TextStyle(color: txtcolor, fontSize: 14, fontWeight: FontWeight.bold),))
+                 ],
+               ),
+
+             ),
+             SizedBox(height: 30,),
+             SingleChildScrollView(
+               scrollDirection: Axis.horizontal,
+               child: Row(
+                 children:
+                 [
+                   Container(
+                    height: 2,
+                     color: txtcolor,
+                     margin: EdgeInsets.only(left: 1, right: 3),
+                     padding: EdgeInsets.only(left: 120),
+                   ),
+                   Center(
+                       child: Text(' or continue with ', style: TextStyle(fontSize: 15),)),
+                   Container(
+                     height: 2,
+                     color: txtcolor,   // Color of horizontal lines
+                     margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
+                     padding: EdgeInsets.only(right: 177),
+                   ),
+                  ]
+               ),
              ),
                 SizedBox(height: 18,),
          
@@ -252,23 +270,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
          
          SizedBox(height: 70,),
-         Center(
-           child: Row(
-               mainAxisAlignment: MainAxisAlignment.center,
-               children: [
-                 Text("Don't have an account ", style: TextStyle(fontSize: 14, color: Colors.black87, ),),
-         
-                 InkWell(
-                   onTap: () {
-                     Navigator.push(context, MaterialPageRoute(builder: (context)=> RegistrationScreen()));
-                   },
-         
-                     child: Text('Sign Up', style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.bold),))
-               ],
-             ),
-         
-         )
-         
          ],
          ),
        ),
