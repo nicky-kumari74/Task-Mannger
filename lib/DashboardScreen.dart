@@ -9,6 +9,7 @@ class Dashboard extends StatelessWidget{
     return DefaultTabController(
         length: 2,
         child:Scaffold(
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.white),
             toolbarHeight: 30,
@@ -18,8 +19,8 @@ class Dashboard extends StatelessWidget{
             elevation: 0.0,
             flexibleSpace: Container(
               decoration: BoxDecoration(
-                  //borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40),bottomRight: Radius.circular(40)),
-                borderRadius: BorderRadius.all(Radius.circular(30)),
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40),bottomRight: Radius.circular(40)),
+                //borderRadius: BorderRadius.all(Radius.circular(30)),
                 gradient: LinearGradient(colors: [Color(0xFF9370DB),Color(0xFFBEA1E4)],
                 begin: Alignment.bottomCenter,
                   end: Alignment.topCenter
