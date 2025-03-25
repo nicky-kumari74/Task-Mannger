@@ -24,7 +24,7 @@ class TeamTask extends StatelessWidget{
                     shape: CircleBorder(),
                     elevation: 10, shadowColor: Colors.blueGrey,
                     padding: EdgeInsets.all(10),
-                    backgroundColor: Colors.blue,
+                    backgroundColor: btncolor,
                   ),
                   child: Icon(Icons.add, color: Colors.white,size: 30,),
                 ),

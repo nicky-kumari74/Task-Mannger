@@ -11,10 +11,21 @@ class Dashboard extends StatelessWidget{
         child:Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.white),
-            toolbarHeight: 50,
+            toolbarHeight: 30,
             title: Text('Task Manager',
-              style: TextStyle(color: Colors.white),),
-            backgroundColor: appbarcolor, // change color for better experience
+              style: TextStyle(color: Colors.white,fontSize: 0),),
+            backgroundColor:Colors.transparent, // change color for better experience
+            elevation: 0.0,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                  //borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40),bottomRight: Radius.circular(40)),
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                gradient: LinearGradient(colors: [Color(0xFF9370DB),Color(0xFFBEA1E4)],
+                begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter
+                )
+              ),
+            ),
             bottom: TabBar(
               labelColor: Colors.white,
                 indicatorColor: Colors.white,
