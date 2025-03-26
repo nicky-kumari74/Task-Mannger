@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/DashboardScreen.dart';
 import 'package:taskmanager/forgetPasswdScreen.dart';
@@ -19,6 +21,29 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _focusNode = FocusNode();
   Color enableborderColor =  Colors.black;
   Color labelTextColor =  Colors.black;
+
+  final formkey = GlobalKey<FormState>();  // Form key to validate
+
+  // Function to validate Email
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email can not be empty';
+    } else if( !RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
+      return'Enter a valid Email';
+    }
+    return null;
+  }
+
+  // Function to validate Password
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password can not be empty';
+    } else if (value.length < 8) {
+      return 'Password must be at least 8 character long' ;
+    }
+    return null;
+  }
 
   @override
   void initState(){
@@ -65,10 +90,11 @@ class _LoginScreenState extends State<LoginScreen> {
              SizedBox(height: 10,),
              Padding(
                padding: const EdgeInsets.all(13),  //adjust padding for better experience
-               child: TextField(
+               child: TextFormField(
                  keyboardType: TextInputType.emailAddress,
                  style: TextStyle(color: Colors.black),
                  controller: Email,
+                 autovalidateMode: AutovalidateMode.onUserInteraction,  //Show errors immediately.
                  focusNode: _focusNode,
                  decoration: InputDecoration(
                  labelText: 'Email',
@@ -82,18 +108,20 @@ class _LoginScreenState extends State<LoginScreen> {
                      borderRadius: BorderRadius.circular(16)
                    ),
                    prefixIcon: Icon(Icons.email, color: Colors.black,)
-         
                  ),
+                 validator: validateEmail,  // Apply Email validation
                ),
+
              ),
          
              SizedBox(height: 10,),
              Padding(
                padding: const EdgeInsets.all(13),
-               child: TextField(
+               child: TextFormField(
                  obscureText: _isobscure,
                  style: TextStyle(color: Colors.black),
                  controller: Password,
+                 autovalidateMode: AutovalidateMode.onUserInteraction,  // Show errors on immediately.
                  decoration: InputDecoration(
                      //counterText: 'Password must be 8 character long ',   // Add if you want to customized input from user
                      labelText: 'Password',
@@ -109,16 +137,19 @@ class _LoginScreenState extends State<LoginScreen> {
                          borderRadius: BorderRadius.circular(16)
                      ),
                      prefixIcon: Icon(Icons.lock, color: Colors.black,),
-                     suffixIcon: IconButton(onPressed: () {
-                       setState(() {
+                     suffixIcon: IconButton( icon: Icon(_isobscure ? Icons.visibility_off : Icons.visibility, color: Colors.black,),
+                         onPressed: () {
+                           setState(() {
                          _isobscure = !_isobscure;
                        });
-                     }, icon:Icon(_isobscure ? Icons.visibility_off: Icons.visibility, color: Colors.black,) )
-         
+                     },
+
+                     ),
                  ),
+                 validator: validatePassword,  // Apply Password validation
                ),
              ),
-         
+
              Container(
                margin: EdgeInsets.only(left: 210),
                child: InkWell(
@@ -139,17 +170,22 @@ class _LoginScreenState extends State<LoginScreen> {
              SizedBox(height: 18,),
          
              ElevatedButton(onPressed: () async {
+              /* if (formkey.currentState!.validate()) {
+                 // If form is valid, proceed with login
+                 print('Email: ${Email.text}');
+                 ScaffoldMessenger.of(context).showSnackBar(
+                   SnackBar(content: Text('Login Successful!'))
+                 );
+               }*/
+
                try {
-                 UserCredential userCredential = await FirebaseAuth.instance
-                     .signInWithEmailAndPassword(
+                 UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                    email: Email.text.trim(),
                    password: Password.text.trim(),
                  );
                  User? user = userCredential.user;
                  if(user!=null){
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(builder: (context) => Dashboard()),
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()),
                    );
                  }
                }
@@ -161,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
              },
                  style: ElevatedButton.styleFrom(
-                   backgroundColor: appbarcolor,    // change background color for better visibility.
+                   backgroundColor: Colors.indigo[400],    // change background color for better visibility.
                    padding: EdgeInsets.only(left: 60, right: 60),
                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
                  ),
@@ -209,9 +245,18 @@ class _LoginScreenState extends State<LoginScreen> {
                  ),
                ),
                child: GestureDetector(
-                 onTap: () {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
-                 },
+                 onTap: () async {
+                   UserCredential? userCredential = await AuthServices().signInWithGoogle();
+                   if (userCredential != null) {
+                     print("User Signed in: ${userCredential.user?.displayName}");
+                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard())
+                  );
+                 } else {
+                     ScaffoldMessenger.of(context).showSnackBar(
+                       SnackBar(content: Text('Google Sign-In Failed')),
+                     );
+                   }
+               },
                ),
              ),
          
@@ -260,15 +305,15 @@ class _LoginScreenState extends State<LoginScreen> {
          
                  InkWell(
                    onTap: () {
-                     Navigator.push(context, MaterialPageRoute(builder: (context)=> RegistrationScreen()));
+                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> RegistrationScreen()),
+                     );
                    },
          
-                     child: Text('Sign Up', style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.bold),))
+                     child: Text('Sign Up', style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.bold)),
+                 ),
                ],
-             ),
-         
-         )
-         
+           ),
+         ),
          ],
          ),
        ),
@@ -276,4 +321,62 @@ class _LoginScreenState extends State<LoginScreen> {
    );
   }
 
+}
+
+class AuthServices {
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  Future<UserCredential?> signInWithGoogle() async {
+    try{
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if(googleUser == null) {
+        return null;
+      }
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      print("Error during Google Sign-in: $e");
+      return null;
+    }
+  }
+
+  Future<void> signOut() async {
+    await GoogleSignIn().signOut();
+    await FirebaseAuth.instance.signOut();
+  }
+}
+
+
+Future<void> loginUser(BuildContext context, String email, String password) async {
+  try{
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email, password: password
+    );
+    print('User logged in: ${userCredential.user?.email}');
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login Successful!')),
+    );
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()),
+    );
+  } catch (e) {
+    String errorMessage = 'Login Failed. Try again' ;
+
+    if ( e is FirebaseAuthException) {
+      switch(e.code) {
+        case 'user-not-found' :
+           errorMessage = 'No user found for this email';
+           break;
+        case 'Wrong-password': errorMessage = 'Incorrect password.' ;
+        break;
+        case 'Invalid-email': errorMessage = 'Invalid email format.';
+        break;
+        default: errorMessage = e.message!;
+      }
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)),
+    );
+  }
 }
