@@ -3,7 +3,7 @@ import 'package:taskmanager/AddPersonalTask.dart';
 import 'package:taskmanager/Colors.dart';
 
 class PersonalTask extends StatelessWidget {
-  List<String> item = <String>['Task A', 'Task B', 'Task C','Task A', 'Task B', 'Task C','Task A', 'Task B', 'Task C'];
+  List<String> item = <String>['Task Name A', 'Task Name B', 'Task Name C','Task A', 'Task B', 'Task C','Task A', 'Task B', 'Task C'];
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class PersonalTask extends StatelessWidget {
         body: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(15.0),
                 child: ListView.builder(
                   //padding: EdgeInsets.only(top: 50), // Adjust padding as needed
                   itemCount: item.length,
@@ -24,26 +24,26 @@ class PersonalTask extends StatelessWidget {
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
                           children: [
-                            Row(children: [Text('Entry ${item[index]}',style: TextStyle(fontWeight: FontWeight.bold,color: txtcolor),),]),
-                            Container(height: 5,),
+                            SizedBox(height: 5),
+                            Row(children: [Text('${item[index]}',style: TextStyle(fontWeight: FontWeight.bold,color: txtcolor),),]),
                             Row(children: [
                               Icon(Icons.date_range,color: Colors.black54,size: 18,),
-                              Text('6/10/2024',),
+                              Text('6/10/2024',style: TextStyle(color: Colors.black),),
                               Container(width: 20,),
                               Icon(Icons.access_time,color: Colors.black54,size: 18,),
-                              Text('5:30',),
-                              Container(width: 130,),
+                              Text('5:30',style: TextStyle(color: Colors.black)),
+                              Container(width: 40,),
                               ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    //backgroundColor: Colors.blue,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                    minimumSize: Size(30, 30), // Increased button size
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      //backgroundColor: Colors.blue,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                      minimumSize: Size(80, 25),// Increased button size
+                                    ),
+                                    child: Text('Pending', style: TextStyle(fontSize: 12, color: Colors.red)), // Increased font size
                                   ),
-                                  child: Text('Pending', style: TextStyle(fontSize: 15, color: Colors.red)), // Increased font size
-                                ),
                             ]),
                           ],
                         ),
@@ -55,7 +55,7 @@ class PersonalTask extends StatelessWidget {
               ),
               Positioned(
                 bottom: 40, // Adjust position as needed
-                right: 40,
+                right: 20,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(context,

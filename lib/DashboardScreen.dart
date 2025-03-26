@@ -30,7 +30,7 @@ class Dashboard extends StatelessWidget{
             bottom: TabBar(
               labelColor: Colors.white,
                 indicatorColor: Colors.white,
-              unselectedLabelColor: Colors.blueGrey,
+              unselectedLabelColor: Colors.black54,
                 tabs: [
                   Tab(text: 'Personal',  icon: Icon(Icons.access_time_filled,), ),
                   Tab(text: 'Team',icon: Icon(Icons.access_time_filled,),),
