@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/DashboardScreen.dart';
 class AddPersonalTask extends StatefulWidget {
@@ -187,8 +188,10 @@ class _AddTaskState extends State<AddPersonalTask> {
     );
   }
 
-  void addTask() {
-    FirebaseFirestore.instance.collection('Personal2').add({
+  void addTask() async {
+    var sharepref= await SharedPreferences.getInstance();
+    var email=sharepref.getString("email");
+    FirebaseFirestore.instance.collection(email!).add({
       'Task Name': task.text,
       'Date': _dateController.text,
       'Time': _timeController.text,

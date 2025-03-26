@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/DashboardScreen.dart';
 import 'package:taskmanager/forgetPasswdScreen.dart';
@@ -150,6 +151,9 @@ class _LoginScreenState extends State<LoginScreen> {
                      context,
                      MaterialPageRoute(builder: (context) => Dashboard()),
                    );
+                   var sharepref= await SharedPreferences.getInstance();
+                   sharepref.setBool("login", true);
+                   sharepref.setString("email", Email.text);
                  }
                }
                catch(e){
