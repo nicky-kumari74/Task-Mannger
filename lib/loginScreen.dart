@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/DashboardScreen.dart';
 import 'package:taskmanager/forgetPasswdScreen.dart';
+import 'package:taskmanager/loadingScreen.dart';
 import 'package:taskmanager/registration.dart';
 
 class LoginScreen extends StatefulWidget{
@@ -179,17 +180,27 @@ class _LoginScreenState extends State<LoginScreen> {
                }*/
 
                try {
+                 // Show Loading Screen
+                 Navigator.push(context, MaterialPageRoute(builder: (context) => LoadingScreen()));
+
+                 //Simulating network delay(Firebase authentication process)
+                 await Future.delayed(Duration(seconds: 3));
+
+                 //Firebase Authentication
                  UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                    email: Email.text.trim(),
                    password: Password.text.trim(),
                  );
                  User? user = userCredential.user;
                  if(user!=null){
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()),
+                   //Redirect to Dashboard after login
+                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard()),
                    );
                  }
                }
                catch(e){
+                 Navigator.pop(context); //Remove loading Screen if login fails
+                 print('Login Error : $e');
                  ScaffoldMessenger.of(context).showSnackBar(
                    SnackBar(content: Text(e.toString())),
                  );
