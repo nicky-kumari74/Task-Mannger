@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/DashboardScreen.dart';
 import 'package:taskmanager/loginScreen.dart';
 import 'package:taskmanager/registration.dart';
@@ -12,15 +13,13 @@ class SplashScreen extends StatefulWidget{
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  static const String KEYLOGIN="login";
 
   @override
   void initState() {
     super.initState();
+    whereToGo();
 
-    Timer(Duration(seconds: 4), () {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
-    }
-    );
   }
 
   @override
@@ -42,6 +41,25 @@ class _SplashScreenState extends State<SplashScreen> {
             )
         ),
       ),
+    );
+  }
+
+  void whereToGo() async {
+    var sharepref= await SharedPreferences.getInstance();
+    var isLoggedIn=sharepref.getBool(KEYLOGIN);
+    Timer(Duration(seconds: 2), () {
+      if(isLoggedIn!=null) {
+        if(isLoggedIn)
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Dashboard(),));
+        else
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+      }
+      else
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+    }
     );
   }
 }

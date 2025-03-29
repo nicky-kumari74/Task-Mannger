@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/PersonalScreen.dart';
 import 'package:taskmanager/TeamScreen.dart';
-import 'package:taskmanager/loginScreen.dart';
 class Dashboard extends StatelessWidget{
 
   @override
@@ -12,16 +9,28 @@ class Dashboard extends StatelessWidget{
     return DefaultTabController(
         length: 2,
         child:Scaffold(
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.white),
-            toolbarHeight: 50,
+            toolbarHeight: 30,
             title: Text('Task Manager',
-              style: TextStyle(color: Colors.white),),
-            backgroundColor: appbarcolor, // change color for better experience
+              style: TextStyle(color: Colors.white,fontSize: 0),),
+            backgroundColor:Colors.transparent, // change color for better experience
+            elevation: 0.0,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40),bottomRight: Radius.circular(40)),
+                //borderRadius: BorderRadius.all(Radius.circular(30)),
+                gradient: LinearGradient(colors: [Color(0xFF9370DB),Color(0xFFBEA1E4)],
+                begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter
+                )
+              ),
+            ),
             bottom: TabBar(
               labelColor: Colors.white,
                 indicatorColor: Colors.white,
-              unselectedLabelColor: Colors.blueGrey,
+              unselectedLabelColor: Colors.black54,
                 tabs: [
                   Tab(text: 'Personal',  icon: Icon(Icons.access_time_filled,), ),
                   Tab(text: 'Team',icon: Icon(Icons.access_time_filled,),),
@@ -58,9 +67,9 @@ class Dashboard extends StatelessWidget{
                   onTap: ()=>print('hello'),
                 ),
                 ListTile(
-                  leading: Icon(Icons.exit_to_app, color: Colors.red,),
-                  title: Text('Logout', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),),
-                  onTap: ()=> signOut(context),   //call the logout function
+                  leading: Icon(Icons.ac_unit_sharp),
+                  title: Text('Logout'),
+                  onTap: ()=>print('hello'),
                 ),
                 Divider(),
               ],
@@ -77,17 +86,4 @@ class Dashboard extends StatelessWidget{
 
   }
 
-}
-
-Future<void> signOut(BuildContext context) async {
-  try {
-    await GoogleSignIn().signOut();  //sign out from google
-    await FirebaseAuth.instance.signOut(); //sign out from Firebase
-
-    //Navigate to Login Screen
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()),);
-
-  }catch (error) {
-    print('Error signing out: $error');
-  }
 }

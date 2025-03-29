@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-const bgcolor= Color(0xffebedf1);  //0xff96b6f4
-const appbarcolor=Colors.blue;    //0xff070471
-const bgcolor2= Color(0xffea6db4);
-const borderColor = Colors.blue;
+const btncolor=Color(0xFFFAC84F);//Color(0xFFF6BD05);
+const txtcolor=Colors.white;//Color(0xFF9063CD);
+const appbarcolor=Color(0xFFBEA1E4);    //0xff070471
+const bgcolor= Color(0xFF212832);
+const borderColor=Colors.blue;
+const inputBoxbgColor=Color(0xFF455A64);
+const iconColor=Color(0xffb8b6b6);
+const textColor2=Color(0xffdfdede);
