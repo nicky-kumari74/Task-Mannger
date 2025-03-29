@@ -54,65 +54,70 @@ class _LoginScreenState extends State<LoginScreen> {
          child: Column(
            mainAxisAlignment: MainAxisAlignment.center,
            children: [
-           Text('LogIn', style: TextStyle(color: txtcolor, fontSize: 35,fontWeight: FontWeight.bold)),
              SizedBox(height: 10,),
-             Text("Welcome Back!!",style: TextStyle(color: textColor2,fontSize: 25),),
-             SizedBox(height: 50,),
+           Text('LogIn', style: TextStyle(color: txtcolor, fontSize: 30,fontWeight: FontWeight.bold)),
+             SizedBox(height: 10,),
+             Text("Welcome Back!!",style: TextStyle(color: textColor2,fontSize: 18),),
+             SizedBox(height: 40,),
              Padding(
-               padding: const EdgeInsets.all(13),  //adjust padding for better experience
+               padding: const EdgeInsets.only(left: 30,right: 30),  //adjust padding for better experience
                child: TextField(
                  keyboardType: TextInputType.emailAddress,
                  style: TextStyle(color: txtcolor),
                  controller: Email,
                  focusNode: _focusNode,
                  decoration: InputDecoration(
-
+                   filled: true, // Enables the background color
+                   fillColor: inputBoxbgColor,
                  labelText: 'Email',
                    labelStyle: TextStyle(
-                     color:txtcolor, fontSize: 20    // Change font color and fot size for better visibility
+                     color:txtcolor, fontSize: 18   // Change font color and fot size for better visibility
                  ),  // Dynamic label text color labelTextColor
                    focusedBorder: OutlineInputBorder(
                      borderRadius: BorderRadius.circular(12),
                      borderSide: BorderSide(color:txtcolor, width: 2),    // Dynamic Border color
                    ),
                    enabledBorder: OutlineInputBorder(
-                     borderSide: BorderSide(color: textColor2, width: 2),
+                     borderSide: BorderSide(color: Colors.transparent, width: 2),
                      borderRadius: BorderRadius.circular(16)
                    ),
-                   prefixIcon: Icon(Icons.email, color: iconColor2,)
+                   prefixIcon: Icon(Icons.email, color: iconColor,),
+                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
          
                  ),
                ),
              ),
-         
-             SizedBox(height: 10,),
+             SizedBox(height: 20,),
              Padding(
-               padding: const EdgeInsets.all(13),
+               padding: const EdgeInsets.only(left: 30,right: 30),
                child: TextField(
                  obscureText: _isobscure,
                  style: TextStyle(color: Colors.black),
                  controller: Password,
                  decoration: InputDecoration(
+                   filled: true, // Enables the background color
+                   fillColor: inputBoxbgColor,
                      //counterText: 'Password must be 8 character long ',   // Add if you want to customized input from user
                      labelText: 'Password',
                      labelStyle: TextStyle(
-                     color: txtcolor, fontSize: 20    // Change font color and fot size for better visibility
+                     color: txtcolor, fontSize: 18
+                       // Change font color and fot size for better visibility
                      ),
                      focusedBorder: OutlineInputBorder(                             // When user clicked on it then the color of border will change
                          borderRadius: BorderRadius.circular(12),
                          borderSide: BorderSide(color:txtcolor, width: 2)
                      ),
                      enabledBorder: OutlineInputBorder(                             // Default border color when login page will open.
-                         borderSide: BorderSide(color: textColor2, width: 2),   // Change color for better experience
+                         borderSide: BorderSide(color: Colors.transparent, width: 2),   // Change color for better experience
                          borderRadius: BorderRadius.circular(16)
                      ),
-                     prefixIcon: Icon(Icons.lock, color: iconColor2,),
+                     prefixIcon: Icon(Icons.lock, color: iconColor,),
                      suffixIcon: IconButton(onPressed: () {
                        setState(() {
                          _isobscure = !_isobscure;
                        });
-                     }, icon:Icon(_isobscure ? Icons.visibility_off: Icons.visibility, color: iconColor2,) )
-         
+                     }, icon:Icon(_isobscure ? Icons.visibility_off: Icons.visibility, color: iconColor,) ,),
+                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                  ),
                ),
              ),
@@ -125,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                    );
                  },
                  child: Text(
-                   'Forget Password?',
+                   'Forgot Password?',
                    style: TextStyle(
                      fontSize: 14,
                      color:txtcolor,   // Change Text color for better user experience.
@@ -178,15 +183,15 @@ class _LoginScreenState extends State<LoginScreen> {
                  [
                    Container(
                     height: 2,
-                     color: iconColor2,
+                     color: iconColor,
                      margin: EdgeInsets.only(left: 1, right: 3),
-                     padding: EdgeInsets.only(left: 150),
+                     padding: EdgeInsets.only(left: 130),
                    ),
                    Center(
-                       child: Text(' or continue with ', style: TextStyle(fontSize: 15,color: iconColor2),)),
+                       child: Text(' or continue with ', style: TextStyle(fontSize: 15,color: iconColor),)),
                    Container(
                      height: 2,
-                     color: iconColor2,   // Color of horizontal lines
+                     color: iconColor,   // Color of horizontal lines
                      margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
                      padding: EdgeInsets.only(right: 177),
                    ),
@@ -198,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Row(
            children: [
              Container(
-                 margin: EdgeInsets.only(left: 100, top: 10),
+                 margin: EdgeInsets.only(left: 90, top: 10),
                  width: 70, height: 40,      // Same height width for square box.
                  decoration: BoxDecoration(
                    border: Border.all(color: Colors.transparent, width: 2),  // Border color and width, adjust for better experience.
@@ -266,7 +271,6 @@ class _LoginScreenState extends State<LoginScreen> {
                ),
 
              ),
-         SizedBox(height: 70,),
          ],
          ),
        ),

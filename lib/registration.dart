@@ -36,87 +36,100 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registration', style: TextStyle(color: Colors.white),),
-        backgroundColor: appbarcolor,
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
 
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children:[
+              Text("Create your account",style: TextStyle(color: textColor2,fontSize: 25,fontWeight: FontWeight.w400),),
+              SizedBox(height: 40,),
               Padding(
-                padding: const EdgeInsets.all(14.0),
+                padding: const EdgeInsets.only(left: 25,right: 25),
                 child: TextField(
+                  style: TextStyle(color: txtcolor),
                   controller: Name,
                   decoration: InputDecoration(
+                      filled: true, // Enables the background color
+                      fillColor: inputBoxbgColor,
                     labelText: 'Name',
                     labelStyle: TextStyle(
-                      color: Colors.black, fontSize: 20   // Change label font color and size for better experience.
+                      color: textColor2, fontSize: 18   // Change label font color and size for better experience.
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2),
+                      borderSide: BorderSide(color: Colors.transparent, width: 2),
                       borderRadius: BorderRadius.circular(10)
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 2),
+                      borderSide: BorderSide(color: Colors.transparent, width: 2),
                       borderRadius: BorderRadius.circular(10)
                     ),
-                    prefixIcon: Icon(Icons.person, color: Colors.black87,)
+                    prefixIcon: Icon(Icons.person, color: iconColor,),
+                    contentPadding: EdgeInsets.symmetric(vertical: 13, horizontal: 12),
                   ),
                 ),
               ),
 
-              SizedBox(height: 10,),
+              SizedBox(height: 20,),
               Padding(
-                padding: const EdgeInsets.all(14.0),
+                padding: const EdgeInsets.only(left: 25,right: 25),
                 child: TextField(
                   controller: Email,
                   keyboardType: TextInputType.emailAddress,
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color:Colors.white),
                   decoration: InputDecoration(
+                      filled: true, // Enables the background color
+                      fillColor: inputBoxbgColor,
                     labelText: 'Email',
                     labelStyle: TextStyle(
-                      color: Colors.black, fontSize: 20),
+                      color: textColor2, fontSize: 18),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2),
+                      borderSide: BorderSide(color: Colors.transparent, width: 2),
                       borderRadius: BorderRadius.circular(10)
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 2),
+                      borderSide: BorderSide(color: Colors.transparent, width: 2),
                       borderRadius: BorderRadius.circular(10)
                     ),
-                    prefixIcon: Icon(Icons.email)
+                    prefixIcon: Icon(Icons.email,color: iconColor),
+                    contentPadding: EdgeInsets.symmetric(vertical: 13, horizontal: 12),
                   ),
                 ),
               ),
 
-              SizedBox(height: 10,),
+              SizedBox(height: 20,),
               Padding(
-                padding: const EdgeInsets.all(14.0),
+                padding: const EdgeInsets.only(left: 25,right: 25),
                 child: TextField(
                   obscureText:_isObscure,
                   controller: Password,
+                  style: TextStyle(color: txtcolor),
                   decoration: InputDecoration(
+                    filled: true, // Enables the background color
+                    fillColor: inputBoxbgColor,
                     labelText: 'Password',
-                    labelStyle: TextStyle(color: Colors.black, fontSize: 20),
+                    labelStyle: TextStyle(color: textColor2, fontSize: 18),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2),
+                      borderSide: BorderSide(color: Colors.transparent, width: 2),
                       borderRadius: BorderRadius.circular(10)
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 2),
+                      borderSide: BorderSide(color: Colors.transparent, width: 2),
                       borderRadius: BorderRadius.circular(10)
                     ),
-                    prefixIcon: Icon(Icons.lock),
+                    prefixIcon: Icon(Icons.lock,color: iconColor,),
+                    contentPadding: EdgeInsets.symmetric(vertical: 13, horizontal: 12),
                     suffixIcon: IconButton(onPressed: () {
                       setState(() {
                         _isObscure = !_isObscure;
                       });
                     }, icon: Icon(
                    _isObscure ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.black,
+                      color: iconColor,
                       ),
                    ),
 
@@ -124,7 +137,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                ),
               ),
 
-              SizedBox(height: 18,),
+              SizedBox(height: 20,),
 
               ElevatedButton(onPressed: () async {
                 UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -140,35 +153,38 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 }
               },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: appbarcolor,    // change background color for better visibility.
-                      padding: EdgeInsets.only(left: 60, right: 60),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                      backgroundColor: btncolor,    // change background color for better visibility.
+                      padding: EdgeInsets.only(left: 90,right: 90,top: 11,bottom: 11),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
                   ),
-                  child: Text('Submit',
+                  child: Text('Sign Up',
                     style: TextStyle(fontSize: 19, color: Colors.white),
                   )
               ),
 
-              SizedBox(height: 18,),
+              SizedBox(height: 50,),
 
-              Row(
-                  children:
-                  [
-                    Container(
-                      height: 2,
-                      color: Colors.blue,
-                      margin: EdgeInsets.only(left: 10, right: 3),
-                      padding: EdgeInsets.only(left: 170),
-                    ),
-                    Center(
-                        child: Text('or', style: TextStyle(fontSize: 20),)),
-                    Container(
-                      height: 2,
-                      color: Colors.blue,   // Color of horizontal lines
-                      margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
-                      padding: EdgeInsets.only(right: 177),
-                    ),
-                  ]
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                    children:
+                    [
+                      Container(
+                        height: 2,
+                        color: iconColor,
+                        margin: EdgeInsets.only(left: 1, right: 3),
+                        padding: EdgeInsets.only(left: 130),
+                      ),
+                      Center(
+                          child: Text(' or continue with', style: TextStyle(fontSize: 15,color: iconColor),)),
+                      Container(
+                        height: 2,
+                        color: iconColor,   // Color of horizontal lines
+                        margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
+                        padding: EdgeInsets.only(right: 177),
+                      ),
+                    ]
+                ),
               ),
               SizedBox(height: 18,),
 
@@ -177,14 +193,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 children: [
 
                   Container(
-                    margin: EdgeInsets.only(left: 40, top: 10),
-                    width: 60, height: 60,      // Same height width for square box.
+                    margin: EdgeInsets.only(left: 90, top: 10),
+                    width: 70, height: 40,      // Same height width for square box.
                     decoration: BoxDecoration(
-                      color: Colors.transparent,
                       border: Border.all(color: Colors.transparent, width: 2),  // Border color and width, adjust for better experience.
                       borderRadius: BorderRadius.circular(10), //optional, Rounded corner
                       image: DecorationImage(
-                        image: AssetImage('assets/images/google.png'),
+                          image: AssetImage('assets/images/google.png',),
+                          fit: BoxFit.fitHeight
                       ),
                     ),
                     child: GestureDetector(
@@ -194,10 +210,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 18,),
+                  SizedBox(height: 20,),
                   Container(
                     margin: EdgeInsets.only(left:65, top:10),
-                    width: 60, height: 60,  // Same height and wight for square box.
+                    width: 70, height: 50,  // Same height and wight for square box.
                     decoration: BoxDecoration(
                       color: Colors.transparent,
                       border: Border.all(color: Colors.transparent, width: 2),   // Border color and width, adjust for better experience.
@@ -213,7 +229,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                   ),
 
-                  Container(
+                  /*Container(
                     margin: EdgeInsets.only(left: 68, top: 10),
                     width: 60, height: 60,
                     decoration: BoxDecoration(
@@ -226,10 +242,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
                       },
                     ),
-                  ),
+                  ),*/
                 ],
               ),
-
+              SizedBox(height: 70,),
             ]
 
           ),
