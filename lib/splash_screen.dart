@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void whereToGo() async {
     var sharepref= await SharedPreferences.getInstance();
     var isLoggedIn=sharepref.getBool(KEYLOGIN);
-    Timer(Duration(seconds: 4), () {
+    Timer(Duration(seconds: 2), () {
       if(isLoggedIn!=null) {
         if(isLoggedIn)
         Navigator.pushReplacement(

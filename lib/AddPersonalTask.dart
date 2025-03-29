@@ -167,7 +167,7 @@ class _AddTaskState extends State<AddPersonalTask> {
                       child: ElevatedButton(
                         onPressed: () {
                           addTask();
-                          Navigator.pop(context);
+                          //Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: btncolor,
@@ -197,6 +197,9 @@ class _AddTaskState extends State<AddPersonalTask> {
       'Time': _timeController.text,
     }).then((value) {
       print("Task Added");
+      task.clear();
+      _timeController.clear();
+      _dateController.clear();
     }).catchError((error) {
       print("Failed to add user: $error");
     });

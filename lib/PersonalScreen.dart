@@ -1,78 +1,101 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/AddPersonalTask.dart';
 import 'package:taskmanager/Colors.dart';
 
-class PersonalTask extends StatelessWidget {
-  List<String> item = <String>['Task Name A', 'Task Name B', 'Task Name C','Task A', 'Task B', 'Task C','Task A', 'Task B', 'Task C'];
+class PersonalTask extends StatefulWidget {
+  @override
+  _PersonalTaskState createState() => _PersonalTaskState();
+}
+
+class _PersonalTaskState extends State<PersonalTask> {
+  String? email; // Store user email
+
+  @override
+  void initState() {
+    super.initState();
+    _getEmail(); // Fetch email from SharedPreferences
+  }
+
+  Future<void> _getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      email = prefs.getString("email");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[200], // Assuming a background color
-        body: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: ListView.builder(
-                  //padding: EdgeInsets.only(top: 50), // Adjust padding as needed
-                  itemCount: item.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 2,
-                      margin: EdgeInsets.only(top: 10),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          children: [
-                            SizedBox(height: 5),
-                            Row(children: [Text('${item[index]}',style: TextStyle(fontWeight: FontWeight.bold,color: txtcolor),),]),
-                            Row(children: [
-                              Icon(Icons.date_range,color: Colors.black54,size: 18,),
-                              Text('6/10/2024',style: TextStyle(color: Colors.black),),
-                              Container(width: 20,),
-                              Icon(Icons.access_time,color: Colors.black54,size: 18,),
-                              Text('5:30',style: TextStyle(color: Colors.black)),
-                              Container(width: 40,),
-                              ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      //backgroundColor: Colors.blue,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                      minimumSize: Size(80, 25),// Increased button size
-                                    ),
-                                    child: Text('Pending', style: TextStyle(fontSize: 12, color: Colors.red)), // Increased font size
-                                  ),
-                            ]),
-                          ],
-                        ),
-                      ),
-                    );
+      //backgroundColor: Colors.grey[200],
+      body: email == null
+          ? Center(child: CircularProgressIndicator()) // Show loader until email is fetched
+          : StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection(email!).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator()); // Loading state
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text("No tasks available!"));
+          }
 
-                  },
-                ),
-              ),
-              Positioned(
-                bottom: 40, // Adjust position as needed
-                right: 20,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AddPersonalTask()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: CircleBorder(),
-                    elevation: 10,
-                    shadowColor: Colors.blueGrey,
-                    padding: EdgeInsets.all(10),
-                    backgroundColor: btncolor, // Assuming a button color
+          var tasks = snapshot.data!.docs;
+
+          return ListView.builder(
+            padding: EdgeInsets.all(15),
+            itemCount: tasks.length,
+            itemBuilder: (context, index) {
+              var taskData = tasks[index].data() as Map<String, dynamic>;
+              return Card(
+                elevation: 2,
+                  margin: EdgeInsets.only(top: index == 0 ? 140 : 10,),
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    children: [
+                      //SizedBox(height: 3),
+                      Row(children: [
+                        Text(
+                          taskData['Task Name'] ?? "No Task",
+                          style: TextStyle( color:txtcolor,fontSize: 18),
+                        ),
+                      ]),
+                      Row(children: [
+                        Icon(Icons.date_range, color: Colors.black54, size: 18),
+                        Text(taskData['Date'] ?? "No Date", style: TextStyle(color: Colors.black)),
+                        SizedBox(width: 20),
+                        Icon(Icons.access_time, color: Colors.black54, size: 18),
+                        Text(taskData['Time'] ?? "No Time", style: TextStyle(color: Colors.black)),
+                        SizedBox(width: 40),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            minimumSize: Size(80, 25),
+                          ),
+                          child: Text('Pending', style: TextStyle(fontSize: 12, color: Colors.red)),
+                        ),
+                      ]),
+                    ],
                   ),
-                  child: Icon(Icons.add, color: Colors.white, size: 30),
                 ),
-              ),
-            ],
-            ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton.small(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => AddPersonalTask()));
+        },
+        backgroundColor: btncolor,
+        shape: CircleBorder(),
+        child: Icon(Icons.add, color: Colors.white, size: 30),
+      ),
     );
   }
 }

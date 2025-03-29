@@ -48,40 +48,38 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
    return Scaffold(
-     appBar: AppBar(
-       centerTitle: true,
-       toolbarHeight: 70, // Height of appbar
-       title: Text('Sign in',
-         style: TextStyle(color: txtcolor, fontSize: 25,fontWeight: FontWeight.bold),
-       ),
-     ),
+     backgroundColor: Colors.black,
      body: Center(
        child: SingleChildScrollView(
          child: Column(
            mainAxisAlignment: MainAxisAlignment.center,
            children: [
+           Text('LogIn', style: TextStyle(color: txtcolor, fontSize: 35,fontWeight: FontWeight.bold)),
              SizedBox(height: 10,),
+             Text("Welcome Back!!",style: TextStyle(color: textColor2,fontSize: 25),),
+             SizedBox(height: 50,),
              Padding(
                padding: const EdgeInsets.all(13),  //adjust padding for better experience
                child: TextField(
                  keyboardType: TextInputType.emailAddress,
-                 style: TextStyle(color: Colors.black),
+                 style: TextStyle(color: txtcolor),
                  controller: Email,
                  focusNode: _focusNode,
                  decoration: InputDecoration(
+
                  labelText: 'Email',
                    labelStyle: TextStyle(
-                     color: Colors.black, fontSize: 20    // Change font color and fot size for better visibility
+                     color:txtcolor, fontSize: 20    // Change font color and fot size for better visibility
                  ),  // Dynamic label text color labelTextColor
                    focusedBorder: OutlineInputBorder(
                      borderRadius: BorderRadius.circular(12),
                      borderSide: BorderSide(color:txtcolor, width: 2),    // Dynamic Border color
                    ),
                    enabledBorder: OutlineInputBorder(
-                     borderSide: BorderSide(color: Colors.black38, width: 2),
+                     borderSide: BorderSide(color: textColor2, width: 2),
                      borderRadius: BorderRadius.circular(16)
                    ),
-                   prefixIcon: Icon(Icons.email, color: iconColor,)
+                   prefixIcon: Icon(Icons.email, color: iconColor2,)
          
                  ),
                ),
@@ -98,22 +96,22 @@ class _LoginScreenState extends State<LoginScreen> {
                      //counterText: 'Password must be 8 character long ',   // Add if you want to customized input from user
                      labelText: 'Password',
                      labelStyle: TextStyle(
-                     color: Colors.black, fontSize: 20    // Change font color and fot size for better visibility
+                     color: txtcolor, fontSize: 20    // Change font color and fot size for better visibility
                      ),
                      focusedBorder: OutlineInputBorder(                             // When user clicked on it then the color of border will change
                          borderRadius: BorderRadius.circular(12),
                          borderSide: BorderSide(color:txtcolor, width: 2)
                      ),
                      enabledBorder: OutlineInputBorder(                             // Default border color when login page will open.
-                         borderSide: BorderSide(color: Colors.black38, width: 2),   // Change color for better experience
+                         borderSide: BorderSide(color: textColor2, width: 2),   // Change color for better experience
                          borderRadius: BorderRadius.circular(16)
                      ),
-                     prefixIcon: Icon(Icons.lock, color: iconColor,),
+                     prefixIcon: Icon(Icons.lock, color: iconColor2,),
                      suffixIcon: IconButton(onPressed: () {
                        setState(() {
                          _isobscure = !_isobscure;
                        });
-                     }, icon:Icon(_isobscure ? Icons.visibility_off: Icons.visibility, color: Colors.black,) )
+                     }, icon:Icon(_isobscure ? Icons.visibility_off: Icons.visibility, color: iconColor2,) )
          
                  ),
                ),
@@ -136,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                ),
              ),
          
-             SizedBox(height: 18,),
+             SizedBox(height: 25,),
          
              ElevatedButton(onPressed: () async {
                try {
@@ -172,25 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                    style: TextStyle(fontSize: 19, color: Colors.white),
                  )
              ),
-
-             SizedBox(height: 80,),
-             Center(
-               child: Row(
-                 mainAxisAlignment: MainAxisAlignment.center,
-                 children: [
-                   Text("Don't have an account? ", style: TextStyle(fontSize: 14, color: Colors.black87, ),),
-
-                   InkWell(
-                       onTap: () {
-                         Navigator.push(context, MaterialPageRoute(builder: (context)=> RegistrationScreen()));
-                       },
-
-                       child: Text('Sign Up', style: TextStyle(color: txtcolor, fontSize: 14, fontWeight: FontWeight.bold),))
-                 ],
-               ),
-
-             ),
-             SizedBox(height: 30,),
+             SizedBox(height: 50,),
              SingleChildScrollView(
                scrollDirection: Axis.horizontal,
                child: Row(
@@ -198,15 +178,15 @@ class _LoginScreenState extends State<LoginScreen> {
                  [
                    Container(
                     height: 2,
-                     color: txtcolor,
+                     color: iconColor2,
                      margin: EdgeInsets.only(left: 1, right: 3),
-                     padding: EdgeInsets.only(left: 120),
+                     padding: EdgeInsets.only(left: 150),
                    ),
                    Center(
-                       child: Text(' or continue with ', style: TextStyle(fontSize: 15),)),
+                       child: Text(' or continue with ', style: TextStyle(fontSize: 15,color: iconColor2),)),
                    Container(
                      height: 2,
-                     color: txtcolor,   // Color of horizontal lines
+                     color: iconColor2,   // Color of horizontal lines
                      margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
                      padding: EdgeInsets.only(right: 177),
                    ),
@@ -216,31 +196,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 18,),
          
           Row(
-         
            children: [
-         
              Container(
-               margin: EdgeInsets.only(left: 40, top: 10),
-               width: 60, height: 60,      // Same height width for square box.
-               decoration: BoxDecoration(
-                 color: Colors.transparent,
-                 border: Border.all(color: Colors.transparent, width: 2),  // Border color and width, adjust for better experience.
-                 borderRadius: BorderRadius.circular(10), //optional, Rounded corner
-                 image: DecorationImage(
-                     image: AssetImage('assets/images/google.png'),
+                 margin: EdgeInsets.only(left: 100, top: 10),
+                 width: 70, height: 40,      // Same height width for square box.
+                 decoration: BoxDecoration(
+                   border: Border.all(color: Colors.transparent, width: 2),  // Border color and width, adjust for better experience.
+                   borderRadius: BorderRadius.circular(10), //optional, Rounded corner
+                   image: DecorationImage(
+                       image: AssetImage('assets/images/google.png',),
+                     fit: BoxFit.fitHeight
+                   ),
+                 ),
+                 child: GestureDetector(
+                   onTap: () {
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
+                   },
                  ),
                ),
-               child: GestureDetector(
-                 onTap: () {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
-                 },
-               ),
-             ),
-         
              SizedBox(height: 18,),
              Container(
                margin: EdgeInsets.only(left:65, top:10),
-               width: 60, height: 60,  // Same height and wight for square box.
+               width: 70, height: 50,  // Same height and wight for square box.
                decoration: BoxDecoration(
                  color: Colors.transparent,
                  border: Border.all(color: Colors.transparent, width: 2),   // Border color and width, adjust for better experience.
@@ -256,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                ),
              ),
          
-             Container(
+             /*Container(
                margin: EdgeInsets.only(left: 68, top: 10),
                width: 60, height: 60,
                decoration: BoxDecoration(
@@ -269,10 +246,26 @@ class _LoginScreenState extends State<LoginScreen> {
                    Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
                  },
                ),
-             ),
+             ),*/
            ],
           ),
-         
+             SizedBox(height: 50,),
+             Center(
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: [
+                   Text("Don't have an account? ", style: TextStyle(fontSize: 14, color: txtcolor, ),),
+
+                   InkWell(
+                       onTap: () {
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=> RegistrationScreen()));
+                       },
+
+                       child: Text('Sign Up', style: TextStyle(color: btncolor, fontSize: 14, fontWeight: FontWeight.bold),))
+                 ],
+               ),
+
+             ),
          SizedBox(height: 70,),
          ],
          ),
