@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
    return Scaffold(
-     backgroundColor: Colors.black,
+     backgroundColor: bgcolor,
      body: Center(
        child: SingleChildScrollView(
          child: Column(
@@ -156,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                    );
                    var sharepref= await SharedPreferences.getInstance();
                    sharepref.setBool("login", true);
-                   sharepref.setString("email", Email.text);
+                   sharepref.setString("email.", Email.text);
                  }
                }
                catch(e){
@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                  style: ElevatedButton.styleFrom(
                    backgroundColor: btncolor,    // change background color for better visibility.
                    padding: EdgeInsets.only(left: 100,right: 100,top: 11,bottom: 11),
-                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
                  ),
                  child: Text('Login',
                    style: TextStyle(fontSize: 19, color: Colors.white),
