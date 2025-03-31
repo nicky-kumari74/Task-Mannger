@@ -49,97 +49,108 @@ class _AddTaskState extends State<AddPersonalTask> {
         centerTitle: true,
         toolbarHeight: 54,
         leadingWidth: 37,
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: bgcolor,
         title: Text(
-          'Add Task',
-          style: TextStyle(fontSize: 25, color: txtcolor,fontWeight: FontWeight.bold),
+          'Create New Task',
+          style: TextStyle(fontSize: 20, color: txtcolor,),
         ),
       ),
+        backgroundColor: bgcolor,
       body: Container(
         margin: EdgeInsets.only(top: 40),
         child:SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(35.0),
-            child: Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: btncolor),
-                borderRadius: BorderRadius.circular(25)
-              ),
-              child: Center(
                 child: Column(
                   children: [
                     SizedBox(height: 50),
-                    Text('What is to be done?', style: TextStyle(fontSize: 20, color: txtcolor)),
-                    SizedBox(height: 5),
                     Container(
-                      width: 230,
-                      height: 40,
-                      child: TextField(
-                        controller: task,
-                          style: TextStyle(fontSize: 20),
-                        decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color:Colors.black, width: 2),    // Dynamic Border color
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black, width: 1),
-                                borderRadius: BorderRadius.circular(10)
-                            )
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text('Due date', style: TextStyle(fontSize: 20, color: txtcolor)),
-                    SizedBox(height: 5),
-                    Container(
-                      width: 180,
-                      height: 35,
-                      //margin: EdgeInsets.only(left: 40),
-                      child: TextField(
-                        controller: _dateController,
-                        readOnly: true,
-                        style: TextStyle(fontSize: 18),
-                        decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6),
-                            borderSide: BorderSide(color:Colors.black, width: 2),    // Dynamic Border color
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black, width: 1),
-                              borderRadius: BorderRadius.circular(6)
-                          ),
-                          suffixIcon: IconButton(
-                            onPressed: _pickDate,
-                            icon: Icon(Icons.date_range,color: Colors.black,),
-                          ),
-                        ),
-                      ),
+                      width: 500,
+                        child: Text('What is to be done?', style: TextStyle(fontSize: 20, color: txtcolor))
                     ),
                     SizedBox(height: 15),
-                    Container(
-                      width: 180,
-                      height: 35,
-                      //margin: EdgeInsets.only(left: 40),
-                      child: TextField(
-                        controller: _timeController,
-                        readOnly: true,
-                        style: TextStyle(fontSize: 18),
-                        decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6),
-                            borderSide: BorderSide(color:Colors.black, width: 2),    // Dynamic Border color
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black, width: 1),
-                              borderRadius: BorderRadius.circular(6)
-                          ),
-                          suffixIcon: IconButton(
-                            onPressed: _pickTime,
-                            icon: Icon(Icons.timer_outlined,color: Colors.black,),
+                    TextField(
+                          style: TextStyle(color: txtcolor),
+                          controller: task,
+                          decoration: InputDecoration(
+                            filled: true, // Enables the background color
+                            fillColor: inputBoxbgColor,
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.transparent, width: 2),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.transparent, width: 2),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 13, horizontal: 12),
                           ),
                         ),
-                      ),
+                    SizedBox(height: 15),
+                    Container(
+                        width: 500,
+                        child: Text('Due date & time', style: TextStyle(fontSize: 20, color: txtcolor))
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Container(
+                          width: 150,
+                          height: 40,
+                          alignment: Alignment.topLeft,
+                          child: TextField(
+                            readOnly: true,
+                            controller: _dateController,
+                            style: TextStyle(color: txtcolor),
+                            decoration: InputDecoration(
+                              filled: true, // Enables the background color
+                              fillColor: inputBoxbgColor,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.transparent, width: 2),
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.transparent, width: 2),
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: _pickDate,
+                                icon: Icon(Icons.date_range, color: iconColor),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 12),
+                            ),
+                          ),
+                        ),
+                        Container(width: 10,),
+                        Container(
+                          width: 100,
+                          height: 40,
+                          alignment: Alignment.topLeft,
+                          child: TextField(
+                            readOnly: true,
+                            controller: _timeController,
+                            style: TextStyle(color: txtcolor),
+                            decoration: InputDecoration(
+                              filled: true, // Enables the background color
+                              fillColor: inputBoxbgColor,
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.transparent, width: 2),
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.transparent, width: 2),
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: _pickTime,
+                                icon: Icon(Icons.timer_outlined,color: iconColor,),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 12),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 20),
                     /*Text('Add to \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t', style: TextStyle(fontSize: 20, color: appbarcolor)),
@@ -180,8 +191,8 @@ class _AddTaskState extends State<AddPersonalTask> {
                     SizedBox(height: 50)
                   ],
                 ),
-              ),
-            ),
+
+
           ),
         ),
       )
@@ -191,10 +202,12 @@ class _AddTaskState extends State<AddPersonalTask> {
   void addTask() async {
     var sharepref= await SharedPreferences.getInstance();
     var email=sharepref.getString("email");
+    print("$email");
     FirebaseFirestore.instance.collection(email!).add({
       'Task Name': task.text,
       'Date': _dateController.text,
       'Time': _timeController.text,
+      'status':"pending"
     }).then((value) {
       print("Task Added");
       task.clear();

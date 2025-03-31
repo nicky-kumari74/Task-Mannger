@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                padding: const EdgeInsets.only(left: 30,right: 30),
                child: TextField(
                  obscureText: _isobscure,
-                 style: TextStyle(color: Colors.black),
+                 style: TextStyle(color: txtcolor),
                  controller: Password,
                  decoration: InputDecoration(
                    filled: true, // Enables the background color
@@ -156,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                    );
                    var sharepref= await SharedPreferences.getInstance();
                    sharepref.setBool("login", true);
-                   sharepref.setString("email.", Email.text);
+                   sharepref.setString("email", Email.text);
                  }
                }
                catch(e){

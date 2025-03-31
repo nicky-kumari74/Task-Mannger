@@ -36,10 +36,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+          backgroundColor: bgcolor,
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: bgcolor,
 
       body: Center(
         child: SingleChildScrollView(

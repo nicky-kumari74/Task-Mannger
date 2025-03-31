@@ -12,7 +12,7 @@ class TeamTask extends StatelessWidget{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
-                  child: Text('Team task')
+                  child: Text('Team task',style: TextStyle(color: Colors.white),)
               ),
               Container(
                 margin: EdgeInsets.only(top: 480, ),

@@ -28,7 +28,7 @@ class _PersonalTaskState extends State<PersonalTask> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: Colors.grey[200],
+      backgroundColor: bgcolor,
       body: email == null
           ? Center(child: CircularProgressIndicator()) // Show loader until email is fetched
           : StreamBuilder<QuerySnapshot>(
@@ -38,7 +38,7 @@ class _PersonalTaskState extends State<PersonalTask> {
             return Center(child: CircularProgressIndicator()); // Loading state
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text("No tasks available!"));
+            return Center(child: Text("No tasks available!",style: TextStyle(color: txtcolor),));
           }
 
           var tasks = snapshot.data!.docs;
@@ -50,25 +50,31 @@ class _PersonalTaskState extends State<PersonalTask> {
               var taskData = tasks[index].data() as Map<String, dynamic>;
               return Card(
                 elevation: 2,
-                  margin: EdgeInsets.only(top: index == 0 ? 140 : 10,),
+                  color: inputBoxbgColor,
+                  margin: EdgeInsets.only(top: index == 0 ? 20 : 15,),
                 child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.only(left: 20,right: 20,top: 5),
                   child: Column(
                     children: [
                       //SizedBox(height: 3),
                       Row(children: [
-                        Text(
-                          taskData['Task Name'] ?? "No Task",
-                          style: TextStyle( color:txtcolor,fontSize: 18),
+                        Icon(Icons.pending, color: Colors.white, size: 18),
+                        Container(
+                          margin: EdgeInsets.only(left:10),
+                          child: Text(
+                            taskData['Task Name'] ?? "No Task",
+                            style: TextStyle( color:txtcolor,fontSize: 18,),
+                          ),
                         ),
+                        Container(width:180,height: 10,alignment:Alignment.bottomRight,child: Icon(Icons.delete, color: Colors.white, size: 25))
                       ]),
                       Row(children: [
-                        Icon(Icons.date_range, color: Colors.black54, size: 18),
+                        /*Icon(Icons.date_range, color: Colors.black54, size: 18),
                         Text(taskData['Date'] ?? "No Date", style: TextStyle(color: Colors.black)),
                         SizedBox(width: 20),
                         Icon(Icons.access_time, color: Colors.black54, size: 18),
-                        Text(taskData['Time'] ?? "No Time", style: TextStyle(color: Colors.black)),
-                        SizedBox(width: 40),
+                        Text(taskData['Time'] ?? "No Time", style: TextStyle(color: Colors.black)),*/
+                        SizedBox(width: 80),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
@@ -90,12 +96,77 @@ class _PersonalTaskState extends State<PersonalTask> {
       ),
       floatingActionButton: FloatingActionButton.small(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => AddPersonalTask()));
+          showPersonaldialogbox();
+          //Navigator.push(context, MaterialPageRoute(builder: (context) => AddPersonalTask()));
         },
         backgroundColor: btncolor,
         shape: CircleBorder(),
         child: Icon(Icons.add, color: Colors.white, size: 30),
       ),
     );
+  }
+  void showPersonaldialogbox() {
+    TextEditingController Taskname = TextEditingController();
+    TextEditingController inviteMembers = TextEditingController();
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(title: Text("Create New Task"),backgroundColor: boxColor,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,  // This make dialog box width responsive.
+            child: Column(
+              mainAxisSize: MainAxisSize.min,  // Help to shrink the dialog box height according to content.
+              children: [
+                Container(height: 10,),
+                TextField(
+                  controller: Taskname,
+                  decoration: InputDecoration(
+                    hintText: 'Enter Task Name',
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(width: 2),
+                        borderRadius: BorderRadius.circular(15)
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(width: 1),
+                        borderRadius: BorderRadius.circular(15)
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop((context)),   // close dialog box
+              child: Text('Cancel',style: TextStyle(fontSize: 18)),
+            ),
+            TextButton(onPressed: () {
+              String Task = Taskname.text.trim();
+              if (Task.isNotEmpty) {
+                addTask(Task);
+                setState(() {
+                  //teams.add(newTeam);
+                  //saveTeams();
+                });
+                Navigator.pop(context);   // Close dialog box
+              }
+            }, child: Text("Add",style: TextStyle(fontSize: 18),),
+            ),
+          ],
+
+      );
+    });
+  }
+
+  void addTask(String task) async {
+    var sharepref= await SharedPreferences.getInstance();
+    var email=sharepref.getString("email");
+    FirebaseFirestore.instance.collection(email!).add({
+      'Task Name': task,
+      'status':"pending"
+    }).then((value) {
+      print("Task Added");
+    }).catchError((error) {
+      print("Failed to add user: $error");
+    });
   }
 }
