@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/PersonalScreen.dart';
 import 'package:taskmanager/TeamScreen.dart';
+import 'package:taskmanager/loginScreen.dart';
 class Dashboard extends StatelessWidget{
 
   @override
@@ -66,8 +68,13 @@ class Dashboard extends StatelessWidget{
                 ListTile(
                   leading: Icon(Icons.ac_unit_sharp),
                   title: Text('Logout'),
-                  onTap: ()=>{
-
+                  onTap: () async {
+                    var sharepref = await SharedPreferences.getInstance();
+                    sharepref.setBool("login", false);// Set to false for logout
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()), // Replace with your LoginPage widget
+                    );
                   },
                 ),
                 Divider(),

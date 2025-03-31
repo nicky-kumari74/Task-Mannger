@@ -11,6 +11,9 @@ class PersonalTask extends StatefulWidget {
 
 class _PersonalTaskState extends State<PersonalTask> {
   String? email; // Store user email
+  //bool? isChecked=false;
+  late List<bool> isCheckedList;
+  Map<String, bool> isCheckedMap = {};
 
   @override
   void initState() {
@@ -48,6 +51,8 @@ class _PersonalTaskState extends State<PersonalTask> {
             itemCount: tasks.length,
             itemBuilder: (context, index) {
               var taskData = tasks[index].data() as Map<String, dynamic>;
+              String taskId = tasks[index].id; // Unique ID for each task
+              bool isChecked = isCheckedMap[taskId] ?? false;
               return Card(
                 elevation: 2,
                   color: inputBoxbgColor,
@@ -58,15 +63,30 @@ class _PersonalTaskState extends State<PersonalTask> {
                     children: [
                       //SizedBox(height: 3),
                       Row(children: [
-                        Icon(Icons.pending, color: Colors.white, size: 18),
                         Container(
-                          margin: EdgeInsets.only(left:10),
+                            height: 20,
+                            margin: EdgeInsets.only(top: 10),
+                            child:taskData['status']=="pending"?
+                    Image.asset('lib/icons/hour_glass.png',color: Colors.white,):
+                            Image.asset('lib/icons/checkmark.png',color: Colors.white,)
+                        ),
+                        //Icon(Icons.pending, color: Colors.white, size: 18),
+                        Container(
+                          width: 200,
+                          margin: EdgeInsets.only(left:50),
                           child: Text(
                             taskData['Task Name'] ?? "No Task",
-                            style: TextStyle( color:txtcolor,fontSize: 18,),
+                            style: TextStyle(
+                              color:txtcolor,fontSize: 18,),
                           ),
                         ),
-                        Container(width:180,height: 10,alignment:Alignment.bottomRight,child: Icon(Icons.delete, color: Colors.white, size: 25))
+                          //Container(width: 90,),
+                          IconButton(
+                              onPressed: () {
+                                _deleteTask(taskId); // Function to delete task
+                              },
+                              icon: Icon(Icons.delete, color: Colors.white, size: 25)),
+
                       ]),
                       Row(children: [
                         /*Icon(Icons.date_range, color: Colors.black54, size: 18),
@@ -74,17 +94,40 @@ class _PersonalTaskState extends State<PersonalTask> {
                         SizedBox(width: 20),
                         Icon(Icons.access_time, color: Colors.black54, size: 18),
                         Text(taskData['Time'] ?? "No Time", style: TextStyle(color: Colors.black)),*/
-                        SizedBox(width: 80),
-                        ElevatedButton(
+                        SizedBox(width: 40),
+                        Text("Mark as completed",style: TextStyle(color: textColor2),),
+                        Checkbox(value: taskData["checked"],
+                            activeColor: btncolor,
+                            side: BorderSide(color:btncolor, width: 2),
+                            onChanged: (bool? newBool) {
+                              setState(() {
+                                isCheckedMap[taskId] = newBool ?? false;// Update only this task's checkbox
+                                FirebaseFirestore.instance
+                                    .collection(email!) // Access the user's collection
+                                    .doc(taskId) // Find the specific task by its ID
+                                    .update({
+                                  "status": "completed",
+                                  "checked":true// Update only this field
+                                })
+                                    .then((_) {
+                                  print("Task updated successfully!");
+                                  setState(() {}); // Refresh UI if needed
+                                }).catchError((error) {
+                                  print("Failed to update task: $error");
+                                });
+                              });
+                            }),
+                        /*ElevatedButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            print("clicked");
+                            //Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                             minimumSize: Size(80, 25),
                           ),
                           child: Text('Pending', style: TextStyle(fontSize: 12, color: Colors.red)),
-                        ),
+                        ),*/
                       ]),
                     ],
                   ),
@@ -162,11 +205,30 @@ class _PersonalTaskState extends State<PersonalTask> {
     var email=sharepref.getString("email");
     FirebaseFirestore.instance.collection(email!).add({
       'Task Name': task,
-      'status':"pending"
+      'status':"pending",
+      'checked':false
     }).then((value) {
       print("Task Added");
     }).catchError((error) {
       print("Failed to add user: $error");
+    });
+  }
+
+  void _deleteTask(String taskId) {
+    if (email == null) {
+      print("Email not found. Cannot delete task.");
+      return;
+    }
+
+    FirebaseFirestore.instance
+        .collection(email!) // Use email! directly
+        .doc(taskId) // Reference the document by its ID
+        .delete()
+        .then((_) {
+      print("Task Deleted Successfully!");
+      setState(() {}); // Refresh the UI after deletion
+    }).catchError((error) {
+      print("Failed to delete task: $error");
     });
   }
 }
