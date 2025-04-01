@@ -86,65 +86,74 @@ class _DashboardState extends State<Dashboard> {
       ),
       backgroundColor: bgcolor,
       body: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            Container(
-              height: 100,
-              margin: EdgeInsets.only(top: 20),
-              color: bgcolor,
-              child: TabBar(
-                physics: const ClampingScrollPhysics(),
-                padding: EdgeInsets.only(top: 55, left: 10, right: 10),
-                unselectedLabelColor: btncolor,
-                labelColor: Colors.black,
-                indicatorColor: Colors.transparent,
-                indicatorSize: TabBarIndicatorSize.label,
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: btncolor,
+          length: 2,
+          child: Column(
+            children: [
+              Container(
+                height: 100,
+                margin: EdgeInsets.only(top: 20),
+                color: bgcolor,
+                child: PreferredSize(
+                  preferredSize: Size.fromHeight(60),
+                  child: Theme(
+                    data: Theme.of(context).copyWith(
+                      tabBarTheme: TabBarTheme(
+                        dividerColor: Colors.transparent, // Removes the thin white line
+                      ),
+                    ),
+                    child: TabBar(
+                      physics: const ClampingScrollPhysics(),
+                      padding: EdgeInsets.only(top: 55, left: 10, right: 10),
+                      unselectedLabelColor: btncolor,
+                      labelColor: Colors.black,
+                      indicatorSize: TabBarIndicatorSize.label,
+                      indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: btncolor,
+                      ),
+                      tabs: [
+                        Tab(
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(color: btncolor, width: 1),
+                            ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text("Personal"),
+                            ),
+                          ),
+                        ),
+                        Tab(
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(color: btncolor, width: 1),
+                            ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text("Team"),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                tabs: [
-                  Tab(
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: btncolor, width: 1),
-                      ),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text("Personal"),
-                      ),
-                    ),
-                  ),
-                  Tab(
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: btncolor, width: 1),
-                      ),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text("Team"),
-                      ),
-                    ),
-                  ),
-                ],
               ),
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  PersonalTask(),
-                  TeamTask(),
-                ],
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    PersonalTask(),
+                    TeamTask(),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+      )
     );
   }
 }

@@ -53,121 +53,103 @@ class _PersonalTaskState extends State<PersonalTask> {
               var taskData = tasks[index].data() as Map<String, dynamic>;
               String taskId = tasks[index].id; // Unique ID for each task
               bool isChecked = isCheckedMap[taskId] ?? false;
-              return Card(
-                elevation: 2,
+
+              return Dismissible(
+                key: Key(taskId),
+                direction: DismissDirection.endToStart, // Swipe left to delete
+                background: Container(
+                  //color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Icon(Icons.delete, color: Colors.white),
+                ),
+                confirmDismiss: (direction) async {
+                  bool confirm = await _showDeleteConfirmationDialog(context,taskId);
+                  if (confirm) {
+                    _deleteTask(taskId);
+                    return true;
+                  }
+                  return false;
+                },
+                child: Card(
+                  elevation: 2,
                   color: inputBoxbgColor,
-                  margin: EdgeInsets.only(top: index == 0 ? 20 : 15,),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20,right: 20,top: 5,bottom: 5),
-                  child: Column(
-                    children: [
-                      //SizedBox(height: 3),
-                      Row(children: [
-                        //Icon(Icons.pending, color: Colors.white, size: 18),
-                        Row(
-                          children: [
-                            Container(
-                                width: 180,
-                                //margin: EdgeInsets.only(top: 5),
-                                  child: Text(
-                                    taskData['Task Name'] ?? "No Task",
-                                    style: TextStyle(
-                                      color:txtcolor,fontSize: 18,),
+                  margin: EdgeInsets.only(top: index == 0 ? 20 : 15),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                    child: Column(
+                      children: [
+                        Row(children: [
+                          Row(
+                            children: [
+                              SingleChildScrollView(
+                                child: Container(
+                                  width: 210,
+                                  height: 30,
+                                  margin: EdgeInsets.only(top: 5),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("Task Details"),
+                                            content: Text(taskData['Task Name'] ?? "No Task"),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop(); // Close the dialog
+                                                },
+                                                child: Text("OK"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      taskData['Task Name'] ?? "No Task",
+                                      style: TextStyle(color: txtcolor, fontSize: 18),
+                                    ),
                                   ),
+
+                                ),
                               ),
-                            Container(width: 10,),
-                            Container(
-                                height: 20,
-                                /*child:taskData['status']=="pending"?
-                                Image.asset('lib/icons/hour_glass.png',color: btncolor,width: 20,height: 20,):
-                                Image.asset('lib/icons/checkmark.png',color: Colors.white,)*/
-                              child: GestureDetector(
+                              SizedBox(width: 10),
+                              GestureDetector(
                                 onTap: () {
                                   print("hello");
                                 },
                                 child: Image.asset(
                                   'lib/icons/time.png',
-                                  color: taskData['status']=="pending"?btncolor:iconColor,
+                                  color: taskData['status'] == "pending" ? btncolor : iconColor,
                                   width: 20,
                                   height: 20,
                                 ),
                               ),
-                            ),
-                            Container(width: 12,),
-                            Container(
-                                height: 20,
-                                /*child:taskData['status']=="pending"?
-                                Image.asset('lib/icons/hour_glass.png',color: Colors.white,width: 20,height: 20,):
-                                Image.asset('lib/icons/checkmark.png',color: Colors.white,)*/
-                              child: GestureDetector(
+                              SizedBox(width: 20),
+                              GestureDetector(
                                 onTap: () {
                                   print("hello");
                                 },
                                 child: Image.asset(
                                   'lib/icons/checkmark.png',
-                                  color: taskData['status']=="completed"?btncolor:iconColor,
+                                  color: taskData['status'] == "completed" ? btncolor : iconColor,
                                   width: 20,
                                   height: 20,
                                 ),
                               ),
-                            ),
-                            IconButton(
+                              /*IconButton(
                                 onPressed: () {
-                                  _deleteTask(taskId); // Function to delete task
+                                  _deleteTask(taskId);
                                 },
-                                icon: Icon(Icons.delete, color: Colors.white, size: 22)),
-                            Container(height: 20,)
-                            /*Row(children: [
-                              SizedBox(width: 40),
-                              Text("Mark as completed",style: TextStyle(color: textColor2),),
-                              Checkbox(value: taskData["checked"],
-                                  activeColor: btncolor,
-                                  side: BorderSide(color:btncolor, width: 2),
-                                  onChanged: (bool? newBool) {
-                                    setState(() {
-                                      isCheckedMap[taskId] = newBool ?? false;// Update only this task's checkbox
-                                      FirebaseFirestore.instance
-                                          .collection(email!) // Access the user's collection
-                                          .doc(taskId) // Find the specific task by its ID
-                                          .update({
-                                        "status": "completed",
-                                        "checked":true// Update only this field
-                                      })
-                                          .then((_) {
-                                        print("Task updated successfully!");
-                                        setState(() {}); // Refresh UI if needed
-                                      }).catchError((error) {
-                                        print("Failed to update task: $error");
-                                      });
-                                    });
-                                  }),
-                            ]),*/
-                          ],
-                        ),
-                          //Container(width: 90,),
-
-
-                      ]),
-                      Row(children: [
-                        /*Icon(Icons.date_range, color: Colors.black54, size: 18),
-                        Text(taskData['Date'] ?? "No Date", style: TextStyle(color: Colors.black)),
-                        SizedBox(width: 20),
-                        Icon(Icons.access_time, color: Colors.black54, size: 18),
-                        Text(taskData['Time'] ?? "No Time", style: TextStyle(color: Colors.black)),*/
-                        SizedBox(width: 40),
-                        /*ElevatedButton(
-                          onPressed: () {
-                            print("clicked");
-                            //Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                            minimumSize: Size(80, 25),
+                                icon: Icon(Icons.delete, color: Colors.white, size: 22),
+                              ),*/
+                            ],
                           ),
-                          child: Text('Pending', style: TextStyle(fontSize: 12, color: Colors.red)),
-                        ),*/
-                      ]),
-                    ],
+                        ]),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -237,7 +219,29 @@ class _PersonalTaskState extends State<PersonalTask> {
       );
     });
   }
-
+  Future<bool> _showDeleteConfirmationDialog(BuildContext context,String taskId) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Delete Task"),
+        content: Text("Are you sure you want to delete this task?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              _deleteTask(taskId);
+              Navigator.pop(context, false);
+              },
+            child: Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    ) ??
+        false;
+  }
   void addTask(String task) async {
     var sharepref= await SharedPreferences.getInstance();
     var email=sharepref.getString("email");
@@ -269,4 +273,6 @@ class _PersonalTaskState extends State<PersonalTask> {
       print("Failed to delete task: $error");
     });
   }
+
+  void showTask(taskData) {}
 }
