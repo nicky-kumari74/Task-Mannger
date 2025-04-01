@@ -4,155 +4,147 @@ import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/PersonalScreen.dart';
 import 'package:taskmanager/TeamScreen.dart';
 import 'package:taskmanager/loginScreen.dart';
-class Dashboard extends StatelessWidget{
+class Dashboard extends StatefulWidget {
+  @override
+  _DashboardState createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  String userName = "loading.."; // Default text while loading
+  String userEmail = "loading..";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    print("hello 1");
+    var sharepref= await SharedPreferences.getInstance();
+    setState(() {
+      userName = sharepref.getString("name") ?? "Nicky"; // Default name
+      userEmail = sharepref.getString("email") ?? "bhagat@gmail.com"; // Default email
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            iconTheme: IconThemeData(color: Colors.white),
-            toolbarHeight: 30,
-            /*title: Text('Task Manager',
-              style: TextStyle(color: Colors.white,fontSize: 0),),*/
-            backgroundColor:bgcolor, // change color for better experience
-            /*flexibleSpace: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40),bottomRight: Radius.circular(40)),
-                //borderRadius: BorderRadius.all(Radius.circular(30)),
-                gradient: LinearGradient(colors: [Color(0xFF9370DB),Color(0xFFBEA1E4)],
-                begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter
-                )
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
+        toolbarHeight: 30,
+        backgroundColor: bgcolor,
+      ),
+      drawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text(userName,style: TextStyle(fontWeight: FontWeight.bold),),
+              accountEmail: Text(userEmail),
+              currentAccountPicture: CircleAvatar(
+                child: Text(userName.isNotEmpty ? userName[0].toUpperCase() : "N",style: TextStyle(fontSize: 25),),
+                backgroundColor: Colors.white,
               ),
-            ),*/
-            /*bottom: TabBar(
-              labelColor: Colors.white,
-                indicatorColor: Colors.white,
-              unselectedLabelColor: Colors.black54,
+            ),
+            ListTile(
+              leading: Icon(Icons.group_add),
+              title: Text('Create Team'),
+              onTap: () => print('Create Team tapped'),
+            ),
+            ListTile(
+              leading: Icon(Icons.group),
+              title: Text('Join Team'),
+              onTap: () => print('Join Team tapped'),
+            ),
+            ListTile(
+              leading: Icon(Icons.help),
+              title: Text('Help'),
+              onTap: () => print('Help tapped'),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () => print('Settings tapped'),
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () async {
+                var prefs = await SharedPreferences.getInstance();
+                prefs.setBool("login", false); // Set to false for logout
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()), // Replace with your login screen
+                );
+              },
+            ),
+            Divider(),
+          ],
+        ),
+      ),
+      backgroundColor: bgcolor,
+      body: DefaultTabController(
+        length: 2,
+        child: Column(
+          children: [
+            Container(
+              height: 100,
+              margin: EdgeInsets.only(top: 20),
+              color: bgcolor,
+              child: TabBar(
+                physics: const ClampingScrollPhysics(),
+                padding: EdgeInsets.only(top: 55, left: 10, right: 10),
+                unselectedLabelColor: btncolor,
+                labelColor: Colors.black,
+                indicatorColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.label,
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: btncolor,
+                ),
                 tabs: [
-                  Tab(text: 'Personal',  icon: Icon(Icons.access_time_filled,), ),
-                  Tab(text: 'Team',icon: Icon(Icons.access_time_filled,),),
-                ]
-            ),*/
-          ),
-          drawer: Drawer(
-            child: Column(
-              children: <Widget>[
-                UserAccountsDrawerHeader(
-                    accountName:Text('Nicky'), 
-                    accountEmail: Text('bhagatnicky@gmail.com'),
-                   currentAccountPicture: CircleAvatar(child: Text('N'),backgroundColor: Colors.white,),
-
-                ),
-                ListTile(
-                  leading: Icon(Icons.ac_unit_sharp),
-                  title: Text('Create Team'),
-                  onTap: ()=>print('hello'),
-                ),
-                ListTile(
-                  leading: Icon(Icons.ac_unit_sharp),
-                  title: Text('Join Team'),
-                  onTap: ()=>print('hello'),
-                ),
-                ListTile(
-                  leading: Icon(Icons.ac_unit_sharp),
-                  title: Text('Help'),
-                  onTap: ()=>print('hello'),
-                ),
-                ListTile(
-                  leading: Icon(Icons.ac_unit_sharp),
-                  title: Text('Setting'),
-                  onTap: ()=>print('hello'),
-                ),
-                ListTile(
-                  leading: Icon(Icons.ac_unit_sharp),
-                  title: Text('Logout'),
-                  onTap: () async {
-                    var sharepref = await SharedPreferences.getInstance();
-                    sharepref.setBool("login", false);// Set to false for logout
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()), // Replace with your LoginPage widget
-                    );
-                  },
-                ),
-                Divider(),
-              ],
-            ),
-          ),
-          backgroundColor: bgcolor,
-          body: DefaultTabController(
-            length: 2,
-            child: Column(
-              children: [
-                Container(
-                  height: 100,
-                  margin: EdgeInsets.only(top: 10),
-                  color: bgcolor,
-                  child: TabBar(
-                    physics: const ClampingScrollPhysics(),
-                    padding: EdgeInsets.only(top:55, left: 10, right: 10),
-
-                    unselectedLabelColor: btncolor,
-                    labelColor: Colors.black,
-                    indicatorColor: Colors.transparent, // Ensure no extra line appears
-                    indicatorSize: TabBarIndicatorSize.label,
-                    indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: btncolor,
+                  Tab(
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: btncolor, width: 1),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text("Personal"),
+                      ),
                     ),
-                    tabs: [
-                      Tab(
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(color: btncolor, width: 1),
-                          ),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text("Personal"),
-                          ),
-                        ),
-                      ),
-                      Tab(
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(color: btncolor, width: 1),
-                          ),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text("Team"),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      PersonalTask(),
-                      TeamTask(),
-                    ],
+                  Tab(
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: btncolor, width: 1),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text("Team"),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-
-          /*body: TabBarView(
-              children:[
-                PersonalTask(),
-                TeamTask(),
-              ]
-          ),*/
-
+            Expanded(
+              child: TabBarView(
+                children: [
+                  PersonalTask(),
+                  TeamTask(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
-
   }
-
 }

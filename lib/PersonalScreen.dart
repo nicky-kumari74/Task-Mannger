@@ -58,34 +58,94 @@ class _PersonalTaskState extends State<PersonalTask> {
                   color: inputBoxbgColor,
                   margin: EdgeInsets.only(top: index == 0 ? 20 : 15,),
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 20,right: 20,top: 5),
+                  padding: const EdgeInsets.only(left: 20,right: 20,top: 5,bottom: 5),
                   child: Column(
                     children: [
                       //SizedBox(height: 3),
                       Row(children: [
-                        Container(
-                            height: 20,
-                            margin: EdgeInsets.only(top: 10),
-                            child:taskData['status']=="pending"?
-                    Image.asset('lib/icons/hour_glass.png',color: Colors.white,):
-                            Image.asset('lib/icons/checkmark.png',color: Colors.white,)
-                        ),
                         //Icon(Icons.pending, color: Colors.white, size: 18),
-                        Container(
-                          width: 200,
-                          margin: EdgeInsets.only(left:50),
-                          child: Text(
-                            taskData['Task Name'] ?? "No Task",
-                            style: TextStyle(
-                              color:txtcolor,fontSize: 18,),
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                                width: 180,
+                                //margin: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    taskData['Task Name'] ?? "No Task",
+                                    style: TextStyle(
+                                      color:txtcolor,fontSize: 18,),
+                                  ),
+                              ),
+                            Container(width: 10,),
+                            Container(
+                                height: 20,
+                                /*child:taskData['status']=="pending"?
+                                Image.asset('lib/icons/hour_glass.png',color: btncolor,width: 20,height: 20,):
+                                Image.asset('lib/icons/checkmark.png',color: Colors.white,)*/
+                              child: GestureDetector(
+                                onTap: () {
+                                  print("hello");
+                                },
+                                child: Image.asset(
+                                  'lib/icons/time.png',
+                                  color: taskData['status']=="pending"?btncolor:iconColor,
+                                  width: 20,
+                                  height: 20,
+                                ),
+                              ),
+                            ),
+                            Container(width: 12,),
+                            Container(
+                                height: 20,
+                                /*child:taskData['status']=="pending"?
+                                Image.asset('lib/icons/hour_glass.png',color: Colors.white,width: 20,height: 20,):
+                                Image.asset('lib/icons/checkmark.png',color: Colors.white,)*/
+                              child: GestureDetector(
+                                onTap: () {
+                                  print("hello");
+                                },
+                                child: Image.asset(
+                                  'lib/icons/checkmark.png',
+                                  color: taskData['status']=="completed"?btncolor:iconColor,
+                                  width: 20,
+                                  height: 20,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  _deleteTask(taskId); // Function to delete task
+                                },
+                                icon: Icon(Icons.delete, color: Colors.white, size: 22)),
+                            Container(height: 20,)
+                            /*Row(children: [
+                              SizedBox(width: 40),
+                              Text("Mark as completed",style: TextStyle(color: textColor2),),
+                              Checkbox(value: taskData["checked"],
+                                  activeColor: btncolor,
+                                  side: BorderSide(color:btncolor, width: 2),
+                                  onChanged: (bool? newBool) {
+                                    setState(() {
+                                      isCheckedMap[taskId] = newBool ?? false;// Update only this task's checkbox
+                                      FirebaseFirestore.instance
+                                          .collection(email!) // Access the user's collection
+                                          .doc(taskId) // Find the specific task by its ID
+                                          .update({
+                                        "status": "completed",
+                                        "checked":true// Update only this field
+                                      })
+                                          .then((_) {
+                                        print("Task updated successfully!");
+                                        setState(() {}); // Refresh UI if needed
+                                      }).catchError((error) {
+                                        print("Failed to update task: $error");
+                                      });
+                                    });
+                                  }),
+                            ]),*/
+                          ],
                         ),
                           //Container(width: 90,),
-                          IconButton(
-                              onPressed: () {
-                                _deleteTask(taskId); // Function to delete task
-                              },
-                              icon: Icon(Icons.delete, color: Colors.white, size: 25)),
+
 
                       ]),
                       Row(children: [
@@ -95,28 +155,6 @@ class _PersonalTaskState extends State<PersonalTask> {
                         Icon(Icons.access_time, color: Colors.black54, size: 18),
                         Text(taskData['Time'] ?? "No Time", style: TextStyle(color: Colors.black)),*/
                         SizedBox(width: 40),
-                        Text("Mark as completed",style: TextStyle(color: textColor2),),
-                        Checkbox(value: taskData["checked"],
-                            activeColor: btncolor,
-                            side: BorderSide(color:btncolor, width: 2),
-                            onChanged: (bool? newBool) {
-                              setState(() {
-                                isCheckedMap[taskId] = newBool ?? false;// Update only this task's checkbox
-                                FirebaseFirestore.instance
-                                    .collection(email!) // Access the user's collection
-                                    .doc(taskId) // Find the specific task by its ID
-                                    .update({
-                                  "status": "completed",
-                                  "checked":true// Update only this field
-                                })
-                                    .then((_) {
-                                  print("Task updated successfully!");
-                                  setState(() {}); // Refresh UI if needed
-                                }).catchError((error) {
-                                  print("Failed to update task: $error");
-                                });
-                              });
-                            }),
                         /*ElevatedButton(
                           onPressed: () {
                             print("clicked");
