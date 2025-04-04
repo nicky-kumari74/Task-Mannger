@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/AddTeamTask.dart';
 import 'package:taskmanager/Colors.dart';
+import 'package:taskmanager/SendInvitation.dart';
+import 'package:taskmanager/TeamMembersScreen.dart';
 
 class TeamTask extends StatefulWidget{
   @override
@@ -13,23 +18,35 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   @override
   void initState(){
     super.initState();
-
-    //Simulate fetching teams dynamically
-
-    /*Future.delayed(Duration(seconds: 1), (){
-      setState(() {
-        teams = List.generate(12, (index) => "Team ${index+1}");   //change this dynamically
-      });
-    });*/
+    loadOrganization();    // load teams when app starts
+    Future.delayed(Duration.zero, () {
+      showorganizationDialogbox();
+    });
+  }
+  //Function to load Teams from when app starts
+  Future<void> loadOrganization() async {
+    SharedPreferences shareprefs = await SharedPreferences.getInstance();
+    setState(() {
+      teams = shareprefs.getStringList('teams') ?? [];
+    });
   }
 
-  // Function to create a new team and also invite members in it
+  // Function to save Teams to SharedPreferences.
+/*
+  Future<void> saveTeams() async {
+    SharedPreferences shareprefes = await SharedPreferences.getInstance();
+    await shareprefes.setStringList('teams', teams);
+  }
+*/
 
+  // Function to create a new team and also invite members in it
+/*
  void showAddTeamdialogbox() {
     TextEditingController customTeamname = TextEditingController();
     TextEditingController inviteMembers = TextEditingController();
     showDialog(context: context, builder: (context) {
       return AlertDialog(title: Text("Create New Team"),
+
         content: SizedBox(
           width: MediaQuery.of(context).size.width * 0.8,  // This make dialog box width responsive.
           child: Column(
@@ -41,12 +58,14 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                   hintText: 'Enter Your Team Name',
                   border: OutlineInputBorder(),
                 ),
+                keyboardType: TextInputType.emailAddress,
               ),
+
               SizedBox(height: 20,),
               TextField(
                 controller: inviteMembers,
                 decoration: InputDecoration(
-                  hintText: 'Invite new members in your team',
+                  hintText: 'Enter Email ID ',
                   border: OutlineInputBorder(),
                 ),
               )
@@ -59,11 +78,17 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
           ),
           TextButton(onPressed: () {
             String newTeam = customTeamname.text.trim();
+            String email = inviteMembers.text.trim();
             if (newTeam.isNotEmpty) {
               setState(() {
                 teams.add(newTeam);
+                saveTeams();
               });
-              Navigator.pop(context);   // Close dialog box 
+              
+              if (email.isNotEmpty) {
+                //sendInvitationEmail(email);
+              }
+              Navigator.pop(context);   // Close dialog box
             }
           }, child: Text("Create"),
           ),
@@ -71,31 +96,108 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       );
     });
  }
+*/
 
   // Function to delete a team
-  void deleteTeam(int index) {
+ /* void deleteTeam(int index) {
     setState(() {
       teams.removeAt(index);
+      saveTeams();    //save after deleting
     });
+  }*/
+
+
+
+void showorganizationDialogbox() {
+  TextEditingController organizationController = TextEditingController();
+
+  showDialog(
+      context: context,
+      barrierDismissible: false,     // Prevent closing by tapping outside
+      builder: (context) {
+    return AlertDialog(
+      backgroundColor: bgcolor,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("Organization or Name", style: TextStyle(fontSize: 16, color: txtcolor),),
+          IconButton(
+              onPressed: () {
+            showInfoDialogbox(context);
+          }, icon: Icon(Icons.info_outline, color: txtcolor,)),
+
+        ],
+      ),
+
+      content: TextField(
+        controller: organizationController,
+        decoration: InputDecoration(
+          fillColor: inputBoxbgColor,
+          labelText: "Enter your organization name",
+          labelStyle: TextStyle(color: txtcolor),
+          border: OutlineInputBorder(),
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () {
+          Navigator.pop(context);
+        }, child: Text("Cancel",  style: TextStyle(color: txtcolor))
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: btncolor),
+          onPressed: () {
+            String userInput = organizationController.text;
+            print("User Input: $userInput");
+            Navigator.pop(context);
+          },
+          child: Text("Submit", style: TextStyle(color: txtcolor),),
+        ),
+
+      ],
+    );
+  });
+}
+
+  void showInfoDialogbox(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: bgcolor,
+          title: Text("Information", style: TextStyle(color: txtcolor),),
+          content: Text("If you are not in the organization you put here your name.", style: TextStyle(color: txtcolor),),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgcolor,
-      body: TabBarView(
+      body: Column(
           children: [
-            Center(child: Text('Teams Content'),),
-            TeamList(teams: teams, deleteTeam : deleteTeam), //Display teams dynamically
+            Center(child: Text('No Teams yet', style: TextStyle(color: txtcolor),),),
+            //Expanded(child: TeamList(teams: teams, deleteTeam : deleteTeam)), //Display teams dynamically
           ],
       ),
 
          floatingActionButton: Container(
            margin: EdgeInsets.only(bottom: 29,right: 140),
            child: FloatingActionButton(
-             onPressed: showAddTeamdialogbox,
-             hoverColor: Colors.blueGrey,
+             onPressed: () {
+               Navigator.push(context, MaterialPageRoute(builder: (context) => sendInvitation()));
+             },
              shape: CircleBorder(),
-             backgroundColor: Colors.blue,
+             backgroundColor: btncolor,
            child: Icon(Icons.add),
            ),
          ),
@@ -105,13 +207,15 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
 }
 
 
-class TeamList extends StatelessWidget {
+/*class TeamList extends StatelessWidget {
   final List<String> teams;
   final Function(int) deleteTeam;
+
   TeamList({required this.teams, required this.deleteTeam});
+
   @override
   Widget build(BuildContext context) {
-    return teams.isEmpty ? Center(child: Text("No team yet. Click + to add one!", style: TextStyle(fontSize: 16),),)
+    return teams.isEmpty ? Center(child: Text("No team yet. Click + to add one!", style: TextStyle(fontSize: 16, color: Colors.black),),)
         : Padding(padding: const EdgeInsets.all(10),
     child: ListView.builder(
       itemCount: teams.length, itemBuilder: (context, index) {
@@ -141,9 +245,9 @@ class TeamList extends StatelessWidget {
               child: ListTile(
                 title: Text(teams[index], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                trailing: Icon(Icons.arrow_forward_ios,size: 16, color: Colors.grey,),
+                trailing: Icon(Icons.arrow_forward_ios,size: 16, color: Colors.black,),
                 onTap: () {
-                  // Function will be here when click on the teams
+                   //Navigator.push(context, MaterialPageRoute(builder: (context) => showTeamMembers()));      // Function will be here when click on the teams
                 },
               ),
             ),
@@ -155,4 +259,5 @@ class TeamList extends StatelessWidget {
     );
   }
 
-}
+}*/
+

@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/PersonalScreen.dart';
 import 'package:taskmanager/TeamScreen.dart';
+import 'package:taskmanager/loginScreen.dart';
 class Dashboard extends StatelessWidget{
 
   @override
@@ -67,9 +70,9 @@ class Dashboard extends StatelessWidget{
                   onTap: ()=>print('hello'),
                 ),
                 ListTile(
-                  leading: Icon(Icons.ac_unit_sharp),
-                  title: Text('Logout'),
-                  onTap: ()=>print('hello'),
+                  leading: Icon(Icons.exit_to_app, color: Colors.red),
+                  title: Text('Logout', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  onTap: () => signOut(context), // Call the logout function
                 ),
                 Divider(),
               ],
@@ -86,4 +89,19 @@ class Dashboard extends StatelessWidget{
 
   }
 
+}
+
+Future<void> signOut(BuildContext context) async {
+  try {
+   // await GoogleSignIn().signIn(); // Sign out from Google
+    await FirebaseAuth.instance.signOut(); // Sign out from Firebase
+
+    // Navigate to Login Screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  } catch (error) {
+    print("Error signing out: $error");
+  }
 }

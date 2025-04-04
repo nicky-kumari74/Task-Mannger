@@ -237,21 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                  },
                ),
              ),
-         
-             /*Container(
-               margin: EdgeInsets.only(left: 68, top: 10),
-               width: 60, height: 60,
-               decoration: BoxDecoration(
-                 border: Border.all(color: Colors.transparent, width: 2, ),  // Border color and width, adjust for better experience.
-                 borderRadius: BorderRadius.circular(10),
-                 image: DecorationImage(image: AssetImage('assets/images/twitter.png'))
-                 ),
-               child: GestureDetector(
-                 onTap: () {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
-                 },
-               ),
-             ),*/
+
            ],
           ),
              SizedBox(height: 50,),
