@@ -33,10 +33,8 @@ class _sendInvitationState extends State<sendInvitation> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("You can only add up to 10 emails")),
-
-      /*ScaffoldMessenger.of(context, root).showSnackBar(
-      SnackBar(content: Text("You can only add up to 10 emails")),*/
       );
+      return ;
     }
   }
 

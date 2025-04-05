@@ -81,7 +81,7 @@ class Dashboard extends StatelessWidget{
           body: TabBarView(
               children:[
                 PersonalTask(),
-                TeamTask(),
+                TeamTask(organizatioName: 'My Organization',),
               ]
           ),
         )

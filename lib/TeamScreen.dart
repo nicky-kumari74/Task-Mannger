@@ -8,12 +8,18 @@ import 'package:taskmanager/SendInvitation.dart';
 import 'package:taskmanager/TeamMembersScreen.dart';
 
 class TeamTask extends StatefulWidget{
+
+  final String organizatioName;
+  TeamTask({required this.organizatioName});
+
+
   @override
   State<TeamTask> createState() => _TeamTaskState();
 }
 
 class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin {
   List<String> teams = [];    // Dynamic team lists
+
 
   @override
   void initState(){
@@ -108,10 +114,10 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
 
 
 
-void showorganizationDialogbox() {
+Future<void> showorganizationDialogbox() async {
   TextEditingController organizationController = TextEditingController();
 
-  showDialog(
+  String ? result = await showDialog<String> (
       context: context,
       barrierDismissible: false,     // Prevent closing by tapping outside
       builder: (context) {
@@ -148,7 +154,7 @@ void showorganizationDialogbox() {
           onPressed: () {
             String userInput = organizationController.text;
             print("User Input: $userInput");
-            Navigator.pop(context);
+            Navigator.pop(context, userInput);
           },
           child: Text("Submit", style: TextStyle(color: txtcolor),),
         ),
@@ -156,6 +162,13 @@ void showorganizationDialogbox() {
       ],
     );
   });
+
+  if (result != null && result.isNotEmpty) {
+    // Navigate to the Teams screen with org name
+    Navigator.push(context, MaterialPageRoute(builder: (context) => TeamTask(organizatioName: result),
+    ),
+    );
+  }
 }
 
   void showInfoDialogbox(BuildContext context) {
@@ -179,17 +192,35 @@ void showorganizationDialogbox() {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgcolor,
       body: Column(
-          children: [
-            Center(child: Text('No Teams yet', style: TextStyle(color: txtcolor),),),
-            //Expanded(child: TeamList(teams: teams, deleteTeam : deleteTeam)), //Display teams dynamically
-          ],
-      ),
+        children: [
+      Center(child: Text('No Teams yet', style: TextStyle(color: txtcolor),),),
+          //Expanded(child: TeamList(teams: teams, deleteTeam : deleteTeam)), //Display teams dynamically
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              color: inputBoxbgColor,
+              child: ListTile(
+                title: Text( widget.organizatioName,
+                  style: TextStyle(fontSize: 20, color: txtcolor, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text("Team Details will be shown here. ", style: TextStyle(color: txtcolor),),
+                trailing: Icon(Icons.arrow_forward_ios),
+              ),
 
+            ),
+          ),
+        ],
+      ),
          floatingActionButton: Container(
            margin: EdgeInsets.only(bottom: 29,right: 140),
            child: FloatingActionButton(

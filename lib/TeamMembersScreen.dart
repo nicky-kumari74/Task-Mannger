@@ -62,6 +62,8 @@ class ShowTeamMembers extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text("New Screen"),
+        backgroundColor: Colors.blue,
       ),
     );
   }
