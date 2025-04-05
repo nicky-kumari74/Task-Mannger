@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/DashboardScreen.dart';
+import 'package:taskmanager/loginScreen.dart';
 import 'package:taskmanager/main.dart';
 
 void main(){
@@ -31,15 +33,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   var Email =  TextEditingController();
   var Password =  TextEditingController();
   bool _isObscure = true;
-
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+          backgroundColor: bgcolor,
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: bgcolor,
 
       body: Center(
         child: SingleChildScrollView(
@@ -139,27 +141,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
               SizedBox(height: 20,),
 
-              ElevatedButton(onPressed: () async {
-                UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: Email.text.trim(),
-                  password: Password.text.trim(),
-                );
-                User? user = userCredential.user;
-                if(user!=null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Dashboard()),
-                  );
-                }
-              },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: btncolor,    // change background color for better visibility.
-                      padding: EdgeInsets.only(left: 90,right: 90,top: 11,bottom: 11),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
-                  ),
-                  child: Text('Sign Up',
-                    style: TextStyle(fontSize: 19, color: Colors.white),
-                  )
+              _isLoading
+                  ? CircularProgressIndicator(color: btncolor)
+                  : ElevatedButton(
+                onPressed: _register,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: btncolor,
+                  padding: EdgeInsets.symmetric(horizontal: 90, vertical: 11),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                ),
+                child: Text('Sign Up', style: TextStyle(fontSize: 19, color: Colors.white)),
               ),
 
               SizedBox(height: 50,),
@@ -252,6 +243,35 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ),
     );
+  }
+  Future<void> _register() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: Email.text.trim(),
+        password: Password.text.trim(),
+      );
+      User? user = userCredential.user;
+      if (user != null) {
+        var sharepref = await SharedPreferences.getInstance();
+        sharepref.setString("name", Name.text.trim());
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registration Failed: \$e")),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }
 

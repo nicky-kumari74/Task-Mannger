@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
+//import "package:mailer/mailer.dart";
+//import 'package:mailer/smtp_server.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/AddTeamTask.dart';
 import 'package:taskmanager/Colors.dart';
@@ -24,7 +24,9 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   @override
   void initState(){
     super.initState();
-    loadOrganization();    // load teams when app starts
+    loadOrganization(); // load teams when app starts
+    //showorganizationDialogbox();
+    //getOrganization();
     Future.delayed(Duration.zero, () {
       showorganizationDialogbox();
     });
@@ -122,37 +124,40 @@ Future<void> showorganizationDialogbox() async {
       barrierDismissible: false,     // Prevent closing by tapping outside
       builder: (context) {
     return AlertDialog(
-      backgroundColor: bgcolor,
+      backgroundColor: boxColor,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Organization or Name", style: TextStyle(fontSize: 16, color: txtcolor),),
+          Text("Organization or Name", style: TextStyle(fontSize: 18, color: bgcolor),),
           IconButton(
               onPressed: () {
             showInfoDialogbox(context);
-          }, icon: Icon(Icons.info_outline, color: txtcolor,)),
+          }, icon: Icon(Icons.info_outline, color: bgcolor,)),
 
         ],
       ),
 
       content: TextField(
         controller: organizationController,
+        style: TextStyle(color: bgcolor),
         decoration: InputDecoration(
           fillColor: inputBoxbgColor,
           labelText: "Enter your organization name",
-          labelStyle: TextStyle(color: txtcolor),
+          labelStyle: TextStyle(color: bgcolor,),
           border: OutlineInputBorder(),
         ),
       ),
       actions: [
         TextButton(onPressed: () {
           Navigator.pop(context);
-        }, child: Text("Cancel",  style: TextStyle(color: txtcolor))
+        }, child: Text("Cancel",  style: TextStyle(color: bgcolor))
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: btncolor),
-          onPressed: () {
-            String userInput = organizationController.text;
+          onPressed: () async {
+            String userInput = organizationController.text.trim();
+            var sharepref = await SharedPreferences.getInstance();
+            sharepref.setString("organization", userInput);
             print("User Input: $userInput");
             Navigator.pop(context, userInput);
           },
@@ -234,6 +239,12 @@ Future<void> showorganizationDialogbox() async {
          ),
 
     );
+  }
+
+  Future<void> getOrganization() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var org=prefs.getString("organization");
+
   }
 }
 

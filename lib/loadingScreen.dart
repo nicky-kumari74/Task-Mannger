@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart'; // Add this package in pubspec.yaml
+//import 'package:lottie/lottie.dart'; // Add this package in pubspec.yaml
 
 class LoadingScreen extends StatelessWidget {
   @override
@@ -10,7 +10,7 @@ class LoadingScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Lottie.asset('assets/loading.json', width: 200, height: 200), // Animation
+            //Lottie.asset('assets/loading.json', width: 200, height: 200), // Animation
             SizedBox(height: 20),
             Text(
               "Logging in...",

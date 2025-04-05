@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _focusNode = FocusNode();
   Color enableborderColor =  Colors.black;
   Color labelTextColor =  Colors.black;
+  bool _isLoading=false;
 
   @override
   void initState(){
@@ -92,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                padding: const EdgeInsets.only(left: 30,right: 30),
                child: TextField(
                  obscureText: _isobscure,
-                 style: TextStyle(color: Colors.black),
+                 style: TextStyle(color: txtcolor),
                  controller: Password,
                  decoration: InputDecoration(
                    filled: true, // Enables the background color
@@ -138,34 +139,10 @@ class _LoginScreenState extends State<LoginScreen> {
                  ),
                ),
              ),
-         
              SizedBox(height: 25,),
-         
-             ElevatedButton(onPressed: () async {
-               try {
-                 UserCredential userCredential = await FirebaseAuth.instance
-                     .signInWithEmailAndPassword(
-                   email: Email.text.trim(),
-                   password: Password.text.trim(),
-                 );
-                 User? user = userCredential.user;
-                 if(user!=null){
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(builder: (context) => Dashboard()),
-                   );
-                   var sharepref= await SharedPreferences.getInstance();
-                   sharepref.setBool("login", true);
-                   sharepref.setString("email.", Email.text);
-                 }
-               }
-               catch(e){
-                 ScaffoldMessenger.of(context).showSnackBar(
-                   SnackBar(content: Text(e.toString())),
-                 );
-               }
-
-             },
+             _isLoading
+                 ? CircularProgressIndicator(color: btncolor)
+                 : ElevatedButton(onPressed: _login,
                  style: ElevatedButton.styleFrom(
                    backgroundColor: btncolor,    // change background color for better visibility.
                    padding: EdgeInsets.only(left: 100,right: 100,top: 11,bottom: 11),
@@ -238,6 +215,20 @@ class _LoginScreenState extends State<LoginScreen> {
                ),
              ),
 
+             /*Container(
+               margin: EdgeInsets.only(left: 68, top: 10),
+               width: 60, height: 60,
+               decoration: BoxDecoration(
+                 border: Border.all(color: Colors.transparent, width: 2, ),  // Border color and width, adjust for better experience.
+                 borderRadius: BorderRadius.circular(10),
+                 image: DecorationImage(image: AssetImage('assets/images/twitter.png'))
+                 ),
+               child: GestureDetector(
+                 onTap: () {
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
+                 },
+               ),
+             ),*/
            ],
           ),
              SizedBox(height: 50,),
@@ -262,6 +253,37 @@ class _LoginScreenState extends State<LoginScreen> {
        ),
        ),
    );
+  }
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+        email: Email.text.trim(),
+        password: Password.text.trim(),
+      );
+      User? user = userCredential.user;
+      if(user!=null){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Dashboard()),
+        );
+        var sharepref= await SharedPreferences.getInstance();
+        sharepref.setBool("login", true);
+        sharepref.setString("email", Email.text);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registration Failed: \$e")),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
 }
