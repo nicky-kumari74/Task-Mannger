@@ -8,173 +8,124 @@ import 'package:taskmanager/SendInvitation.dart';
 import 'package:taskmanager/TeamMembersScreen.dart';
 
 class TeamTask extends StatefulWidget{
-
-  final String organizatioName;
-  TeamTask({required this.organizatioName});
-
-
   @override
   State<TeamTask> createState() => _TeamTaskState();
 }
 
 class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin {
-  List<String> teams = [];    // Dynamic team lists
-
+  List<String> teams = []; // Dynamic team lists
+  List<String> organizationLists = [];
+  String? organizationName;
+  bool dialogShown = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     loadOrganization(); // load teams when app starts
-    //showorganizationDialogbox();
-    //getOrganization();
-    Future.delayed(Duration.zero, () {
-      showorganizationDialogbox();
-    });
+    checkAndShowDialogbox();
   }
+
   //Function to load Teams from when app starts
   Future<void> loadOrganization() async {
     SharedPreferences shareprefs = await SharedPreferences.getInstance();
     setState(() {
-      teams = shareprefs.getStringList('teams') ?? [];
+      organizationLists = shareprefs.getStringList('organizations') ?? [];
     });
   }
 
-  // Function to save Teams to SharedPreferences.
-/*
-  Future<void> saveTeams() async {
+
+  // Function to check dialog box is open or not
+
+  Future<void> checkAndShowDialogbox() async {
     SharedPreferences shareprefes = await SharedPreferences.getInstance();
-    await shareprefes.setStringList('teams', teams);
+    bool shown = shareprefes.getBool('orgDialogShown') ?? false;
+    if (!shown) {
+      String? orgName = await showorganizationDialogbox();
+      if (orgName != null && orgName.isNotEmpty) {
+        addOrganizatioinName(orgName);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => sendInvitation()),
+        );
+      }
+      await shareprefes.setBool(("orgDialogShown"), true);
+    }
   }
-*/
 
-  // Function to create a new team and also invite members in it
-/*
- void showAddTeamdialogbox() {
-    TextEditingController customTeamname = TextEditingController();
-    TextEditingController inviteMembers = TextEditingController();
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(title: Text("Create New Team"),
+  // Function to add Organization Name
 
-        content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,  // This make dialog box width responsive.
-          child: Column(
-            mainAxisSize: MainAxisSize.min,  // Help to shrink the dialog box height according to content.
-            children: [
-              TextField(
-                controller: customTeamname,
-                decoration: InputDecoration(
-                  hintText: 'Enter Your Team Name',
-                  border: OutlineInputBorder(),
+  Future<void> addOrganizatioinName(String name) async {
+    if (organizationLists.length >= 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(
+              "Limit Reached!! You can only add up to 5 organizations"))
+      );
+      return;
+    }
+    setState(() {
+      organizationLists.add(name);
+    });
+    SharedPreferences shaerpref = await SharedPreferences.getInstance();
+    await shaerpref.setStringList("organizations", organizationLists);
+  }
+
+  // Function to delete the Organizations
+
+  Future<void> deleteOrganizations(int index) async {
+    setState(() {
+      organizationLists.removeAt(index);
+    });
+    SharedPreferences sharepref = await SharedPreferences.getInstance();
+    await sharepref.setStringList("organizations", organizationLists);
+  }
+
+
+  Future<String?> showorganizationDialogbox() async {
+    TextEditingController organizationController = TextEditingController();
+
+    return await showDialog<String>(
+      context: context,
+      barrierDismissible: false, // Prevent closing by tapping outside
+      builder: (context) => AlertDialog(
+            backgroundColor: boxColor,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Organization or Name",
+                  style: TextStyle(fontSize: 18, color: bgcolor),),
+                IconButton(
+                  icon: Icon(Icons.info_outline, color: bgcolor,),
+                  onPressed: () => showInfoDialogbox(context),
                 ),
-                keyboardType: TextInputType.emailAddress,
+              ],
+            ),
+
+            content: TextField(
+              controller: organizationController,
+              style: TextStyle(color: bgcolor),
+              decoration: InputDecoration(
+                fillColor: inputBoxbgColor,
+                labelText: "Enter your organization name",
+                labelStyle: TextStyle(color: bgcolor,),
+                border: OutlineInputBorder(),
               ),
-
-              SizedBox(height: 20,),
-              TextField(
-                controller: inviteMembers,
-                decoration: InputDecoration(
-                  hintText: 'Enter Email ID ',
-                  border: OutlineInputBorder(),
-                ),
-              )
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Cancel", style: TextStyle(color: bgcolor))
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: btncolor),
+                onPressed: () async {
+                  String userInput = organizationController.text.trim();
+                  Navigator.pop(context, userInput);
+                },
+                child: Text("Submit", style: TextStyle(color: txtcolor),),
+              ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop((context)),   // close dialog box
-              child: Text('Cancel'),
-          ),
-          TextButton(onPressed: () {
-            String newTeam = customTeamname.text.trim();
-            String email = inviteMembers.text.trim();
-            if (newTeam.isNotEmpty) {
-              setState(() {
-                teams.add(newTeam);
-                saveTeams();
-              });
-              
-              if (email.isNotEmpty) {
-                //sendInvitationEmail(email);
-              }
-              Navigator.pop(context);   // Close dialog box
-            }
-          }, child: Text("Create"),
-          ),
-        ],
-      );
-    });
- }
-*/
-
-  // Function to delete a team
- /* void deleteTeam(int index) {
-    setState(() {
-      teams.removeAt(index);
-      saveTeams();    //save after deleting
-    });
-  }*/
-
-
-
-Future<void> showorganizationDialogbox() async {
-  TextEditingController organizationController = TextEditingController();
-
-  String ? result = await showDialog<String> (
-      context: context,
-      barrierDismissible: false,     // Prevent closing by tapping outside
-      builder: (context) {
-    return AlertDialog(
-      backgroundColor: boxColor,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("Organization or Name", style: TextStyle(fontSize: 18, color: bgcolor),),
-          IconButton(
-              onPressed: () {
-            showInfoDialogbox(context);
-          }, icon: Icon(Icons.info_outline, color: bgcolor,)),
-
-        ],
-      ),
-
-      content: TextField(
-        controller: organizationController,
-        style: TextStyle(color: bgcolor),
-        decoration: InputDecoration(
-          fillColor: inputBoxbgColor,
-          labelText: "Enter your organization name",
-          labelStyle: TextStyle(color: bgcolor,),
-          border: OutlineInputBorder(),
-        ),
-      ),
-      actions: [
-        TextButton(onPressed: () {
-          Navigator.pop(context);
-        }, child: Text("Cancel",  style: TextStyle(color: bgcolor))
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: btncolor),
-          onPressed: () async {
-            String userInput = organizationController.text.trim();
-            var sharepref = await SharedPreferences.getInstance();
-            sharepref.setString("organization", userInput);
-            print("User Input: $userInput");
-            Navigator.pop(context, userInput);
-          },
-          child: Text("Submit", style: TextStyle(color: txtcolor),),
-        ),
-
-      ],
-    );
-  });
-
-  if (result != null && result.isNotEmpty) {
-    // Navigate to the Teams screen with org name
-    Navigator.push(context, MaterialPageRoute(builder: (context) => TeamTask(organizatioName: result),
-    ),
     );
   }
-}
+
 
   void showInfoDialogbox(BuildContext context) {
     showDialog(
@@ -183,12 +134,12 @@ Future<void> showorganizationDialogbox() async {
         return AlertDialog(
           backgroundColor: bgcolor,
           title: Text("Information", style: TextStyle(color: txtcolor),),
-          content: Text("If you are not in the organization you put here your name.", style: TextStyle(color: txtcolor),),
+          content: Text(
+            "If you are not in the organization you put here your name.",
+            style: TextStyle(color: txtcolor),),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: Text("OK"),
             ),
           ],
@@ -197,14 +148,71 @@ Future<void> showorganizationDialogbox() async {
     );
   }
 
+  Future<void> handleAddOrganization() async {
+    if (organizationLists.length >= 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("You can only add up to 5 organizations. For more Contact to the Admin")),
+      );
+      return;
+    }
+
+    String? orgName = await showorganizationDialogbox();
+    if (orgName != null && orgName.isNotEmpty) {
+      await addOrganizatioinName(orgName);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => sendInvitation(),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgcolor,
-      body: Column(
+      body: organizationLists.isEmpty
+          ? Center(child: Text("No organizations yet."))
+          : ListView.builder(
+        itemCount: organizationLists.length,
+        itemBuilder: (context, index) => Card(
+              color: inputBoxbgColor,
+              child: ListTile(
+                title: Text(organizationLists[index], style: TextStyle(color: txtcolor),),
+                subtitle: Text("Team details will be shown here", style: TextStyle(color: txtcolor)),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red,),
+                  onPressed: () => deleteOrganizations(index),
+                ),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ShowTeamMembers(orgName: organizationLists[index],))
+                  );
+                },
+              ),
+            ),
+      ),
+
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(bottom: 29, right: 140),
+        child: FloatingActionButton(
+          onPressed: handleAddOrganization,
+          shape: CircleBorder(),
+          backgroundColor: btncolor,
+          child: Icon(Icons.add),
+        ),
+      ),
+
+    );
+  }
+}
+
+
+
+
+/*  Column(
         children: [
-      Center(child: Text('No Teams yet', style: TextStyle(color: txtcolor),),),
+      Center(child: Text('No Organization yet', style: TextStyle(color: txtcolor),),),
           //Expanded(child: TeamList(teams: teams, deleteTeam : deleteTeam)), //Display teams dynamically
           Padding(
             padding: const EdgeInsets.all(18.0),
@@ -215,41 +223,21 @@ Future<void> showorganizationDialogbox() async {
               ),
               color: inputBoxbgColor,
               child: ListTile(
-                title: Text( widget.organizatioName,
-                  style: TextStyle(fontSize: 20, color: txtcolor, fontWeight: FontWeight.bold),
+                title: Text( "Organization Name: ",
+                  style: TextStyle(fontSize: 15, color: txtcolor, fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text("Team Details will be shown here. ", style: TextStyle(color: txtcolor),),
                 trailing: Icon(Icons.arrow_forward_ios),
               ),
 
             ),
+
           ),
         ],
-      ),
-         floatingActionButton: Container(
-           margin: EdgeInsets.only(bottom: 29,right: 140),
-           child: FloatingActionButton(
-             onPressed: () {
-               Navigator.push(context, MaterialPageRoute(builder: (context) => sendInvitation()));
-             },
-             shape: CircleBorder(),
-             backgroundColor: btncolor,
-           child: Icon(Icons.add),
-           ),
-         ),
+      ),*/
 
-    );
-  }
-
-  Future<void> getOrganization() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var org=prefs.getString("organization");
-
-  }
-}
-
-
-/*class TeamList extends StatelessWidget {
+/*
+class TeamList extends StatelessWidget {
   final List<String> teams;
   final Function(int) deleteTeam;
 
@@ -281,7 +269,7 @@ Future<void> showorganizationDialogbox() async {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             elevation: 10,
             margin: EdgeInsets.symmetric(vertical: 9),
-            child: Container( 
+            child: Container(
               padding: EdgeInsets.all(10),
               height: 70,
               child: ListTile(

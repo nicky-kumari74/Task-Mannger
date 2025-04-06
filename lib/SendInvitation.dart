@@ -24,12 +24,11 @@ class _sendInvitationState extends State<sendInvitation> {
   // Functions to add a new email field (max 10)
 
   void addEmailField () {
-    print('Current email count : ${emailControllers.length}');
     if (emailControllers.length <10) {
       setState(() {
         emailControllers.add(TextEditingController());
       });
-      print("Email field added");
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("You can only add up to 10 emails")),
@@ -74,8 +73,9 @@ class _sendInvitationState extends State<sendInvitation> {
     }*/
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Invitations sent successfully! ")),
+      SnackBar(content: Text("Invitations sent successfully!")),
     );
+    return Navigator.pop(context);
   }
   @override
   Widget build(BuildContext context) {
@@ -143,7 +143,6 @@ class _sendInvitationState extends State<sendInvitation> {
                     onTap: () {
                       if (emailControllers.length < 10) {
                           addEmailField();
-
                       }
                     },
                     child: Text('+ add more...', style: TextStyle(color: btncolor),))
@@ -153,13 +152,15 @@ class _sendInvitationState extends State<sendInvitation> {
               ),
 
             SizedBox(height: 160,),
-            ElevatedButton(onPressed: sendInvitation,
-              child: Text("Send Invitation", style: TextStyle(color: txtcolor),),
+            ElevatedButton(onPressed: () {
+              sendInvitation();
+               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: btncolor,
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 31),
                 textStyle: TextStyle(fontSize: 18),
               ),
+              child: Text("Send Invitation", style: TextStyle(color: txtcolor),),
             )
           ],
         ),

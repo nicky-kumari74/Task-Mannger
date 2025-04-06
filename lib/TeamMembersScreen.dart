@@ -54,17 +54,73 @@ class showTeamMembers extends StatelessWidget {
 }*/
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taskmanager/Colors.dart';
+import 'package:taskmanager/SendInvitation.dart';
 
 class ShowTeamMembers extends StatelessWidget {
+  final String orgName;
+  ShowTeamMembers({required this.orgName});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgcolor,
       appBar: AppBar(
-        title: Text("New Screen"),
-        backgroundColor: Colors.blue,
+        title: Text(" $orgName", style: TextStyle(color: txtcolor),),
+        iconTheme: IconThemeData(color: txtcolor),
+        backgroundColor: bgcolor,
       ),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder <DocumentSnapshot>
+              (stream: FirebaseFirestore.instance.collection("teams").doc(orgName).snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator(),);
+              }
+
+              // Check if the document exists
+              if (!snapshot.data!.exists) {
+                return Center(
+                  child: Text("No data found for $orgName yet.",
+                  style: TextStyle(color: txtcolor),
+                  ),
+                );
+              }
+              List<dynamic> emails = snapshot.data!.get("emails") ?? [];
+              if (emails.isEmpty) {
+                return Center(
+                  child: Text("No team members yet.", style: TextStyle(color: txtcolor),),
+                );
+              }
+              return ListView.builder(
+                  itemCount: emails.length,
+                  itemBuilder:(context, index) => Card(
+                    color: inputBoxbgColor,
+                    child: ListTile(
+                      title: Text(emails[index], style: TextStyle(color: txtcolor),),
+                    ),
+                  )
+              );
+            }
+            ),
+          ),
+          Padding(padding: EdgeInsets.all(18),
+            child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => sendInvitation())
+                  );
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: btncolor),
+                child: Text("Invite Members", style: TextStyle(color: txtcolor),)
+            ),
+          )
+        ],
+      ),
+      
     );
   }
 
