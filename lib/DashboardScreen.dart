@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
@@ -155,5 +156,22 @@ class _DashboardState extends State<Dashboard> {
           ),
       )
     );
+
+  }
+
+}
+
+Future<void> signOut(BuildContext context) async {
+  try {
+   // await GoogleSignIn().signIn(); // Sign out from Google
+    await FirebaseAuth.instance.signOut(); // Sign out from Firebase
+
+    // Navigate to Login Screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  } catch (error) {
+    print("Error signing out: $error");
   }
 }
