@@ -24,8 +24,8 @@ class _DashboardState extends State<Dashboard> {
     print("hello 1");
     var sharepref= await SharedPreferences.getInstance();
     setState(() {
-      userName = sharepref.getString("name") ?? "Nicky"; // Default name
-      userEmail = sharepref.getString("email") ?? "bhagat@gmail.com"; // Default email
+      userName = sharepref.getString("name")?? "loading..."; // Default name
+      userEmail = sharepref.getString("email") ?? "loading.."; // Default email
     });
   }
 

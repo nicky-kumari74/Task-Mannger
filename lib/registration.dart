@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -256,8 +257,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       );
       User? user = userCredential.user;
       if (user != null) {
-        var sharepref = await SharedPreferences.getInstance();
-        sharepref.setString("name", Name.text.trim());
+        String email=Email.text.trim();
+        String docId = "users-${email.replaceAll('.', '-')}-data";
+        await FirebaseFirestore.instance.collection('users').doc(docId).set({
+          'name':Name.text.trim(),
+          'email': email,
+          'createdAt': Timestamp.now(),
+        });
+        /*var sharepref = await SharedPreferences.getInstance();
+        sharepref.setString("name", Name.text.trim());*/
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => LoginScreen()),

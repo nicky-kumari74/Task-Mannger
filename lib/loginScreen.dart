@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -267,18 +268,47 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       User? user = userCredential.user;
       if(user!=null){
+        String email=Email.text.trim();
+        String docId = "users-${email.replaceAll('.', '-')}-data";
+        DocumentSnapshot doc= await FirebaseFirestore.instance.collection('users').doc(docId).get();
+
+        var sharepref= await SharedPreferences.getInstance();
+        await sharepref.setBool("login", true);
+        await sharepref.setString("email", email);
+        await sharepref.setString("name", doc['name']);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Dashboard()),
         );
-        var sharepref= await SharedPreferences.getInstance();
-        sharepref.setBool("login", true);
-        sharepref.setString("email", Email.text);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Registration Failed: \$e")),
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.close, color: Colors.red),
+              SizedBox(width: 8),
+              Text("Login Failed",style: TextStyle(color: Colors.red),),
+            ],
+          ),
+          content: Text("Invalid email or password. Please try again."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Clear the input fields
+                Email.clear();
+                Password.clear();
+              },
+              child: Text("OK"),
+            ),
+          ],
+        ),
       );
+      /*ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registration Failed: \$e")),
+      );*/
     } finally {
       setState(() {
         _isLoading = false;
