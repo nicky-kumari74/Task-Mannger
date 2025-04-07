@@ -35,7 +35,7 @@ class _PersonalTaskState extends State<PersonalTask> {
       body: email == null
           ? Center(child: CircularProgressIndicator()) // Show loader until email is fetched
           : StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection(email!).snapshots(),
+        stream: FirebaseFirestore.instance.collection('Personal Task').doc(email).collection('Tasks').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator()); // Loading state
@@ -76,7 +76,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                   color: inputBoxbgColor,
                   margin: EdgeInsets.only(top: index == 0 ? 20 : 15),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                    padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
                     child: Column(
                       children: [
                         Row(children: [
@@ -93,8 +93,22 @@ class _PersonalTaskState extends State<PersonalTask> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: Text("Task Details"),
-                                            content: Text(taskData['Task Name'] ?? "No Task"),
+                                            title: Text("Task Details"),backgroundColor: boxColor,
+                                            content: RichText(
+                                              text: TextSpan(
+                                                style: TextStyle(fontSize: 18),
+                                                children: [
+                                                  TextSpan(
+                                                    text: '${taskData['Task Name'] ?? "No Task"} \n \n',
+                                                    style: TextStyle(color: bgcolor),
+                                                  ),
+                                                  TextSpan(text: 'status  :  ',style: TextStyle(fontWeight: FontWeight.bold,color: bgcolor)),
+                                                  TextSpan(
+                                                    text: '${taskData['status'] ?? "Unknown"}',
+                                                    style: TextStyle(color: (taskData['status'] == 'completed') ? Colors.green : Colors.red,fontSize: 20),),
+                                                ],
+                                              ),
+                                            ),
                                             actions: [
                                               TextButton(
                                                 onPressed: () {
@@ -118,7 +132,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                               SizedBox(width: 10),
                               GestureDetector(
                                 onTap: () {
-                                  print("hello");
+
                                 },
                                 child: Image.asset(
                                   'lib/icons/time.png',
@@ -130,7 +144,19 @@ class _PersonalTaskState extends State<PersonalTask> {
                               SizedBox(width: 20),
                               GestureDetector(
                                 onTap: () {
-                                  print("hello");
+                                  FirebaseFirestore.instance
+                                      .collection('Personal Task')
+                                      .doc(email)
+                                      .collection("Tasks")
+                                      .doc(taskId) // <-- Replace with the actual task document ID
+                                      .update({
+                                    'status': 'completed',
+                                    'checked': true
+                                  }).then((value) {
+                                    print("Task Updated to Completed");
+                                  }).catchError((error) {
+                                    print("Failed to update task: $error");
+                                  });
                                 },
                                 child: Image.asset(
                                   'lib/icons/checkmark.png',
@@ -157,14 +183,20 @@ class _PersonalTaskState extends State<PersonalTask> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.small(
-        onPressed: () {
-          showPersonaldialogbox();
-          //Navigator.push(context, MaterialPageRoute(builder: (context) => AddPersonalTask()));
-        },
-        backgroundColor: btncolor,
-        shape: CircleBorder(),
-        child: Icon(Icons.add, color: Colors.white, size: 30),
+      floatingActionButton: SizedBox(
+        width: 120,
+        height: 40, // desired height
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            showPersonaldialogbox();
+          },
+          backgroundColor: btncolor,
+          icon: Icon(Icons.add, color: bgcolor, size: 20), // smaller icon
+          label: Text(
+            'Add Task',
+            style: TextStyle(color: bgcolor, fontSize: 15), // smaller text
+          ),
+        ),
       ),
     );
   }
@@ -245,7 +277,7 @@ class _PersonalTaskState extends State<PersonalTask> {
   void addTask(String task) async {
     var sharepref= await SharedPreferences.getInstance();
     var email=sharepref.getString("email");
-    FirebaseFirestore.instance.collection(email!).add({
+    FirebaseFirestore.instance.collection('Personal Task').doc(email).collection("Tasks").add({
       'Task Name': task,
       'status':"pending",
       'checked':false
@@ -263,7 +295,7 @@ class _PersonalTaskState extends State<PersonalTask> {
     }
 
     FirebaseFirestore.instance
-        .collection(email!) // Use email! directly
+        .collection('Personal Task').doc(email).collection('Tasks') // Use email! directly
         .doc(taskId) // Reference the document by its ID
         .delete()
         .then((_) {

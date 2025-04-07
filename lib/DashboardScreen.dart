@@ -38,54 +38,73 @@ class _DashboardState extends State<Dashboard> {
         toolbarHeight: 30,
         backgroundColor: bgcolor,
       ),
-      drawer: Drawer(
-        child: Column(
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: Text(userName,style: TextStyle(fontWeight: FontWeight.bold),),
-              accountEmail: Text(userEmail),
-              currentAccountPicture: CircleAvatar(
-                child: Text(userName.isNotEmpty ? userName[0].toUpperCase() : "N",style: TextStyle(fontSize: 25),),
-                backgroundColor: Colors.white,
-              ),
+        drawer: Drawer(
+          child: Container(
+            color: inputBoxbgColor,
+            child: Column(
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  decoration: BoxDecoration(
+                    color: bgcolor, // ⚫ Set black background for account section
+                  ),
+                  accountName: Text(
+                    userName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white, // White text on black
+                    ),
+                  ),
+                  accountEmail: Text(
+                    userEmail,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  currentAccountPicture: CircleAvatar(
+                    child: Text(
+                      userName.isNotEmpty ? userName[0].toUpperCase() : "N",
+                      style: TextStyle(fontSize: 25),
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+                ListTile(
+                  leading: Icon(Icons.group_add,color: txtcolor,),
+                  title: Text('Create Team',style: TextStyle(color: txtcolor),),
+                  onTap: () => print('Create Team tapped'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.group,color: txtcolor,),
+                  title: Text('Join Team',style: TextStyle(color: txtcolor)),
+                  onTap: () => print('Join Team tapped'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.help,color: txtcolor,),
+                  title: Text('Help',style: TextStyle(color: txtcolor)),
+                  onTap: () => print('Help tapped'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.settings,color: txtcolor,),
+                  title: Text('Settings',style: TextStyle(color: txtcolor)),
+                  onTap: () => print('Settings tapped'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.logout,color: txtcolor,),
+                  title: Text('Logout',style: TextStyle(color: txtcolor)),
+                  onTap: () async {
+                    var prefs = await SharedPreferences.getInstance();
+                    prefs.setBool("login", false);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                ),
+                Divider(),
+              ],
             ),
-            ListTile(
-              leading: Icon(Icons.group_add),
-              title: Text('Create Team'),
-              onTap: () => print('Create Team tapped'),
-            ),
-            ListTile(
-              leading: Icon(Icons.group),
-              title: Text('Join Team'),
-              onTap: () => print('Join Team tapped'),
-            ),
-            ListTile(
-              leading: Icon(Icons.help),
-              title: Text('Help'),
-              onTap: () => print('Help tapped'),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () => print('Settings tapped'),
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Logout'),
-              onTap: () async {
-                var prefs = await SharedPreferences.getInstance();
-                prefs.setBool("login", false); // Set to false for logout
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()), // Replace with your login screen
-                );
-              },
-            ),
-            Divider(),
-          ],
+          ),
         ),
-      ),
-      backgroundColor: bgcolor,
+
+        backgroundColor: bgcolor,
       body: DefaultTabController(
           length: 2,
           child: Column(
