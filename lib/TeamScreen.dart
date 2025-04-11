@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //import "package:mailer/mailer.dart";
 //import 'package:mailer/smtp_server.dart';
@@ -13,8 +14,7 @@ class TeamTask extends StatefulWidget{
 }
 
 class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin {
-  List<String> teams = []; // Dynamic team lists
-  List<String> organizationLists = [];
+
   String? organizationName;
   bool dialogShown = false;
 
@@ -29,7 +29,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   Future<void> loadOrganization() async {
     SharedPreferences shareprefs = await SharedPreferences.getInstance();
     setState(() {
-      organizationLists = shareprefs.getStringList('organizations') ?? [];
+      organizationName = shareprefs.getString('organizationName');
     });
   }
 
@@ -39,11 +39,11 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   Future<void> checkAndShowDialogbox() async {
     SharedPreferences shareprefes = await SharedPreferences.getInstance();
     bool shown = shareprefes.getBool('orgDialogShown') ?? false;
-    if (!shown) {
+    if (!shown && organizationName ==null) {
       String? orgName = await showorganizationDialogbox();
       if (orgName != null && orgName.isNotEmpty) {
-        addOrganizatioinName(orgName);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => sendInvitation()),
+        await addOrganizatioinName(orgName);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => sendInvitation(orgName: orgName,)),
         );
       }
       await shareprefes.setBool(("orgDialogShown"), true);
@@ -53,28 +53,32 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   // Function to add Organization Name
 
   Future<void> addOrganizatioinName(String name) async {
-    if (organizationLists.length >= 5) {
+    if (organizationName != null) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(
-              "Limit Reached!! You can only add up to 5 organizations"))
+              "Limit Reached!! You can only add up to 1 organizations"))
       );
       return;
     }
+
+    //final String creatorEmail = FirebaseAuth.instance.currentUser!.email!;
+
     setState(() {
-      organizationLists.add(name);
+      organizationName = name;
     });
     SharedPreferences shaerpref = await SharedPreferences.getInstance();
-    await shaerpref.setStringList("organizations", organizationLists);
+    await shaerpref.setString("organization", organizationName!);
   }
 
   // Function to delete the Organizations
 
-  Future<void> deleteOrganizations(int index) async {
+  Future<void> deleteOrganizations() async {
     setState(() {
-      organizationLists.removeAt(index);
+      organizationName = null;
     });
     SharedPreferences sharepref = await SharedPreferences.getInstance();
-    await sharepref.setStringList("organizations", organizationLists);
+    await sharepref.remove('organizationName');
+    await sharepref.setBool("orgDialogShown", false);
   }
 
 
@@ -149,9 +153,9 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   }
 
   Future<void> handleAddOrganization() async {
-    if (organizationLists.length >= 5) {
+    if (organizationName != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("You can only add up to 5 organizations. For more Contact to the Admin")),
+        SnackBar(content: Text("You can only add 1 organizations. For more Contact to the Admin")),
       );
       return;
     }
@@ -162,7 +166,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => sendInvitation(),
+          builder: (context) => sendInvitation(orgName: orgName,),
         ),
       );
     }
@@ -172,37 +176,45 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgcolor,
-      body: organizationLists.isEmpty
-          ? Center(child: Text("No organizations yet."))
-          : ListView.builder(
-        itemCount: organizationLists.length,
-        itemBuilder: (context, index) => Card(
-              color: inputBoxbgColor,
-              child: ListTile(
-                title: Text(organizationLists[index], style: TextStyle(color: txtcolor),),
-                subtitle: Text("Team details will be shown here", style: TextStyle(color: txtcolor)),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red,),
-                  onPressed: () => deleteOrganizations(index),
+      body: organizationName ==null
+          ? Center(child: Text("No organizations yet.", style: TextStyle(color: txtcolor),))
+          : Padding(
+            padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
+            child: Card(
+                color: inputBoxbgColor,
+                child: ListTile(
+                  title: Text(organizationName!, style: TextStyle(color: txtcolor),),
+                  subtitle: Text("Team details will be shown here", style: TextStyle(color: txtcolor)),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red,),
+                    onPressed: () => deleteOrganizations(),
+                  ),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowTeamMembers(orgName: organizationName!))
+                    );
+                  },
                 ),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ShowTeamMembers(orgName: organizationLists[index],))
-                  );
-                },
               ),
-            ),
-      ),
+          ),
 
-      floatingActionButton: Container(
-        margin: EdgeInsets.only(bottom: 29, right: 140),
-        child: FloatingActionButton(
-          onPressed: handleAddOrganization,
-          shape: CircleBorder(),
+
+      floatingActionButton: organizationName == null
+      ? SizedBox(
+        width: 120,
+        height: 40, // desired height
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            handleAddOrganization();
+          },
           backgroundColor: btncolor,
-          child: Icon(Icons.add),
+          icon: Icon(Icons.add, color: bgcolor, size: 20), // smaller icon
+          label: Text(
+            'Add Team',
+            style: TextStyle(color: bgcolor, fontSize: 15), // smaller text
+          ),
         ),
-      ),
-
+      )
+      : null,
     );
   }
 }
