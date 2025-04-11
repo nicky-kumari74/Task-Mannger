@@ -1,91 +1,55 @@
-/*
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-class showTeamMembers extends StatelessWidget {
-  final List<String> teamMembers;
-
-  showTeamMembers({super.key, required this.teamMembers});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: teamMembers.length, itemBuilder: (context, index) {
-        return Dismissible(key: Key(teamMembers[index]),    // Unique key for each item
-          direction: DismissDirection.endToStart,
-          onDismissed: (direction) {
-           // deleteTeam(index);    // Call delete function.
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${teamMembers[index]} deleted')),
-            );
-          },
-          background: Container(
-            color: Colors.red,
-            alignment: Alignment.centerRight,
-            padding: EdgeInsets.only(right: 20),
-            child: Icon(Icons.delete, color: Colors.white,),
-          ),
-          child: Container(
-            margin: EdgeInsets.all(8),  // help to adjust the card view on the screen.
-            child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              elevation: 10,
-              margin: EdgeInsets.symmetric(vertical: 9),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                height: 70,
-                child: ListTile(
-                  title: Text(teamMembers[index], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  onTap: () {
-                    // Function will be here when click on the teams
-                  },
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      ),
-    );
-  }
-
-}*/
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/SendInvitation.dart';
 
-class ShowTeamMembers extends StatelessWidget {
+class ShowTeamMembers extends StatefulWidget {
   final String orgName;
   ShowTeamMembers({required this.orgName});
+
+  @override
+  State<ShowTeamMembers> createState() => _ShowTeamMembersState();
+}
+
+class _ShowTeamMembersState extends State<ShowTeamMembers> {
+
+  String? creatorEmail;
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    if(user != null) {
+      creatorEmail = user.email;
+      setState(() {
+
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgcolor,
       appBar: AppBar(
-        title: Text(" $orgName", style: TextStyle(color: txtcolor),),
+        title: Text(" ${widget.orgName}", style: TextStyle(color: txtcolor),),
         iconTheme: IconThemeData(color: txtcolor),
         backgroundColor: bgcolor,
       ),
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder <DocumentSnapshot>
-              (stream: FirebaseFirestore.instance.collection("teams").doc(orgName).snapshots(),
+            child: StreamBuilder<DocumentSnapshot>(stream: FirebaseFirestore.instance.collection("Team Task").doc(widget.orgName).
+            collection("Creator Email").doc(creatorEmail).collection("Teams").doc("Your Team Name").snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator(),);
               }
 
               // Check if the document exists
-              if (!snapshot.data!.exists) {
+              if (!snapshot.hasData || !snapshot.data!.exists) {
                 return Center(
-                  child: Text("No data found for $orgName yet.",
+                  child: Text("No data found for ${widget.orgName} yet.",
                   style: TextStyle(color: txtcolor),
                   ),
                 );
@@ -98,20 +62,30 @@ class ShowTeamMembers extends StatelessWidget {
               }
               return ListView.builder(
                   itemCount: emails.length,
-                  itemBuilder:(context, index) => Card(
+                  itemBuilder:(context, index)
+              {
+                final email = emails[index];
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: Card(
                     color: inputBoxbgColor,
-                    child: ListTile(
-                      title: Text(emails[index], style: TextStyle(color: txtcolor),),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11)
                     ),
-                  )
-              );
-            }
+                    child: ListTile(
+                      title: Text(email, style: TextStyle(color: txtcolor),),
+                    ),
+                  ),
+                );
+              },
+            );
+              }
             ),
           ),
           Padding(padding: EdgeInsets.all(18),
             child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => sendInvitation())
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => sendInvitation(orgName: widget.orgName,))
                   );
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: btncolor),
@@ -120,8 +94,7 @@ class ShowTeamMembers extends StatelessWidget {
           )
         ],
       ),
-      
+
     );
   }
-
 }

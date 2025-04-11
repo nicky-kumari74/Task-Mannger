@@ -1,8 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 
 class sendInvitation extends StatefulWidget {
+
+  final String orgName;
+  sendInvitation({required this.orgName});
 
   @override
   State<sendInvitation> createState() => _sendInvitationState();
@@ -40,7 +46,7 @@ class _sendInvitationState extends State<sendInvitation> {
   //Function to send invitation
   Future<void> sendInvitation () async {
     String teamname = teamnameController.text.trim();
-    List<String> emails = emailControllers.map((controller) =>
+    List<String> emailslist = emailControllers.map((controller) =>
         controller.text.trim())
         .where((email) => email.isNotEmpty).toList();
 
@@ -50,14 +56,45 @@ class _sendInvitationState extends State<sendInvitation> {
       );
       return;
     }
-    if (emails.length < 2) {
+    if (emailslist.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter at least two email')),
       );
       return;
     }
 
-   /* for (String email in emails) {
+    try {
+      // Save data to Firebase
+     /* var sharepref= await SharedPreferences.getInstance();
+      var emails=sharepref.getString("email");
+      var shaerpref = await SharedPreferences.getInstance();
+      var organization  = shaerpref.getString("organization");*/
+      final String creatorEmail = FirebaseAuth.instance.currentUser!.email!;
+
+      //Save organization level data with creator email
+      await FirebaseFirestore.instance.collection("Team Task").doc(widget.orgName).
+      set({
+        "Creator Email" : creatorEmail,
+        //"Created At": FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      await FirebaseFirestore.instance.collection("Team Task").doc(widget.orgName).collection(creatorEmail).doc(teamname).set(
+          {
+            "Team Name" : teamname,
+            "Members" : FieldValue.arrayUnion(emailslist),
+            "Created At" : FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true)
+      );
+
+      //Add invitation sub-documents
+      /*for (String email in emailslist) {
+        await organization.collection("Organization Name").add({
+          "email" : email,
+          "status" : "pending",
+          "sentAt" : FieldValue.serverTimestamp(),
+        });
+      }*/
+      /* for (String email in emails) {
       try {
         final result = await FirebaseFunctions.instance.httpsCallable(
             'sendInvitationEmail').call({'teamname': teamname, "email": email});
@@ -72,10 +109,16 @@ class _sendInvitationState extends State<sendInvitation> {
       }
     }*/
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Invitations sent successfully!")),
-    );
-    return Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Invitations sent successfully!")),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      print("Error saving data to Firestore: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to save invitation")),
+      );
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -89,80 +132,88 @@ class _sendInvitationState extends State<sendInvitation> {
         iconTheme: IconThemeData(color: txtcolor),
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: teamnameController,
-              style: TextStyle(color: txtcolor),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: inputBoxbgColor,
-                hintText: 'Enter Team Name',
-                hintStyle: TextStyle(
-                  color: txtcolor,
-                  fontSize: 18,
-                ),
-                //border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: btncolor)
-                )
-              ),
-            ),
-            SizedBox(height: 20,),
-            Expanded(
-              child: ListView.builder(
-                itemCount: emailControllers.length,
-                  itemBuilder: (context, index) {
-                  return Padding(padding: EdgeInsets.symmetric(vertical: 8.1),
-                  child: TextField(
-                    controller: emailControllers[index],
-                    decoration: InputDecoration(
-                    filled: true,
-                    fillColor: inputBoxbgColor,
-                      labelText: 'Enter Email ID',
-                      labelStyle: TextStyle(color: txtcolor),
-                      border: OutlineInputBorder(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(19),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: teamnameController,
+                        style: TextStyle(color: txtcolor),
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: inputBoxbgColor,
+                          hintText: 'Enter Team Name',
+                          hintStyle: TextStyle(
+                            color: txtcolor,
+                            fontSize: 18,
+                          ),
+                          //border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: btncolor)
+                          )
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: btncolor)
+                      SizedBox(height: 39,),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: emailControllers.length,
+                          itemBuilder: (context, index) {
+                          return Padding(padding: EdgeInsets.symmetric(vertical: 8.1),
+                          child: TextField(
+                            style: TextStyle(color: txtcolor),
+                            controller: emailControllers[index],
+                            decoration: InputDecoration(
+                            filled: true,
+                            fillColor: inputBoxbgColor,
+                              labelText: 'Enter Email ID',
+                              labelStyle: TextStyle(color: txtcolor),
+                              border: OutlineInputBorder(
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: btncolor)
+                              )
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          );
+                          }),
+
+                      SizedBox(height: 20,),
+
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: InkWell(
+                              onTap: () {
+                                if (emailControllers.length < 10) {
+                                    addEmailField();
+                                }
+                              },
+                              child: Text('+ add more...', style: TextStyle(color: btncolor),))
+                        ),
+
+                      SizedBox(height: 160,),
+                      ElevatedButton(onPressed: () {
+                        sendInvitation();
+                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: btncolor,
+                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 31),
+                          textStyle: TextStyle(fontSize: 18),
+                        ),
+                        child: Text("Send Invitation", style: TextStyle(color: txtcolor),),
                       )
-                    ),
-                    keyboardType: TextInputType.emailAddress,
+                    ],
                   ),
-                  );
-                  }),
-            ),
-
-            SizedBox(height: 10,),
-
-              Align(
-                alignment: Alignment.topRight,
-                child: InkWell(
-                    onTap: () {
-                      if (emailControllers.length < 10) {
-                          addEmailField();
-                      }
-                    },
-                    child: Text('+ add more...', style: TextStyle(color: btncolor),))
-                /*IconButton(onPressed: () {},
-                    icon: Icon(Icons.add_circle, color: Colors.white,size: 27,)
-                ),*/
+                ),
               ),
-
-            SizedBox(height: 160,),
-            ElevatedButton(onPressed: () {
-              sendInvitation();
-               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: btncolor,
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 31),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: Text("Send Invitation", style: TextStyle(color: txtcolor),),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
