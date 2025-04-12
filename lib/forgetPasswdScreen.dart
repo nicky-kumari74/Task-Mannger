@@ -13,6 +13,7 @@ class ForgetPasswdScreen extends StatefulWidget{
 class _ForgetPasswdScreenState extends State<ForgetPasswdScreen> {
   var Email = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool send=false;
 
   @override
   Widget build(BuildContext context) {
@@ -35,21 +36,20 @@ class _ForgetPasswdScreenState extends State<ForgetPasswdScreen> {
               margin: EdgeInsets.only(left: 20,right: 20),
                 child: Center(child: Text("Enter email address associated with your account and we'll send email with instruction to reset your password",style: TextStyle(color: textColor2,fontSize: 15),))
             ),*/
-            SizedBox(height: 50,),
+            SizedBox(height: 10,),
             Lottie.asset(
               'assets/forgot-password.json', // Place the file in assets/animations/
               height: 200,
               repeat: true,
             ),
-            SizedBox(height: 30,),
+            SizedBox(height: 20,),
             Container(
               margin: EdgeInsets.only(left: 40,right: 40),
                 child: Text("Enter your email address and we'll email you a secure link to reset your password",style: TextStyle(color: textColor2),textAlign: TextAlign.center,)
             ),
-            SizedBox(height: 30,),
+            SizedBox(height: 20,),
             Padding(
-        
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.only(left: 30,right: 30),
               child: TextField(
                 keyboardType: TextInputType.emailAddress,
                 controller: Email,
@@ -59,7 +59,7 @@ class _ForgetPasswdScreenState extends State<ForgetPasswdScreen> {
                     fillColor: inputBoxbgColor,
                   prefixIcon: Icon(Icons.email, color: iconColor,),
                   labelText: 'Email',
-                  labelStyle: TextStyle(color: textColor2, fontSize: 20),    // change font color and size for better experience
+                  labelStyle: TextStyle(color: textColor2, fontSize: 18),    // change font color and size for better experience
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: txtcolor, width: 2,)       // color change when user clicked on this widget and change border color for better experience
@@ -67,8 +67,8 @@ class _ForgetPasswdScreenState extends State<ForgetPasswdScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.transparent, width: 2)       // color change when user clicked on this widget and change border color for better experience
-        
-                  )
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 ),
               ),
             ),
@@ -94,11 +94,11 @@ class _ForgetPasswdScreenState extends State<ForgetPasswdScreen> {
             },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: btncolor,    // change background color for better visibility.
-                    padding: EdgeInsets.only(left: 40,right: 40,top: 11,bottom: 11),
+                    padding: EdgeInsets.only(left: 50,right: 50,top: 9,bottom: 9),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
                 ),
-                child: Text('Reset Password',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                child: Text('Send',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 )
             ),
           ],
