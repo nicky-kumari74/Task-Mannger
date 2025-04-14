@@ -1,3 +1,4 @@
+/*
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -95,6 +96,99 @@ class _ShowTeamMembersState extends State<ShowTeamMembers> {
         ],
       ),
 
+    );
+  }
+}
+*/
+
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class ShowTeamMembers extends StatefulWidget {
+  final String organizationId;
+  final String teamName;
+
+  const ShowTeamMembers({
+    required this.organizationId,
+    required this.teamName,
+  });
+
+  @override
+  State<ShowTeamMembers> createState() => _Screen3State();
+}
+
+class _Screen3State extends State<ShowTeamMembers> {
+  @override
+  Widget build(BuildContext context) {
+    final membersRef = FirebaseFirestore.instance
+        .collection('Team Task')
+        .doc('Organization')
+        .collection(widget.organizationId)
+        .doc(widget.teamName)
+        .collection('members');
+
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.teamName)),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: membersRef.snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+          final docs = snapshot.data!.docs;
+
+          if (docs.isEmpty) return Center(child: Text("No members added"));
+
+          return ListView(
+            children: docs.map((doc) {
+              final email = doc['email'];
+              return ListTile(
+                title: Text(email),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        _showEditDialog(context, doc.id, email, membersRef);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        membersRef.doc(doc.id).delete();
+                      },
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showEditDialog(BuildContext context, String docId, String oldEmail, CollectionReference membersRef) {
+    final controller = TextEditingController(text: oldEmail);
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Edit Email"),
+        content: TextField(controller: controller),
+        actions: [
+          TextButton(
+            child: Text("Cancel"),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text("Save"),
+            onPressed: () {
+              membersRef.doc(docId).update({'email': controller.text});
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

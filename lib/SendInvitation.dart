@@ -86,29 +86,6 @@ class _sendInvitationState extends State<sendInvitation> {
           }, SetOptions(merge: true)
       );
 
-      //Add invitation sub-documents
-      /*for (String email in emailslist) {
-        await organization.collection("Organization Name").add({
-          "email" : email,
-          "status" : "pending",
-          "sentAt" : FieldValue.serverTimestamp(),
-        });
-      }*/
-      /* for (String email in emails) {
-      try {
-        final result = await FirebaseFunctions.instance.httpsCallable(
-            'sendInvitationEmail').call({'teamname': teamname, "email": email});
-
-        if (result.data['success']) {
-          print('Invitation sent to $email');
-        } else {
-          print("Failed to send invitation: ${result.data['message']}");
-        }
-      } catch (e) {
-        print("Error sending email: $e");
-      }
-    }*/
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Invitations sent successfully!")),
       );
