@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //import "package:mailer/mailer.dart";
@@ -6,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/AddTeamTask.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/SendInvitation.dart';
+import 'package:taskmanager/ShowTeamName.dart';
 import 'package:taskmanager/TeamMembersScreen.dart';
 
 class TeamTask extends StatefulWidget{
@@ -17,19 +19,22 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
 
   String? organizationName;
   bool dialogShown = false;
+  String? creatorEmail;
+  String? orgName;
 
   @override
   void initState() {
     super.initState();
-    loadOrganization(); // load teams when app starts
+    loadOrgName(); // load teams when app starts
     checkAndShowDialogbox();
+    creatorEmail = FirebaseAuth.instance.currentUser?.email;
   }
 
   //Function to load Teams from when app starts
-  Future<void> loadOrganization() async {
-    SharedPreferences shareprefs = await SharedPreferences.getInstance();
+  Future<void> loadOrgName() async {
+    final shareprefs = await SharedPreferences.getInstance();
     setState(() {
-      organizationName = shareprefs.getString('organizationName');
+      orgName = shareprefs.getString('organizationName');
     });
   }
 
@@ -67,7 +72,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       organizationName = name;
     });
     SharedPreferences shaerpref = await SharedPreferences.getInstance();
-    await shaerpref.setString("organization", organizationName!);
+    await shaerpref.setString("organizationName", organizationName!);
   }
 
   // Function to delete the Organizations
@@ -180,23 +185,75 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
           ? Center(child: Text("No organizations yet.", style: TextStyle(color: txtcolor),))
           : Padding(
             padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
-            child: Card(
-                color: inputBoxbgColor,
-                child: ListTile(
-                  title: Text(organizationName!, style: TextStyle(color: txtcolor),),
-                  subtitle: Text("Team details will be shown here", style: TextStyle(color: txtcolor)),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red,),
-                    onPressed: () => deleteOrganizations(),
-                  ),
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowTeamMembers(orgName: organizationName!))
-                    );
-                  },
-                ),
-              ),
-          ),
+            child: Column(
+              children: [
+                Card(
+                    color: inputBoxbgColor,
+                    child: ListTile(
+                      title: Text(organizationName!, style: TextStyle(color: txtcolor),),
+                      //subtitle: Text("Team details will be shown here", style: TextStyle(color: txtcolor)),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red,),
+                        onPressed: () => deleteOrganizations(),
+                      ),
 
+                    ),
+                  ),
+                SizedBox(height: 14,),
+                Text("Teams", style: TextStyle(color: txtcolor, fontSize: 18),),
+                /*StreamBuilder(stream: FirebaseFirestore.instance.collection("Team Task").doc(orgName).collection(creatorEmail!)
+                    .snapshots(),
+                    builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active){
+                    if(snapshot.hasData) {
+                      final teamdocs = snapshot.data!.docs;
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: teamdocs.length,
+                          itemBuilder: (context,index) {
+                        final teamdata = teamdocs[index].data() as Map<String, dynamic>;
+                        final teamName = teamdata["Team Name"] ?? "Unnamed";
+                        return Column(
+                          children: [
+                            Card(
+                              child: ListTile(
+                                title: Text(teamName, style: TextStyle(color: Colors.black),),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.arrow_forward_ios, color: inputBoxbgColor,),
+                                  onPressed: () => ShowTeamMembers(organizationId: organizationName!, teamName: teamName),
+                                ),
+                              ),
+
+
+                             *//* onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => ShowTeamMembers(organizationId: organizationName!, teamName: teamname)));
+                              },*//*
+
+
+
+                            ),
+                          ],
+                        );
+                       }
+                      );
+                    } else if (snapshot.hasError){
+                      return Center(child: Text("${snapshot.hasError.toString()}"),);
+                    }
+                    else if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator(),);
+                    }
+                    return Center(child: Text("Something went wrong or no data found."));
+                  }
+                  else {
+                    return Center(child: CircularProgressIndicator(),);
+                  }
+                    },
+                    ),
+*/
+              ],
+            ),
+          ),
 
       floatingActionButton: organizationName == null
       ? SizedBox(
@@ -219,87 +276,4 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   }
 }
 
-
-
-
-/*  Column(
-        children: [
-      Center(child: Text('No Organization yet', style: TextStyle(color: txtcolor),),),
-          //Expanded(child: TeamList(teams: teams, deleteTeam : deleteTeam)), //Display teams dynamically
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              color: inputBoxbgColor,
-              child: ListTile(
-                title: Text( "Organization Name: ",
-                  style: TextStyle(fontSize: 15, color: txtcolor, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text("Team Details will be shown here. ", style: TextStyle(color: txtcolor),),
-                trailing: Icon(Icons.arrow_forward_ios),
-              ),
-
-            ),
-
-          ),
-        ],
-      ),*/
-
-/*
-class TeamList extends StatelessWidget {
-  final List<String> teams;
-  final Function(int) deleteTeam;
-
-  TeamList({required this.teams, required this.deleteTeam});
-
-  @override
-  Widget build(BuildContext context) {
-    return teams.isEmpty ? Center(child: Text("No team yet. Click + to add one!", style: TextStyle(fontSize: 16, color: Colors.black),),)
-        : Padding(padding: const EdgeInsets.all(10),
-    child: ListView.builder(
-      itemCount: teams.length, itemBuilder: (context, index) {
-        return Dismissible(key: Key(teams[index]),    // Unique key for each item
-         direction: DismissDirection.endToStart,
-         onDismissed: (direction) {
-          deleteTeam(index);    // Call delete function.
-          ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${teams[index]} deleted')),
-      );
-      },
-        background: Container(
-      color: Colors.red,
-      alignment: Alignment.centerRight,
-      padding: EdgeInsets.only(right: 20),
-      child: Icon(Icons.delete, color: Colors.white,),
-      ),
-         child: Container(
-           margin: EdgeInsets.all(8),  // help to adjust the card view on the screen.
-           child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            elevation: 10,
-            margin: EdgeInsets.symmetric(vertical: 9),
-            child: Container(
-              padding: EdgeInsets.all(10),
-              height: 70,
-              child: ListTile(
-                title: Text(teams[index], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                trailing: Icon(Icons.arrow_forward_ios,size: 16, color: Colors.black,),
-                onTap: () {
-                   //Navigator.push(context, MaterialPageRoute(builder: (context) => showTeamMembers()));      // Function will be here when click on the teams
-                },
-              ),
-            ),
-           ),
-         ),
-        );
-    },
-    ),
-    );
-  }
-
-}*/
 
