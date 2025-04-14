@@ -92,6 +92,7 @@ class _DashboardState extends State<Dashboard> {
                   onTap: () async {
                     var prefs = await SharedPreferences.getInstance();
                     prefs.setBool("login", false);
+                    prefs.remove("organizationName");
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => LoginScreen()),

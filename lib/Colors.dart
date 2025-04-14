@@ -8,3 +8,4 @@ const inputBoxbgColor=Color(0xFF455A64);
 const iconColor=Color(0xffb8b6b6);
 const textColor2=Color(0xffdfdede);
 const boxColor=Color(0xfff3d38f);
+const cardbg=Color(0xFFFAE2A9);
