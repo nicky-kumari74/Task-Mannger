@@ -135,49 +135,72 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
             ),
           )
               : Padding(
-            padding: const EdgeInsets.only(top: 30, right: 10, left: 10),
+            padding: const EdgeInsets.only(top: 30, right: 25, left: 25),
             child: Column(
               children: [
+                Container(height: 10,),
                 Card(
                   color: inputBoxbgColor,
                   child: Column(
                     children: [
-                      ListTile(
+                      Container(height: 10,),
+                      Text("$orgName",style: TextStyle(color: btncolor,fontWeight: FontWeight.bold,fontSize: 20),),
+                      Container(height: 5,),
+                      Text("Teams Found for $orgName organization",style: TextStyle(color: textColor2,fontSize: 15),),
+                      /*ListTile(
                         title: Text(
                           orgName!,
                           style: TextStyle(color: txtcolor),
                         ),
-                        trailing: IconButton(
+                        /*trailing: IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () => deleteOrganizations(),
-                        ),
-                      ),
+                        ),*/
+                      ),*/
+                      //Text("data",style: TextStyle(color: txtcolor),),
                       isLoading
                           ? Center(child: CircularProgressIndicator())
                           : teamNames.isEmpty
-                          ? Center(child: Text('No teams found.'))
-                          : Center(
-                            child: ListView.builder(
+                          ? Center(child: Text('No teams found.',style: TextStyle(color:txtcolor),))
+                          : ListView.builder(
+                        padding: EdgeInsets.zero,
                                                     shrinkWrap: true,  // Allows ListView to shrink wrap based on its content
-                                                    physics: NeverScrollableScrollPhysics(),  // Prevents double scroll issue
                                                     itemCount: teamNames.length,
                                                     itemBuilder: (context, index) {
-                            return Card(
-                              color: cardbg,
-                              margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
-                              elevation: 5,
-                              child: ListTile(
-                                leading: Icon(Icons.group, color: bgcolor),
-                                title: Text(
-                                  teamNames[index],
-                                  style: TextStyle(color: bgcolor),
-                                ),
-                                trailing: Icon(Icons.arrow_forward_ios, color: bgcolor, size: 16),
-                              ),
-                            );
+                                                      return Container(
+                                                        height: 50, // increase height to fit extra text
+                                                        margin: EdgeInsets.only(left: 25,right: 25,top: 10),
+                                                        child: Card(
+                                                          color: cardbg,
+                                                          elevation: 5,
+                                                          child: Padding(
+                                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                                            child: Column(
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    Icon(Icons.group, color: Colors.black54),
+                                                                    SizedBox(width: 10),
+                                                                    Expanded(
+                                                                      child: Text(
+                                                                        teamNames[index],
+                                                                        style: TextStyle(color: bgcolor, fontSize: 16),
+                                                                      ),
+                                                                    ),
+                                                                    Icon(Icons.arrow_forward_ios, color: bgcolor, size: 15),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(height: 1),
+
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+
                                                     },
                                                   ),
-                          ),
+                      Container(height: 30,)
                     ],
                   ),
                 ),

@@ -74,7 +74,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                 child: Card(
                   elevation: 2,
                   color: inputBoxbgColor,
-                  margin: EdgeInsets.only(top: index == 0 ? 20 : 15),
+                  margin: EdgeInsets.only(top: index == 0 ? 5 : 15),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
                     child: Column(

@@ -33,11 +33,11 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
+      /*appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         toolbarHeight: 30,
         backgroundColor: bgcolor,
-      ),
+      ),*/
         drawer: Drawer(
           child: Container(
             color: inputBoxbgColor,
@@ -106,64 +106,82 @@ class _DashboardState extends State<Dashboard> {
         ),
 
         backgroundColor: bgcolor,
-      body: DefaultTabController(
+        body: DefaultTabController(
           length: 2,
           child: Column(
             children: [
               Container(
-                height: 100,
-                margin: EdgeInsets.only(top: 20),
+                height: 115,
                 color: bgcolor,
-                child: PreferredSize(
-                  preferredSize: Size.fromHeight(60),
-                  child: Theme(
-                    data: Theme.of(context).copyWith(
-                      tabBarTheme: TabBarTheme(
-                        dividerColor: Colors.transparent, // Removes the thin white line
+                padding: EdgeInsets.only(top: 60,bottom: 10),
+                child: Row(
+                  children: [
+                    /// 🟡 Drawer Icon
+                    Builder(
+                      builder: (context) => IconButton(
+                        icon: Icon(Icons.menu, color: btncolor),
+                        onPressed: () {
+                          Scaffold.of(context).openDrawer();
+                        },
                       ),
                     ),
-                    child: TabBar(
-                      physics: const ClampingScrollPhysics(),
-                      padding: EdgeInsets.only(top: 55, left: 10, right: 10),
-                      unselectedLabelColor: btncolor,
-                      labelColor: Colors.black,
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicator: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: btncolor,
+
+                    //SizedBox(width: 10),
+
+                    Expanded(
+    child: PreferredSize(
+    preferredSize: Size.fromHeight(60),
+    child: Theme(
+    data: Theme.of(context).copyWith(
+    tabBarTheme: TabBarTheme(
+    dividerColor: Colors.transparent, // Removes thin white line
+    ),
+    ),
+                      child: TabBar(
+                        physics: const ClampingScrollPhysics(),
+                        unselectedLabelColor: btncolor,
+                        labelColor: Colors.black,
+                        indicatorSize: TabBarIndicatorSize.label,
+                        indicator: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: btncolor,
+                        ),
+                        tabs: [
+                          Tab(
+                            child: Container(
+                              height: 40,
+                              //width: 220,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(color: btncolor, width: 1),
+                              ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text("Personal",style: TextStyle(fontSize: 15),),
+                              ),
+                            ),
+                          ),
+                          Tab(
+                            child: Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(color: btncolor, width: 1),
+                              ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text("Team",style: TextStyle(fontSize: 15)),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      tabs: [
-                        Tab(
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(color: btncolor, width: 1),
-                            ),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text("Personal"),
-                            ),
-                          ),
-                        ),
-                        Tab(
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(color: btncolor, width: 1),
-                            ),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text("Team"),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),),)
+                  ],
                 ),
               ),
+
+              /// 🟡 TabBarView Section
               Expanded(
                 child: TabBarView(
                   children: [
@@ -174,7 +192,8 @@ class _DashboardState extends State<Dashboard> {
               ),
             ],
           ),
-      )
+        )
+
     );
 
   }
