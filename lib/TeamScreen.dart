@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/AddTeamTask.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/SendInvitation.dart';
-import 'package:taskmanager/ShowTeamName.dart';
+import 'package:taskmanager/ShowTeamDetails.dart';
 import 'package:taskmanager/TeamMembersScreen.dart';
 
 class TeamTask extends StatefulWidget{
@@ -170,6 +170,12 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                                                       return Container(
                                                         height: 50, // increase height to fit extra text
                                                         margin: EdgeInsets.only(left: 25,right: 25,top: 10),
+                                                        child:InkWell(
+                                                      onTap: (){
+                                                        Navigator.push(context,
+                                                        MaterialPageRoute(builder: (context)=>TeamDetails(teamNames[index]))
+                                                        );
+                                                      },
                                                         child: Card(
                                                           color: cardbg,
                                                           elevation: 5,
@@ -196,6 +202,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                                                             ),
                                                           ),
                                                         ),
+                                                        )
                                                       );
 
                                                     },
