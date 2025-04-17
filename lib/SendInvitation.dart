@@ -70,21 +70,24 @@ class _sendInvitationState extends State<sendInvitation> {
       var shaerpref = await SharedPreferences.getInstance();
       var organization  = shaerpref.getString("organization");*/
       final String creatorEmail = FirebaseAuth.instance.currentUser!.email!;
+      FirebaseFirestore.instance.collection('Team Task').doc('tcs').collection(creatorEmail).doc(teamname).set({
+      }).then((value) {
+        print("Task Added");
+      }).catchError((error) {
+        print("Failed to add user: $error");
+      });
+      final membersRef = FirebaseFirestore.instance
+          .collection("Teams")
+          .doc(creatorEmail)
+          .collection('team name')
+          .doc(teamname)
+          .collection('Members');
 
-      //Save organization level data with creator email
-      await FirebaseFirestore.instance.collection("Team Task").doc(widget.orgName).
-      set({
-        "Creator Email" : creatorEmail,
-        //"Created At": FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
-
-      await FirebaseFirestore.instance.collection("Team Task").doc(widget.orgName).collection(creatorEmail).doc(teamname).set(
-          {
-            "Team Name" : teamname,
-            "Members" : FieldValue.arrayUnion(emailslist),
-            "Created At" : FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true)
-      );
+      await Future.wait(emailslist.map((email) {
+        return membersRef.doc(email).set({
+          "Created At": FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }));
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Invitations sent successfully!")),

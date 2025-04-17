@@ -9,6 +9,7 @@ import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/SendInvitation.dart';
 import 'package:taskmanager/ShowTeamDetails.dart';
 import 'package:taskmanager/TeamMembersScreen.dart';
+import 'package:taskmanager/testingfirebase.dart';
 
 class TeamTask extends StatefulWidget{
   @override
@@ -19,6 +20,8 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   String? orgName;
   List<String> teamNames = [];
   bool isLoading = true;
+  //final Future<List<Map<String, dynamic>>> _teamsFuture = TeamService.fetchTeamsAndMembers();
+
   //TextEditingController organizationController = TextEditingController();
   @override
   void initState() {
@@ -89,21 +92,28 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
      );
   }
   Future<void> fetchTeamNames() async {
+    final String? userEmail = FirebaseAuth.instance.currentUser?.email;
+    List<String> teamnm = [];
     try {
-      SharedPreferences sharepref = await SharedPreferences.getInstance();
-      String email = sharepref.getString("email") ?? "loading..";
-      final firestore = FirebaseFirestore.instance;
-      final teamsSnapshot = await firestore
+      final teamRef = FirebaseFirestore.instance
           .collection('Team Task')
-          .doc(orgName)
-          .collection(email)
-          .get();
-      if (teamsSnapshot.docs.isEmpty) {
-        print("No teams found for this organization.");
+          .doc('tcs')
+          .collection(userEmail!);
+
+      final snapshot = await teamRef.get();
+
+      if (snapshot.docs.isEmpty) {
+        print('No teams found for: $userEmail');
+      } else {
+        for (var doc in snapshot.docs) {
+          print('Team ID: ${doc.id}');
+          teamnm.add(doc.id);
+          //print('Data: ${doc.data()}');
+        }
       }
       setState(() {
-        teamNames = teamsSnapshot.docs.map((doc) => doc.id).toList();
-        print("teams : $teamNames");
+        teamNames=teamnm;
+        print("teams $teamNames");
         isLoading = false;
       });
     } catch (e) {
@@ -147,17 +157,46 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                       Text("$orgName",style: TextStyle(color: btncolor,fontWeight: FontWeight.bold,fontSize: 20),),
                       Container(height: 5,),
                       Text("Teams Found for $orgName organization",style: TextStyle(color: textColor2,fontSize: 15),),
-                      /*ListTile(
-                        title: Text(
-                          orgName!,
-                          style: TextStyle(color: txtcolor),
-                        ),
-                        /*trailing: IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => deleteOrganizations(),
-                        ),*/
+
+                      /*FutureBuilder<List<Map<String, dynamic>>>(
+                        future: _teamsFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+
+                          if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                            return const Center(child: Text('No team found.'));
+                          }
+
+                          final teams = snapshot.data!;
+
+                          return ListView.builder(
+                            shrinkWrap: true, // 🔑 Add this
+                            physics: NeverScrollableScrollPhysics(), // 🔑 Add this to disable scroll conflict
+                            itemCount: teams.length,
+                            itemBuilder: (context, index) {
+                              final team = teams[index];
+                              return Card(
+                                margin: const EdgeInsets.all(10),
+                                child: ExpansionTile(
+                                  title: Text(
+                                    team['teamName'],
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  ),
+                                  children: team['members'].map<Widget>((member) {
+                                    return ListTile(
+                                      leading: const Icon(Icons.person),
+                                      title: Text(member),
+                                    );
+                                  }).toList(),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),*/
-                      //Text("data",style: TextStyle(color: txtcolor),),
+
                       isLoading
                           ? Center(child: CircularProgressIndicator())
                           : teamNames.isEmpty
