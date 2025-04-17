@@ -7,6 +7,8 @@ import 'package:taskmanager/DashboardScreen.dart';
 import 'package:taskmanager/loginScreen.dart';
 import 'package:taskmanager/registration.dart';
 
+import 'Colors.dart';
+
 class SplashScreen extends StatefulWidget{
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -26,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          color : Colors.indigo[900],  // Change background color for better experience
+          color : bgcolor,  // Change background color for better experience
         child: Center(
             child: Container(
               width: 288,
