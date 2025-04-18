@@ -64,11 +64,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       color: textColor2, fontSize: 18   // Change label font color and size for better experience.
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent, width: 2),
+                      borderSide: BorderSide(color: txtcolor, width: 1),
                       borderRadius: BorderRadius.circular(10)
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent, width: 2),
+                      borderSide: BorderSide(color: Colors.transparent, width: 1),
                       borderRadius: BorderRadius.circular(10)
                     ),
                     prefixIcon: Icon(Icons.person, color: iconColor,),
@@ -91,11 +91,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     labelStyle: TextStyle(
                       color: textColor2, fontSize: 18),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent, width: 2),
+                      borderSide: BorderSide(color: txtcolor, width: 1),
                       borderRadius: BorderRadius.circular(10)
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent, width: 2),
+                      borderSide: BorderSide(color: Colors.transparent, width: 1),
                       borderRadius: BorderRadius.circular(10)
                     ),
                     prefixIcon: Icon(Icons.email,color: iconColor),
@@ -117,11 +117,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     labelText: 'Password',
                     labelStyle: TextStyle(color: textColor2, fontSize: 18),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent, width: 2),
+                      borderSide: BorderSide(color: txtcolor, width: 1),
                       borderRadius: BorderRadius.circular(10)
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent, width: 2),
+                      borderSide: BorderSide(color: Colors.transparent, width: 1),
                       borderRadius: BorderRadius.circular(10)
                     ),
                     prefixIcon: Icon(Icons.lock,color: iconColor,),
@@ -161,20 +161,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: Row(
                     children:
                     [
-                      Container(
-                        height: 2,
-                        color: iconColor,
-                        margin: EdgeInsets.only(left: 1, right: 3),
-                        padding: EdgeInsets.only(left: 130),
-                      ),
+                      /*Container(
+                    height: 2,
+                     color: iconColor,
+                     margin: EdgeInsets.only(left: 1, right: 3),
+                     padding: EdgeInsets.only(left: 130),
+                   ),*/
                       Center(
-                          child: Text(' or continue with', style: TextStyle(fontSize: 15,color: iconColor),)),
-                      Container(
-                        height: 2,
-                        color: iconColor,   // Color of horizontal lines
-                        margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
-                        padding: EdgeInsets.only(right: 177),
-                      ),
+                          child: Text('___________ or continue with ___________ ', style: TextStyle(fontSize: 15,color: iconColor),)),
+                      /*Container(
+                     height: 2,
+                     color: iconColor,   // Color of horizontal lines
+                     margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
+                     padding: EdgeInsets.only(right: 177),
+                   ),*/
                     ]
                 ),
               ),

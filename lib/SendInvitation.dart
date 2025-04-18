@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 
+import 'DashboardScreen.dart';
+
 class sendInvitation extends StatefulWidget {
 
   final String orgName;
@@ -17,6 +19,7 @@ class sendInvitation extends StatefulWidget {
 class _sendInvitationState extends State<sendInvitation> {
   TextEditingController teamnameController = TextEditingController();
   List<TextEditingController> emailControllers = [];
+  bool _isLoading=false;
 
   @override
   void initState () {
@@ -45,6 +48,9 @@ class _sendInvitationState extends State<sendInvitation> {
 
   //Function to send invitation
   Future<void> sendInvitation () async {
+    setState(() {
+      _isLoading = true;
+    });
     String teamname = teamnameController.text.trim();
     List<String> emailslist = emailControllers.map((controller) =>
         controller.text.trim())
@@ -54,23 +60,30 @@ class _sendInvitationState extends State<sendInvitation> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter a team name')),
       );
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
     if (emailslist.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter at least two email')),
       );
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
 
     try {
       // Save data to Firebase
-     /* var sharepref= await SharedPreferences.getInstance();
+      /* var sharepref= await SharedPreferences.getInstance();
       var emails=sharepref.getString("email");
       var shaerpref = await SharedPreferences.getInstance();
       var organization  = shaerpref.getString("organization");*/
       final String creatorEmail = FirebaseAuth.instance.currentUser!.email!;
-      FirebaseFirestore.instance.collection('Team Task').doc('tcs').collection(creatorEmail).doc(teamname).set({
+      FirebaseFirestore.instance.collection('Team Task').doc('tcs').collection(
+          creatorEmail).doc(teamname).set({
       }).then((value) {
         print("Task Added");
       }).catchError((error) {
@@ -92,110 +105,123 @@ class _sendInvitationState extends State<sendInvitation> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Invitations sent successfully!")),
       );
-      Navigator.pop(context);
+      //Navigator.pop(context);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Dashboard()));
     } catch (e) {
       print("Error saving data to Firestore: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Failed to save invitation")),
       );
     }
-  }
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      backgroundColor: bgcolor,
-      appBar: AppBar(
+    finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+    }
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
         backgroundColor: bgcolor,
-        toolbarHeight: 70,
-        title: Text('Send Invitation', style: TextStyle(color: txtcolor, ),),
-        iconTheme: IconThemeData(color: txtcolor),
-      ),
+        appBar: AppBar(
+          backgroundColor: bgcolor,
+          toolbarHeight: 70,
+          title: Text('Send Invitation', style: TextStyle(color: txtcolor,),),
+          iconTheme: IconThemeData(color: txtcolor),
+        ),
 
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(19),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: teamnameController,
-                        style: TextStyle(color: txtcolor),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: inputBoxbgColor,
-                          hintText: 'Enter Team Name',
-                          hintStyle: TextStyle(
-                            color: txtcolor,
-                            fontSize: 18,
-                          ),
-                          //border: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: btncolor)
-                          )
-                        ),
-                      ),
-                      SizedBox(height: 39,),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: emailControllers.length,
-                          itemBuilder: (context, index) {
-                          return Padding(padding: EdgeInsets.symmetric(vertical: 8.1),
-                          child: TextField(
-                            style: TextStyle(color: txtcolor),
-                            controller: emailControllers[index],
-                            decoration: InputDecoration(
-                            filled: true,
-                            fillColor: inputBoxbgColor,
-                              labelText: 'Enter Email ID',
-                              labelStyle: TextStyle(color: txtcolor),
-                              border: OutlineInputBorder(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(19),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: teamnameController,
+                          style: TextStyle(color: txtcolor),
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: inputBoxbgColor,
+                              hintText: 'Enter Team Name',
+                              hintStyle: TextStyle(
+                                color: txtcolor,
+                                fontSize: 18,
                               ),
+                              //border: OutlineInputBorder(),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: btncolor)
+                                  borderSide: BorderSide(color: btncolor)
                               )
-                            ),
-                            keyboardType: TextInputType.emailAddress,
                           ),
-                          );
-                          }),
+                        ),
+                        SizedBox(height: 39,),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: emailControllers.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.1),
+                                child: TextField(
+                                  style: TextStyle(color: txtcolor),
+                                  controller: emailControllers[index],
+                                  decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: inputBoxbgColor,
+                                      labelText: 'Enter Email ID',
+                                      labelStyle: TextStyle(color: txtcolor),
+                                      border: OutlineInputBorder(
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: btncolor)
+                                      )
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
+                              );
+                            }),
 
-                      SizedBox(height: 20,),
+                        SizedBox(height: 20,),
 
                         Align(
-                          alignment: Alignment.topRight,
-                          child: InkWell(
-                              onTap: () {
-                                if (emailControllers.length < 10) {
+                            alignment: Alignment.topRight,
+                            child: InkWell(
+                                onTap: () {
+                                  if (emailControllers.length < 10) {
                                     addEmailField();
-                                }
-                              },
-                              child: Text('+ add more...', style: TextStyle(color: btncolor),))
+                                  }
+                                },
+                                child: Text('+ add more...',
+                                  style: TextStyle(color: btncolor),))
                         ),
 
-                      SizedBox(height: 160,),
-                      ElevatedButton(onPressed: () {
-                        sendInvitation();
-                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: btncolor,
-                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 31),
-                          textStyle: TextStyle(fontSize: 18),
-                        ),
-                        child: Text("Send Invitation", style: TextStyle(color: txtcolor),),
-                      )
-                    ],
+                        SizedBox(height: 160,),
+                        _isLoading
+                            ? CircularProgressIndicator(color: btncolor)
+                            : ElevatedButton(onPressed: () {
+                          sendInvitation();
+                        },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: btncolor,
+                            padding: EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 31),
+                            textStyle: TextStyle(fontSize: 18),
+                          ),
+                          child: Text("Send Invitation",
+                            style: TextStyle(color: txtcolor),),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
-}

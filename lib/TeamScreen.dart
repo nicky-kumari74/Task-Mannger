@@ -67,6 +67,14 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
             fillColor: inputBoxbgColor,
             labelText: "Enter your organization name",
             labelStyle: TextStyle(color: bgcolor,),
+            focusedBorder: OutlineInputBorder(                             // When user clicked on it then the color of border will change
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color:bgcolor, width: 2)
+            ),
+            enabledBorder: OutlineInputBorder(                             // Default border color when login page will open.
+                borderSide: BorderSide(color: bgcolor, width: 2),   // Change color for better experience
+                borderRadius: BorderRadius.circular(16)
+            ),
             border: OutlineInputBorder(),
           ),
         ),
@@ -85,7 +93,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
               fetchTeamNames();
               Navigator.pop(context, userInput);
             },
-            child: Text("Submit", style: TextStyle(color: txtcolor),),
+            child: Text("Submit", style: TextStyle(color: bgcolor),),
           ),
         ],
       )
@@ -198,9 +206,9 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                       ),*/
 
                       isLoading
-                          ? Center(child: CircularProgressIndicator())
+                          ? Center(child: CircularProgressIndicator(color: btncolor,))
                           : teamNames.isEmpty
-                          ? Center(child: Text('No teams found.',style: TextStyle(color:txtcolor),))
+                          ? Center(child: Text('No teams found.',style: TextStyle(color:Colors.red),))
                           : ListView.builder(
                         padding: EdgeInsets.zero,
                                                     shrinkWrap: true,  // Allows ListView to shrink wrap based on its content

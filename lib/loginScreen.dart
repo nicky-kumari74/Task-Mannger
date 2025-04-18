@@ -159,20 +159,20 @@ class _LoginScreenState extends State<LoginScreen> {
                child: Row(
                  children:
                  [
-                   Container(
+                   /*Container(
                     height: 2,
                      color: iconColor,
                      margin: EdgeInsets.only(left: 1, right: 3),
                      padding: EdgeInsets.only(left: 130),
-                   ),
+                   ),*/
                    Center(
-                       child: Text(' or continue with ', style: TextStyle(fontSize: 15,color: iconColor),)),
-                   Container(
+                       child: Text('___________ or continue with ___________ ', style: TextStyle(fontSize: 15,color: iconColor),)),
+                   /*Container(
                      height: 2,
                      color: iconColor,   // Color of horizontal lines
                      margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
                      padding: EdgeInsets.only(right: 177),
-                   ),
+                   ),*/
                   ]
                ),
              ),
@@ -193,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                  ),
                  child: GestureDetector(
                    onTap: () {
-                     Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
+                     //Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
                    },
                  ),
                ),
@@ -211,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                ),
                child: GestureDetector(
                  onTap: () {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
+                   //Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
                  },
                ),
              ),
