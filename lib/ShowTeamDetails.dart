@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanager/Colors.dart';
+import 'package:taskmanager/Team_AssignTask.dart';
 
 class TeamDetails extends StatefulWidget{
   String teamname;
@@ -63,6 +64,9 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
         child: FloatingActionButton.extended(
           onPressed: () {
             //handleAddOrganization();
+            memberNames.add(widget.teamname);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AssignTask(memberNames: memberNames),));
           },
           backgroundColor: btncolor,
           icon: Icon(Icons.add, color: bgcolor, size: 20), // smaller icon
