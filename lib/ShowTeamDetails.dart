@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,8 @@ class TeamDetails extends StatefulWidget{
 
 class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStateMixin {
   List<String> memberNames = [];
+  List<Map<String, dynamic>> allMemberData = [];
+
   void initState() {
     super.initState();
     fetchMemberEmail();
@@ -43,14 +47,70 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                     ListView.builder(
                   itemCount: memberNames.length,
                     itemBuilder: (context,index){
-                    return Card(
+                    return GestureDetector(
+                      onTap: (){
+                        remarkDialogueBox(index);
+                      },
+                      child:Card(
                       color: inputBoxbgColor,
                       elevation: 4,
                       margin: EdgeInsets.symmetric(vertical: 8),
-                      child: ListTile(
-                        leading: Icon(Icons.person,color: textColor2,),
-                        title: Text(memberNames[index],style: TextStyle(color: txtcolor),),
+                      child: Stack(
+                        children: [
+                          Column(
+                          children: [
+                            ListTile(
+                              leading: Icon(Icons.person,color: btncolor,),
+                              title: Text(memberNames[index],style: TextStyle(color: btncolor,fontWeight: FontWeight.w500),),
+                            ),
+                            allMemberData[index]['Task Name']==null ? Text("Task Not Assigned",style: TextStyle(color: Colors.red,fontSize: 15),)
+                            : Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 40),
+                                  child: Row(
+                                    children: [
+                                      Image.asset('lib/icons/clipboard.png',width: 30,height: 20,color: textColor2,),
+                                      Text("${allMemberData[index]['Task Name']}",style: TextStyle(color: txtcolor,fontSize: 15),),
+                                    ],
+                                  ),
+                                ),
+                                Container(height: 10,),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 45),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.timer,color: textColor2,size: 20,),
+                                      Text("${allMemberData[index]['Due date']}",style: TextStyle(color: txtcolor,fontSize: 15),),
+                                    ],
+                                  ),
+                                ),
+                                //if(allMemberData[index]['Remark']!=null)Text("Task ${allMemberData[index]['Remark']}",style: TextStyle(color: txtcolor,fontSize: 15),),
+                              ],
+                            ),
+                            Container(height: 20,)
+                          ],
+                        ),
+                          Positioned(
+                            top: 1,
+                            right: 8,
+                            child: allMemberData[index]['Status'] == 'Pending'
+                                ? SizedBox(
+                              width: 30,
+                              height: 30,
+                                  child: CircularProgressIndicator(
+                                                                valueColor: AlwaysStoppedAnimation<Color>(btncolor), // Red color for the pending animation
+                                                                strokeWidth: 3, // Width of the spinner
+                                                                semanticsLabel: 'Pending Task',
+                                                                backgroundColor: Colors.transparent, // To make the background transparent
+                                  ),
+                                )
+                                : SizedBox.shrink(), // If no pending, show nothing
+                          ),
+                      ]
                       ),
+
+                      )
                     );
                     }
                 )
@@ -92,18 +152,77 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
       if (snapshot.docs.isEmpty) {
         print('No teams found for: $userEmail');
       } else {
-        /*for (var doc in snapshot.docs) {
-            memberNames.add(doc.id);
-          //print('Team ID: ${doc.id}');
-          //print('Data: ${doc.data()}');
-        }*/
+        List<Map<String, dynamic>> tempList = [];
+        for (var doc in snapshot.docs) {
+          tempList.add(doc.data() as Map<String, dynamic>);
+        }
+        //print(tempList[0]);
         setState(() {
           memberNames = snapshot.docs.map((doc) => doc.id).toList();
+          allMemberData=tempList;
         });
         print(memberNames);
       }
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  void remarkDialogueBox(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent, // Transparent background for glass effect
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15), // Glassy semi-transparent effect
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+              ),
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Remark",
+                    style: TextStyle(
+                      color: btncolor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  allMemberData[index]['Remark'] == null
+                      ? Text(
+                    "No remark",
+                    style: TextStyle(color: Colors.white),
+                  )
+                      : Text(
+                    allMemberData[index]['Remark'],
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  SizedBox(height: 15),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        "Close",
+                        style: TextStyle(color: btncolor),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

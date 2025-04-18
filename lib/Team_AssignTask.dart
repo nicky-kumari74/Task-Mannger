@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanager/Colors.dart';
@@ -18,6 +20,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
   var Remark=TextEditingController();
   late String teamName;
   late List<bool> checked;
+  bool isLoading=false;
   @override
   void initState(){
     super.initState();
@@ -133,7 +136,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
                 ),
                 child: TextField(
                   controller: Remark,
-                  style: TextStyle(fontSize: 20, color: Colors.black),    // increase font size
+                  style: TextStyle(fontSize: 20, color: txtcolor),    // increase font size
                   maxLines: null,   // Allow multiple lines
                   expands: true, // Expands to fill the container
                   decoration: InputDecoration(
@@ -146,7 +149,8 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
                 ),
               ),
               SizedBox(height: 30,),
-              ElevatedButton(onPressed: (){
+              isLoading?CircularProgressIndicator(color: btncolor,)
+              :ElevatedButton(onPressed: (){
                 saveAssignTask();
               },
                   style: ElevatedButton.styleFrom(
@@ -180,6 +184,9 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
   }
 
   void saveAssignTask() {
+    setState(() {
+      isLoading=true;
+    });
     late List<String> selectedName=[];
     for(int i=0;i<checked.length;i++){
       if(checked[i]){
@@ -193,14 +200,46 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Please Enter Task Name')),
         );
+        stopLoading();
         return;
       }
     if(duedate.isEmpty){
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please Select a Due Date')),
       );
+      stopLoading();
       return;
     }
-
+    try{
+      final String creatorEmail = FirebaseAuth.instance.currentUser!.email!;
+      for(int i=0;i<selectedName.length;i++){
+        FirebaseFirestore.instance
+            .collection("Teams")
+            .doc(creatorEmail)
+            .collection('team name')
+            .doc(teamName)
+            .collection('Members').doc(selectedName[i]).set({
+          'Task Name':taskname,
+          'Due date':duedate,
+          'Remark':Remark.text.trim(),
+          'Status':'Pending'
+        }
+        ).then((value) {
+          stopLoading();
+          print("Task Assigned");
+        }).catchError((error) {
+          print("Failed to add user: $error");
+          stopLoading();
+        });
+      }
+    }catch (e){
+      print('Error: $e');
+      stopLoading();
+    }
+  }
+  void stopLoading(){
+    setState(() {
+      isLoading=false;
+    });
   }
 }

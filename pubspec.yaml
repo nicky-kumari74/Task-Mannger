@@ -70,6 +70,8 @@ flutter:
     - assets/images/
     - lib/icons/checkmark.png
     - lib/icons/time.png
+    - lib/icons/task.png
+    - lib/icons/clipboard.png
     - assets/forgot-password.json
     - assets/password.json
 
