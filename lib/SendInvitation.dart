@@ -82,7 +82,7 @@ class _sendInvitationState extends State<sendInvitation> {
       var shaerpref = await SharedPreferences.getInstance();
       var organization  = shaerpref.getString("organization");*/
       final String creatorEmail = FirebaseAuth.instance.currentUser!.email!;
-      FirebaseFirestore.instance.collection('Team Task').doc('tcs').collection(
+      FirebaseFirestore.instance.collection('Team Task').doc(widget.orgName).collection(
           creatorEmail).doc(teamname).set({
       }).then((value) {
         print("Task Added");
@@ -100,6 +100,13 @@ class _sendInvitationState extends State<sendInvitation> {
         return membersRef.doc(email).set({
           "Created At": FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
+      }));
+
+      final personRef=FirebaseFirestore.instance.collection('Personal Task');
+      await Future.wait(emailslist.map((email){
+        return personRef.doc(email).collection(widget.orgName).doc(teamname).set({
+          "creator email":creatorEmail
+        },SetOptions(merge:true));
       }));
 
       ScaffoldMessenger.of(context).showSnackBar(

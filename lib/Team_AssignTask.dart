@@ -131,6 +131,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
                 height: 150,
                 width: 300,
                 margin: EdgeInsets.only(right: 50),
+
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.black)
                 ),

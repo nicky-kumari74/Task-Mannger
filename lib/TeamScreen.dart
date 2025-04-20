@@ -19,7 +19,9 @@ class TeamTask extends StatefulWidget{
 class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin {
   String? orgName;
   List<String> teamNames = [];
+  List<String> teamnm = [];
   bool isLoading = true;
+
   //final Future<List<Map<String, dynamic>>> _teamsFuture = TeamService.fetchTeamsAndMembers();
 
   //TextEditingController organizationController = TextEditingController();
@@ -32,7 +34,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   }
   Future<void> loadOrgName() async {
     final shareprefs = await SharedPreferences.getInstance();
-    orgName = shareprefs.getString('organizationName');
+    //orgName = shareprefs.getString('organizationName');
 
     setState(() {
       orgName = shareprefs.getString('organizationName');
@@ -41,6 +43,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       showorganizationDialogbox();
     }
   }
+
   Future<void> showorganizationDialogbox() async {
     TextEditingController organizationController = TextEditingController();
      await showDialog<String>(
@@ -99,13 +102,42 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       )
      );
   }
+  Future<void> fetchPersonalTeam() async{
+    final String? userEmail = FirebaseAuth.instance.currentUser?.email;
+    final shareprefs = await SharedPreferences.getInstance();
+    orgName = shareprefs.getString('organizationName');
+    try{
+      final teamref=FirebaseFirestore.instance.collection('Personal Task').doc(userEmail).collection(orgName!);
+      final snapshot = await teamref.get();
+
+      if (snapshot.docs.isEmpty) {
+        print('No teams found for: $userEmail');
+      } else {
+        for (var doc in snapshot.docs) {
+          //print('Team ID: ${doc.id}');
+          teamnm.add(doc.id);
+          //print('Data: ${doc.data()}');
+        }
+        setState(() {
+          teamNames=teamnm;
+          print("teams $teamNames");
+          isLoading = false;
+        });
+      }
+
+    }catch (e) {
+      print('Error fetching teams: $e');
+      isLoading = false;
+    }
+  }
   Future<void> fetchTeamNames() async {
     final String? userEmail = FirebaseAuth.instance.currentUser?.email;
-    List<String> teamnm = [];
+    final shareprefs = await SharedPreferences.getInstance();
+    orgName = shareprefs.getString('organizationName');
     try {
       final teamRef = FirebaseFirestore.instance
           .collection('Team Task')
-          .doc('tcs')
+          .doc(orgName)
           .collection(userEmail!);
 
       final snapshot = await teamRef.get();
@@ -119,11 +151,12 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
           //print('Data: ${doc.data()}');
         }
       }
-      setState(() {
+      /*setState(() {
         teamNames=teamnm;
         print("teams $teamNames");
         isLoading = false;
-      });
+      });*/
+      fetchPersonalTeam();
     } catch (e) {
       print('Error fetching teams: $e');
       setState(() {
@@ -165,46 +198,6 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                       Text("$orgName",style: TextStyle(color: btncolor,fontWeight: FontWeight.bold,fontSize: 20),),
                       Container(height: 5,),
                       Text("Teams Found for $orgName organization",style: TextStyle(color: textColor2,fontSize: 15),),
-
-                      /*FutureBuilder<List<Map<String, dynamic>>>(
-                        future: _teamsFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          }
-
-                          if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-                            return const Center(child: Text('No team found.'));
-                          }
-
-                          final teams = snapshot.data!;
-
-                          return ListView.builder(
-                            shrinkWrap: true, // 🔑 Add this
-                            physics: NeverScrollableScrollPhysics(), // 🔑 Add this to disable scroll conflict
-                            itemCount: teams.length,
-                            itemBuilder: (context, index) {
-                              final team = teams[index];
-                              return Card(
-                                margin: const EdgeInsets.all(10),
-                                child: ExpansionTile(
-                                  title: Text(
-                                    team['teamName'],
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                  ),
-                                  children: team['members'].map<Widget>((member) {
-                                    return ListTile(
-                                      leading: const Icon(Icons.person),
-                                      title: Text(member),
-                                    );
-                                  }).toList(),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),*/
-
                       isLoading
                           ? Center(child: CircularProgressIndicator(color: btncolor,))
                           : teamNames.isEmpty

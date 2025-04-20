@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/Team_AssignTask.dart';
 
@@ -18,6 +19,9 @@ class TeamDetails extends StatefulWidget{
 class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStateMixin {
   List<String> memberNames = [];
   List<Map<String, dynamic>> allMemberData = [];
+  final String? userEmail = FirebaseAuth.instance.currentUser?.email;
+  String? cremail;
+  bool isDataLoaded = false;
 
   void initState() {
     super.initState();
@@ -61,7 +65,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                           children: [
                             ListTile(
                               leading: Icon(Icons.person,color: btncolor,),
-                              title: Text(memberNames[index],style: TextStyle(color: btncolor,fontWeight: FontWeight.w500),),
+                              title: Text(memberNames[index]==userEmail?"You":memberNames[index],style: TextStyle(color: btncolor,fontWeight: FontWeight.w500),),
                             ),
                             allMemberData[index]['Task Name']==null ? Text("Task Not Assigned",style: TextStyle(color: Colors.red,fontSize: 15),)
                             : Column(
@@ -118,7 +122,9 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
           ],
         ),
       ),
-      floatingActionButton: SizedBox(
+      floatingActionButton: isDataLoaded==false ?null
+          :cremail!=null && cremail!=userEmail?null
+          :SizedBox(
         width: 150,
         height: 40, // desired height
         child: FloatingActionButton.extended(
@@ -140,7 +146,11 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   }
 
   void fetchMemberEmail() async {
-    final String? userEmail = FirebaseAuth.instance.currentUser?.email;
+    final shareprefs = await SharedPreferences.getInstance();
+    String? email = shareprefs.getString('email');
+    String? orgName = shareprefs.getString('organizationName');
+    //print(email);
+    List<Map<String, dynamic>> tempList = [];
     try {
       final teamRef = FirebaseFirestore.instance
           .collection('Teams')
@@ -150,18 +160,32 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
       final snapshot = await teamRef.get();
 
       if (snapshot.docs.isEmpty) {
-        print('No teams found for: $userEmail');
+        //print('No teams found for: $userEmail');
+        final teamref=FirebaseFirestore.instance.collection('Personal Task').doc(userEmail).collection(orgName!).doc(widget.teamname);
+        final snapshot1 = await teamref.get();
+        if(snapshot1.exists){
+          final data=snapshot1.data();
+          cremail=data?['creator email'];
+          final teamRef = FirebaseFirestore.instance.collection('Teams').doc(cremail).collection('team name').doc(widget.teamname).collection('Members');
+          final snapshot = await teamRef.get();
+          for (var doc in snapshot.docs) {
+            tempList.add(doc.data() as Map<String, dynamic>);
+          }
+          setState(() {
+            memberNames = snapshot.docs.map((doc) => doc.id).toList();
+            allMemberData=tempList;
+            isDataLoaded = true;
+          });
+        }
       } else {
-        List<Map<String, dynamic>> tempList = [];
         for (var doc in snapshot.docs) {
           tempList.add(doc.data() as Map<String, dynamic>);
         }
-        //print(tempList[0]);
         setState(() {
           memberNames = snapshot.docs.map((doc) => doc.id).toList();
           allMemberData=tempList;
+          isDataLoaded = true;
         });
-        print(memberNames);
       }
     } catch (e) {
       print('Error: $e');
