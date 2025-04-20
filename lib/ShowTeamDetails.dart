@@ -22,7 +22,9 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   final String? userEmail = FirebaseAuth.instance.currentUser?.email;
   String? cremail;
   bool isDataLoaded = false;
-
+  var taskNmae=TextEditingController();
+  var dueDate=TextEditingController();
+  var Remark=TextEditingController();
   void initState() {
     super.initState();
     fetchMemberEmail();
@@ -159,7 +161,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                                   },
                                   child: Icon(
                                     Icons.edit_note,
-                                    size: 24,
+                                    size: 30,
                                     color: btncolor,
                                     semanticLabel: 'Edit Task',
                                   ),
@@ -201,7 +203,138 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   }
 
   void EditTaskDialoguebox(int index) {
-
+    taskNmae.text=allMemberData[index]['Task Name'];
+    dueDate.text=allMemberData[index]['Due date'];
+    Remark.text=allMemberData[index]['Remark'];
+    showDialog(
+      context: context,
+      builder: (context) =>
+          Dialog(
+            backgroundColor: Colors.transparent,
+            // Transparent background for glass effect
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.25),
+                    // Glassy semi-transparent effect
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  ),
+                  padding: EdgeInsets.all(20),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(width: 200,margin: EdgeInsets.only(left:80),
+                          child: Text("Edit Task", style: TextStyle(color: btncolor, fontSize: 20, fontWeight: FontWeight.w700,),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text('Task Name',style: TextStyle(color: txtcolor,fontSize: 17,fontWeight: FontWeight.w500),),
+                        Container(height: 40,
+                          child: TextField(
+                            controller: taskNmae,
+                            style: TextStyle(color: txtcolor),
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: textColor2),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: textColor2),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text('Due Date :',style: TextStyle(color: txtcolor,fontSize: 17,fontWeight: FontWeight.w500),),
+                        Container(
+                          width: 300,
+                          height: 40,
+                          margin: EdgeInsets.only(right: 40),
+                          child: TextField(
+                            controller: dueDate,
+                            readOnly: true,
+                            style: TextStyle(fontSize: 18,color: txtcolor),
+                            decoration: InputDecoration(
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: textColor2),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: textColor2),
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: _pickDate,
+                                icon: Icon(Icons.date_range,color: txtcolor,),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text('Remark :',style: TextStyle(color: txtcolor,fontSize: 17,fontWeight: FontWeight.w500),),
+                        Container(
+                          height: 100,
+                          width: 300,
+                          margin: EdgeInsets.only(right: 10),
+                          child: TextField(
+                            controller: Remark,
+                            style: TextStyle(color: txtcolor),    // increase font size
+                            maxLines: null,   // Allow multiple lines
+                            expands: true, // Expands to fill the container
+                            decoration: InputDecoration(
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: textColor2)
+                                ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: textColor2)
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: Text(
+                                  "Close",
+                                  style: TextStyle(color: btncolor),
+                                ),
+                              ),
+                            TextButton(
+                                onPressed: updateTask(index),
+                                child: Text(
+                                  "Update",
+                                  style: TextStyle(color: btncolor),
+                                ),
+                              ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+    );
+  }
+  void _pickDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        dueDate.text =
+        "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+      });
+    }
   }
 
   void fetchMemberEmail() async {
@@ -314,5 +447,24 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
             ),
           ),
     );
+  }
+
+  updateTask(int index) {
+        FirebaseFirestore.instance
+            .collection("Teams")
+            .doc(userEmail)
+            .collection('team name')
+            .doc(widget.teamname)
+            .collection('Members').doc(memberNames[index]).update({
+          'Task Name':taskNmae.text.trim(),
+          'Due date':dueDate.text.trim(),
+          'Remark':Remark.text.trim(),
+          'Status':'Pending'
+        }
+        ).then((value) {
+          print("Task Updated");
+        }).catchError((error) {
+          print("Failed to update task: $error");
+        });
   }
 }
