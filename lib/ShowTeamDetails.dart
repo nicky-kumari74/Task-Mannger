@@ -37,11 +37,22 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
       backgroundColor: bgcolor,
       appBar: AppBar(
         backgroundColor: bgcolor,
-        centerTitle: true,
-        //toolbarHeight: 70,
         title: Text(
           'Team Details', style: TextStyle(color: txtcolor, fontSize: 20),),
         iconTheme: IconThemeData(color: txtcolor),
+        actions: [
+          isDataLoaded==false?SizedBox(): cremail != null && cremail != userEmail ?SizedBox():
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0), // 👈 10px right margin
+            child:IconButton(
+              icon: Icon(Icons.person_add_alt_1,color: boxColor,),
+              iconSize: 35,
+              onPressed: () {
+                MemberAdd();
+              },
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.only(left: 30, right: 30),
@@ -304,13 +315,18 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                                   style: TextStyle(color: btncolor),
                                 ),
                               ),
-                            TextButton(
-                                onPressed: updateTask(index),
-                                child: Text(
-                                  "Update",
-                                  style: TextStyle(color: btncolor),
+                            ElevatedButton(onPressed: (){
+                              updateTask(index);
+                            },
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: boxColor,    // change background color for better visibility.
+                                    padding: EdgeInsets.only(left: 20,right: 20,top: 2,bottom: 2),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
                                 ),
-                              ),
+                                child: Text('Update',
+                                  style: TextStyle(fontSize: 17, color: bgcolor),
+                                )
+                            ),
                           ],
                         )
                       ],
@@ -450,21 +466,114 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   }
 
   updateTask(int index) {
+    print(userEmail);
+    print(widget.teamname);
+    print(memberNames[index]);
         FirebaseFirestore.instance
             .collection("Teams")
             .doc(userEmail)
             .collection('team name')
             .doc(widget.teamname)
-            .collection('Members').doc(memberNames[index]).update({
+            .collection('Members').doc(memberNames[index]).set({
           'Task Name':taskNmae.text.trim(),
           'Due date':dueDate.text.trim(),
           'Remark':Remark.text.trim(),
           'Status':'Pending'
         }
         ).then((value) {
-          print("Task Updated");
+          fetchMemberEmail();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Task Updated Successfully!")),
+          );
+          Navigator.pop(context);
         }).catchError((error) {
           print("Failed to update task: $error");
         });
+  }
+
+  void MemberAdd() {
+    var emailcontroller=TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) =>
+          Dialog(
+            backgroundColor: Colors.transparent,
+            // Transparent background for glass effect
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.20),
+                    // Glassy semi-transparent effect
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  ),
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Add Member", style: TextStyle(color: btncolor, fontSize: 20, fontWeight: FontWeight.bold,),
+                      ),
+                      SizedBox(height: 30),
+                      TextField(
+                        style: TextStyle(color: txtcolor),
+                        controller: emailcontroller,
+                        decoration: InputDecoration(
+                            labelText: 'Enter Email ID',
+                            labelStyle: TextStyle(color: txtcolor),
+                            border: OutlineInputBorder(
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: textColor2)
+                            ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color:textColor2)
+                          )
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      SizedBox(height: 15),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: (){
+                            print("add member click");
+                            try{
+                              final membersRef = FirebaseFirestore.instance
+                                  .collection("Teams")
+                                  .doc(userEmail)
+                                  .collection('team name')
+                                  .doc(widget.teamname)
+                                  .collection('Members').doc(emailcontroller.text.trim()).set({
+                                "Created At": FieldValue.serverTimestamp(),
+                              }, SetOptions(merge: true));
+                              fetchMemberEmail();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Member added successfully!")),
+                              );
+                              Navigator.pop(context);
+                            }catch(e){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Failed to add member")),
+                              );
+                            }
+                          },
+                          child: Text(
+                            "Add Member",
+                            style: TextStyle(color: btncolor),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+    );
   }
 }

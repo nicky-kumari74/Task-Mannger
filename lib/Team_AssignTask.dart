@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanager/Colors.dart';
+import 'package:taskmanager/ShowTeamDetails.dart';
 
 class AssignTask extends StatefulWidget {
   final List<String> memberNames;
@@ -224,10 +225,17 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
           'Due date':duedate,
           'Remark':Remark.text.trim(),
           'Status':'Pending'
+
         }
         ).then((value) {
           stopLoading();
-          print("Task Assigned");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Task Assigned Successfully!")),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => TeamDetails(teamName)),
+          );
         }).catchError((error) {
           print("Failed to add user: $error");
           stopLoading();
