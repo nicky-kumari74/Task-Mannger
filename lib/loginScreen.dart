@@ -50,13 +50,15 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
    return Scaffold(
+     appBar: AppBar(
+       backgroundColor: bgcolor,
+     ),
      backgroundColor: bgcolor,
      body: Center(
        child: SingleChildScrollView(
          child: Column(
            mainAxisAlignment: MainAxisAlignment.center,
            children: [
-             SizedBox(height: 10,),
            Text('LogIn', style: TextStyle(color: txtcolor, fontSize: 30,fontWeight: FontWeight.bold)),
              SizedBox(height: 10,),
              Text("Welcome Back!!",style: TextStyle(color: textColor2,fontSize: 18),),
