@@ -43,7 +43,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
         actions: [
           isDataLoaded==false?SizedBox(): cremail != null && cremail != userEmail ?SizedBox():
           Padding(
-            padding: const EdgeInsets.only(right: 20.0), // 👈 10px right margin
+            padding: const EdgeInsets.only(right: 20.0),
             child:IconButton(
               icon: Icon(Icons.person_add_alt_1,color: boxColor,),
               iconSize: 35,
@@ -540,7 +540,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: (){
+                          onPressed: () async{
                             print("add member click");
                             try{
                               final membersRef = FirebaseFirestore.instance
@@ -551,6 +551,11 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                                   .collection('Members').doc(emailcontroller.text.trim()).set({
                                 "Created At": FieldValue.serverTimestamp(),
                               }, SetOptions(merge: true));
+                              final shareprefs = await SharedPreferences.getInstance();
+                              final orgName = shareprefs.getString('organizationName');
+                              final personRef=FirebaseFirestore.instance.collection('Personal Task').doc(emailcontroller.text.trim()).collection(orgName!).doc(widget.teamname).set({
+                                "creator email":userEmail
+                              },SetOptions(merge:true));;
                               fetchMemberEmail();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("Member added successfully!")),

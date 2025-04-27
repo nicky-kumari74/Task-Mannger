@@ -193,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                  ),
                  child: GestureDetector(
                    onTap: () {
-                     //Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
                    },
                  ),
                ),

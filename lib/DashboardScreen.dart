@@ -107,7 +107,8 @@ class _DashboardState extends State<Dashboard> {
         ),
 
         backgroundColor: bgcolor,
-        body: DefaultTabController(
+
+      body: DefaultTabController(
           length: 2,
           child: Column(
             children: [
@@ -120,7 +121,7 @@ class _DashboardState extends State<Dashboard> {
                     /// 🟡 Drawer Icon
                     Builder(
                       builder: (context) => IconButton(
-                        icon: Icon(Icons.menu, color: btncolor),
+                        icon: Icon(Icons.menu, color: btncolor,size: 30,),
                         onPressed: () {
                           Scaffold.of(context).openDrawer();
                         },

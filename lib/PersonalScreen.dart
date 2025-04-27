@@ -46,8 +46,99 @@ class _PersonalTaskState extends State<PersonalTask> {
 
           var tasks = snapshot.data!.docs;
 
-          return ListView.builder(
-            padding: EdgeInsets.all(15),
+          return Padding(
+            padding: const EdgeInsets.only(right: 25, left: 25),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                Card(
+                  color: inputBoxbgColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true, // Important: makes ListView take only needed height
+                          physics: const NeverScrollableScrollPhysics(), // Prevents ListView from scrolling separately
+                          itemCount: tasks.length,
+                          itemBuilder: (context, index) {
+                            var taskData = tasks[index].data() as Map<String, dynamic>;
+                            String taskId = tasks[index].id; // Unique ID for each task
+                            bool isChecked = isCheckedMap[taskId] ?? false;
+
+                            return Dismissible(
+                              key: Key(taskId),
+                              direction: DismissDirection.endToStart, // Swipe left to delete
+                              background: Container(
+                                //color: Colors.red,
+                                alignment: Alignment.centerRight,
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: Icon(Icons.delete, color: Colors.white),
+                              ),
+                              confirmDismiss: (direction) async {
+                                bool confirm = await _showDeleteConfirmationDialog(context,taskId);
+                                if (confirm) {
+                                  _deleteTask(taskId);
+                                  return true;
+                                }
+                                return false;
+                              },
+                              child: Container(
+                                height: 50, // Increased slightly for better spacing
+                                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                child: InkWell(
+                                  onTap: () {
+                                    // You can add your navigation or action here
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => TeamDetails(teamNames[index])));
+                                  },
+                                  child: Card(
+                                    color: cardbg,
+                                    elevation: 3,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                                      child: Row(
+                                        children: [
+                                          Image.asset(
+                                            'lib/icons/time.png',
+                                            color: taskData['status'] == "pending" ? Colors.red : iconColor,
+                                            width: 20,
+                                            height: 15,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              getFirstTwoWords(taskData['Task Name'] ?? ''),
+                                              style: TextStyle(
+                                                color: bgcolor,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ),
+                                          const Icon(Icons.arrow_forward_ios, color: Colors.black54, size: 16),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+
+          /*return ListView.builder(
+            padding: EdgeInsets.only(left:25,right: 25,top:20),
             itemCount: tasks.length,
             itemBuilder: (context, index) {
               var taskData = tasks[index].data() as Map<String, dynamic>;
@@ -73,7 +164,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                 },
                 child: Card(
                   elevation: 2,
-                  color: inputBoxbgColor,
+                  color: cardbg,//inputBoxbgColor,
                   margin: EdgeInsets.only(top: index == 0 ? 5 : 15),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
@@ -123,25 +214,25 @@ class _PersonalTaskState extends State<PersonalTask> {
                                     },
                                     child: Text(
                                       taskData['Task Name'] ?? "No Task",
-                                      style: TextStyle(color: txtcolor, fontSize: 18),
+                                      style: TextStyle(color: bgcolor, fontSize: 18),
                                     ),
                                   ),
 
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              //SizedBox(width: 10),
                               GestureDetector(
                                 onTap: () {
 
                                 },
                                 child: Image.asset(
                                   'lib/icons/time.png',
-                                  color: taskData['status'] == "pending" ? btncolor : iconColor,
+                                  color: taskData['status'] == "pending" ? Colors.red : iconColor,
                                   width: 20,
                                   height: 20,
                                 ),
                               ),
-                              SizedBox(width: 20),
+                              SizedBox(width: 10),
                               GestureDetector(
                                 onTap: () {
                                   FirebaseFirestore.instance
@@ -160,7 +251,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                                 },
                                 child: Image.asset(
                                   'lib/icons/checkmark.png',
-                                  color: taskData['status'] == "completed" ? btncolor : iconColor,
+                                  color: taskData['status'] == "completed" ? Colors.green : iconColor,
                                   width: 20,
                                   height: 20,
                                 ),
@@ -180,21 +271,21 @@ class _PersonalTaskState extends State<PersonalTask> {
                 ),
               );
             },
-          );
+          );*/
         },
       ),
       floatingActionButton: SizedBox(
-        width: 120,
-        height: 40, // desired height
+        width: 130,
+        height: 45, // desired height
         child: FloatingActionButton.extended(
           onPressed: () {
             showPersonaldialogbox();
           },
           backgroundColor: btncolor,
-          icon: Icon(Icons.add, color: bgcolor, size: 20), // smaller icon
+          icon: Icon(Icons.add, color: bgcolor, size: 25), // smaller icon
           label: Text(
-            'Add Task',
-            style: TextStyle(color: bgcolor, fontSize: 15), // smaller text
+            'Add Task  ',
+            style: TextStyle(color: bgcolor, fontSize: 18), // smaller text
           ),
         ),
       ),
@@ -251,6 +342,15 @@ class _PersonalTaskState extends State<PersonalTask> {
       );
     });
   }
+  String getFirstTwoWords(String text) {
+    List<String> words = text.trim().split(' ');
+    if (words.length >= 2) {
+      return '${words[0]} ${words[1]}';
+    } else {
+      return text; // If less than 2 words, show the whole text
+    }
+  }
+
   Future<bool> _showDeleteConfirmationDialog(BuildContext context,String taskId) async {
     return await showDialog(
       context: context,
