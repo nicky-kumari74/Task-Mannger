@@ -92,10 +92,10 @@ class _PersonalTaskState extends State<PersonalTask> {
                     child: Card(
                       color: inputBoxbgColor,
                       child: Padding(
-                        padding: const EdgeInsets.only(top:5,left: 16,right: 16),
+                        padding: const EdgeInsets.only(top:5,left: 12,right: 12),
                         child: Column(
                           children: [
-                            Text(formattedDate, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold,color: btncolor)),
+                            Text(formattedDate, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,color: btncolor)),
                             // ListView of tasks for this date
                             ListView.builder(
                               padding: EdgeInsets.zero,
@@ -146,15 +146,22 @@ class _PersonalTaskState extends State<PersonalTask> {
                                               ),
                                               const SizedBox(width: 12),
                                               Expanded(
-                                                child: Text(
-                                                  getFirstTwoWords(taskData['Task Name'] ?? ''),
-                                                  style: TextStyle(
-                                                    color: bgcolor,
-                                                    fontSize: 16,
-                                                  ),
+                                                //width: 100,
+                                                child: Container(
+                                                  height: 20,
+                                                  child: Text(
+                                                      taskData['Task Name'],
+                                                      //getFirstTwoWords(taskData['Task Name'] ?? ''),
+                                                      style: TextStyle(
+                                                        color: bgcolor,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
                                                 ),
                                               ),
-                                              const Icon(Icons.arrow_forward_ios, color: Colors.black54, size: 16),
+                                              GestureDetector(
+                                                onTap: (){UpdateTask(taskId,taskData['Task Name']);},
+                                                  child: Icon(Icons.edit_note, color: Colors.black54, size: 23)),
                                             ],
                                           ),
                                         ),
@@ -164,7 +171,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                                 );
                               },
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 15),
                           ],
                         ),
                       ),
@@ -334,7 +341,7 @@ class _PersonalTaskState extends State<PersonalTask> {
     TextEditingController Taskname = TextEditingController();
     TextEditingController inviteMembers = TextEditingController();
     showDialog(context: context, builder: (context) {
-      return AlertDialog(title: Text("Create New Task"),backgroundColor: boxColor,
+      return AlertDialog(title: Text("Create New Task",style: TextStyle(color: btncolor,fontWeight: FontWeight.w500),),backgroundColor: inputBoxbgColor,
           content: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,  // This make dialog box width responsive.
             child: Column(
@@ -343,16 +350,18 @@ class _PersonalTaskState extends State<PersonalTask> {
                 Container(height: 10,),
                 TextField(
                   controller: Taskname,
+                  style: TextStyle(color: txtcolor),
                   decoration: InputDecoration(
                     hintText: 'Enter Task Name',
+                    hintStyle: TextStyle(color: textColor2),
                     border: OutlineInputBorder(),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 2),
-                        borderRadius: BorderRadius.circular(15)
+                        borderSide: BorderSide(color:textColor2,width: 2),
+                        borderRadius: BorderRadius.circular(10)
                     ),
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1),
-                        borderRadius: BorderRadius.circular(15)
+                        borderSide: BorderSide(color:textColor2,width: 1),
+                        borderRadius: BorderRadius.circular(10)
                     ),
                     contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 12),
                   ),
@@ -362,7 +371,7 @@ class _PersonalTaskState extends State<PersonalTask> {
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop((context)),   // close dialog box
-              child: Text('Cancel',style: TextStyle(fontSize: 18)),
+              child: Text('Cancel',style: TextStyle(fontSize: 18,color: btncolor)),
             ),
             TextButton(onPressed: () {
               String Task = Taskname.text.trim();
@@ -374,7 +383,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                 });
                 Navigator.pop(context);   // Close dialog box
               }
-            }, child: Text("Add",style: TextStyle(fontSize: 18),),
+            }, child: Text("Add",style: TextStyle(fontSize: 18,color: btncolor),),
             ),
           ],
 
@@ -447,4 +456,71 @@ class _PersonalTaskState extends State<PersonalTask> {
   }
 
   void showTask(taskData) {}
+  void UpdateTask(String taskId,String taskname){
+    TextEditingController Taskname = TextEditingController();
+    TextEditingController inviteMembers = TextEditingController();
+    Taskname.text=taskname;
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(title: Text("Update Task",style: TextStyle(color: btncolor,fontWeight: FontWeight.w600),),backgroundColor: inputBoxbgColor,
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.8,  // This make dialog box width responsive.
+          child: Column(
+            mainAxisSize: MainAxisSize.min,  // Help to shrink the dialog box height according to content.
+            children: [
+              //Container(height: 10,),
+              Container(width:220,child: Text("Task Name",style: TextStyle(color: txtcolor,fontSize: 18,fontWeight:FontWeight.w400 ),)),
+              TextField(
+                controller: Taskname,
+                style: TextStyle(color: txtcolor),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color:textColor2,width: 2),
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color:textColor2,width: 1),
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 12),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop((context)),   // close dialog box
+            child: Text('Cancel',style: TextStyle(fontSize: 18,color: btncolor)),
+          ),
+          TextButton(onPressed: () {
+            String Task = Taskname.text.trim();
+            if (Task.isNotEmpty) {
+              FirebaseFirestore.instance
+                  .collection('Personal Task')
+                  .doc(email)
+                  .collection("Tasks")
+                  .doc(taskId) // <-- Replace with the actual task document ID
+                  .update({
+                'Task Name':Taskname.text.toString().trim(),
+                'status': 'pending',
+                'checked': false
+              }).then((value) {
+                print("Task Updated");
+              }).catchError((error) {
+                print("Failed to update task: $error");
+              });
+              //addTask(Task);
+              setState(() {
+                //teams.add(newTeam);
+                //saveTeams();
+              });
+              Navigator.pop(context);   // Close dialog box
+            }
+          }, child: Text("Update",style: TextStyle(fontSize: 18,color: btncolor),),
+          ),
+        ],
+
+      );
+    });
+  }
 }

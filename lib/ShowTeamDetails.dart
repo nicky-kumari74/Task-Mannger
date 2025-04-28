@@ -466,9 +466,9 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   }
 
   updateTask(int index) {
-    print(userEmail);
-    print(widget.teamname);
-    print(memberNames[index]);
+    //print(userEmail);
+    //print(widget.teamname);
+    //print(memberNames[index]);
         FirebaseFirestore.instance
             .collection("Teams")
             .doc(userEmail)
