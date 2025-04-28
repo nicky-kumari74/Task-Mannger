@@ -114,11 +114,8 @@ class _PersonalTaskState extends State<PersonalTask> {
                                     child: Icon(Icons.delete, color: Colors.white),
                                   ),
                                   confirmDismiss: (direction) async {
-                                    bool confirm = await _showDeleteConfirmationDialog(context, taskId);
-                                    if (confirm) {
-                                      _deleteTask(taskId);
-                                      return true;
-                                    }
+                                    bool confirm = await _showDeleteConfirmationDialog(context, taskId,"Delete Task");
+
                                     return false;
                                   },
                                   child: Container(
@@ -138,25 +135,34 @@ class _PersonalTaskState extends State<PersonalTask> {
                                           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                                           child: Row(
                                             children: [
-                                              Image.asset(
-                                                'lib/icons/time.png',
-                                                color: taskData['status'] == "pending" ? Colors.red : iconColor,
-                                                width: 20,
-                                                height: 15,
+                                              GestureDetector(
+                                              onTap: ()async{
+                                                bool confirm = await _showDeleteConfirmationDialog(context, taskId,"Completed");
+                                                //return false;
+                                              },
+                                                child: Image.asset(
+                                                  'lib/icons/time.png',
+                                                  color: taskData['status'] == "pending" ? Colors.red : iconColor,
+                                                  width: 20,
+                                                  height: 15,
+                                                ),
                                               ),
                                               const SizedBox(width: 12),
                                               Expanded(
                                                 //width: 100,
-                                                child: Container(
-                                                  height: 20,
-                                                  child: Text(
-                                                      taskData['Task Name'],
-                                                      //getFirstTwoWords(taskData['Task Name'] ?? ''),
-                                                      style: TextStyle(
-                                                        color: bgcolor,
-                                                        fontSize: 16,
+                                                child: GestureDetector(
+                                                  onTap: (){TaskDetails(taskData['Task Name'],taskId);},
+                                                  child: Container(
+                                                    height: 20,
+                                                    child: Text(
+                                                        taskData['Task Name'],
+                                                        //getFirstTwoWords(taskData['Task Name'] ?? ''),
+                                                        style: TextStyle(
+                                                          color: bgcolor,
+                                                          fontSize: 16,
+                                                        ),
                                                       ),
-                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                               GestureDetector(
@@ -399,24 +405,34 @@ class _PersonalTaskState extends State<PersonalTask> {
     }
   }
 
-  Future<bool> _showDeleteConfirmationDialog(BuildContext context,String taskId) async {
+  Future<bool> _showDeleteConfirmationDialog(BuildContext context,String taskId,String title) async {
     return await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Delete Task"),
-        content: Text("Are you sure you want to delete this task?"),
+      builder: (context) => AlertDialog(backgroundColor: inputBoxbgColor,
+        title: Row(
+          children: [
+            Text(title,style: TextStyle(color: txtcolor),),
+            Container(width: 20,),
+            title=="Completed"?Image.asset(
+              'lib/icons/checkmark.png',
+              color:  Colors.green,
+              width: 25,
+              height: 25,
+            ) :Icon(Icons.delete, color: Colors.red, size: 25)
+          ],
+        ),
+        content: Text(title=="Completed"?"Do you want to mark this task as completed?":"Are you sure you want to delete this task?",style: TextStyle(color: txtcolor,fontSize: 15),),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text("Cancel"),
+            child: Text("Cancel",style: TextStyle(color: btncolor),),
           ),
           TextButton(
             onPressed: () {
               _deleteTask(taskId);
               Navigator.pop(context, false);
               },
-            child: Text("Delete", style: TextStyle(color: Colors.red)),
-          ),
+            child: Text(title=="Completed"?"Yes":"Delete", style: TextStyle(color: btncolor))),
         ],
       ),
     ) ??
@@ -522,5 +538,51 @@ class _PersonalTaskState extends State<PersonalTask> {
 
       );
     });
+  }
+
+  void TaskDetails(String taskData,String taskId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Container(width: 150,),
+              //Text("Task Name",style: TextStyle(color: btncolor,fontWeight: FontWeight.w400),),
+              Image.asset(
+                'lib/icons/time.png',
+                color: btncolor,
+                width: 23,
+                height: 20,
+              ),
+              Container(width: 20,),
+              GestureDetector(
+                  onTap: (){UpdateTask(taskId,taskData);},
+                  child: Icon(Icons.edit_note, color: btncolor, size: 30)),
+            ],
+          ),backgroundColor: inputBoxbgColor,
+          content: RichText(
+            text: TextSpan(
+              style: TextStyle(fontSize: 18),
+              children: [
+                TextSpan(text: 'Task Name:\n\n',style: TextStyle(color: txtcolor,fontWeight: FontWeight.bold)),
+                TextSpan(
+                  text: '${taskData ?? "No Task"} ',
+                  style: TextStyle(color: textColor2),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("OK",style: TextStyle(color: btncolor,fontSize: 18),),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

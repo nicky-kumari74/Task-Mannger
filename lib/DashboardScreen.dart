@@ -115,7 +115,7 @@ class _DashboardState extends State<Dashboard> {
               Container(
                 height: 115,
                 color: bgcolor,
-                padding: EdgeInsets.only(top: 60,bottom: 10),
+                padding: EdgeInsets.only(top: 30,bottom: 10),
                 child: Row(
                   children: [
                     /// 🟡 Drawer Icon
