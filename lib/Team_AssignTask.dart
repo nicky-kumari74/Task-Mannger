@@ -7,8 +7,8 @@ import 'package:taskmanager/ShowTeamDetails.dart';
 
 class AssignTask extends StatefulWidget {
   final List<String> memberNames;
-
-  const AssignTask({Key? key, required this.memberNames}) : super(key: key);
+  final orgName;
+  AssignTask(this.memberNames,this.orgName);
 
   @override
   State<AssignTask> createState() => _AssignTaskState();
@@ -234,7 +234,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
           );
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TeamDetails(teamName)),
+            MaterialPageRoute(builder: (context) => TeamDetails(teamName,widget.orgName)),
           );
         }).catchError((error) {
           print("Failed to add user: $error");

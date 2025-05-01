@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 //import "package:mailer/mailer.dart";
 //import 'package:mailer/smtp_server.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +12,8 @@ import 'package:taskmanager/ShowTeamDetails.dart';
 import 'package:taskmanager/TeamMembersScreen.dart';
 import 'package:taskmanager/testingfirebase.dart';
 
+import 'package:taskmanager/CreateOrg.dart';
+
 class TeamTask extends StatefulWidget{
   @override
   State<TeamTask> createState() => _TeamTaskState();
@@ -18,10 +21,10 @@ class TeamTask extends StatefulWidget{
 
 class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin {
   String? orgName;
+  String? org_id;
   List<String> teamNames = [];
   List<String> teamnm = [];
   bool isLoading = true;
-
   //final Future<List<Map<String, dynamic>>> _teamsFuture = TeamService.fetchTeamsAndMembers();
 
   //TextEditingController organizationController = TextEditingController();
@@ -29,18 +32,34 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     loadOrgName();
-    fetchTeamNames();
-    //showorganizationDialogbox();
+    //fetchTeamNames();
+
   }
   Future<void> loadOrgName() async {
+    //final shareprefs = await SharedPreferences.getInstance();
     final shareprefs = await SharedPreferences.getInstance();
-    //orgName = shareprefs.getString('organizationName');
+    String? email=shareprefs.getString("email");
+    final teamref=FirebaseFirestore.instance.collection('Personal Task').doc(email).collection("organization");
+    final snapshot = await teamref.get();
+    if (snapshot.docs.isEmpty) {
+      print('No teams found for: $email');
+    } else {
+      for (var doc in snapshot.docs) {
+        print('Team ID: ${doc.id}');
+        final data= doc.data();
+        print(data['org_id']);
+        setState(() {
+          orgName=doc.id;
+          org_id=data['org_id'];
+        });
 
-    setState(() {
-      orgName = shareprefs.getString('organizationName');
-    });
+    }
+
+      await Future.delayed(Duration(milliseconds: 100));
+      fetchTeamNames();
+    }
     if (orgName == null) {
-      showorganizationDialogbox();
+      //showorganizationDialogbox();
     }
   }
 
@@ -104,8 +123,6 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   }
   Future<void> fetchPersonalTeam() async{
     final String? userEmail = FirebaseAuth.instance.currentUser?.email;
-    final shareprefs = await SharedPreferences.getInstance();
-    orgName = shareprefs.getString('organizationName');
     try{
       final teamref=FirebaseFirestore.instance.collection('Personal Task').doc(userEmail).collection(orgName!);
       final snapshot = await teamref.get();
@@ -126,14 +143,15 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       }
 
     }catch (e) {
-      print('Error fetching teams: $e');
-      isLoading = false;
+      print('Error fetching teams2: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
   Future<void> fetchTeamNames() async {
     final String? userEmail = FirebaseAuth.instance.currentUser?.email;
-    final shareprefs = await SharedPreferences.getInstance();
-    orgName = shareprefs.getString('organizationName');
+
     try {
       final teamRef = FirebaseFirestore.instance
           .collection('Team Task')
@@ -143,7 +161,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       final snapshot = await teamRef.get();
 
       if (snapshot.docs.isEmpty) {
-        print('No teams found for: $userEmail');
+        print('No teams found for2: $userEmail');
       } else {
         for (var doc in snapshot.docs) {
           print('Team ID: ${doc.id}');
@@ -180,9 +198,36 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
           // If orgName is null, show a message
           orgName == null
               ? Center(
-            child: Text(
-              "No organizations yet.",
-              style: TextStyle(color: txtcolor),
+            child: Column(
+              children: [
+                Text(
+                  "No organizations yet.\n",
+                  style: TextStyle(color: txtcolor),
+                ),
+                Row(
+                  children: [
+                    Container(width: 60,),
+                    Text(
+                      "To create organizations  ",style: TextStyle(color: txtcolor),),
+                    GestureDetector(
+                      onTap:(){ CreateOrg.showCustomAlertDialog(context: context);},
+                      child: Text(
+                        "click here",style: TextStyle(color:btncolor,fontWeight: FontWeight.bold),),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Container(width: 60,),
+                    Text(
+                      "To join organizations  ",
+                      style: TextStyle(color: txtcolor),
+                    ),
+                    Text(
+                      "click here",style: TextStyle(color:btncolor,fontWeight: FontWeight.bold),),
+                  ],
+                ),
+              ],
             ),
           )
               : Padding(
@@ -195,7 +240,15 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                   child: Column(
                     children: [
                       Container(height: 10,),
-                      Text("$orgName",style: TextStyle(color: btncolor,fontWeight: FontWeight.bold,fontSize: 20),),
+                      Row(
+                        children: [
+                          Container(width: 120,),
+                          Text("$orgName",style: TextStyle(color: btncolor,fontWeight: FontWeight.bold,fontSize: 22),),
+                          Container(width: 70,),
+                          GestureDetector(onTap:(){ shareCode();},
+                              child: Icon(Icons.share,color: btncolor,size: 30,))
+                        ],
+                      ),
                       Container(height: 5,),
                       Text("Teams Found for $orgName organization",style: TextStyle(color: textColor2,fontSize: 15),),
                       isLoading
@@ -213,7 +266,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                                                         child:InkWell(
                                                       onTap: (){
                                                         Navigator.push(context,
-                                                        MaterialPageRoute(builder: (context)=>TeamDetails(teamNames[index]))
+                                                        MaterialPageRoute(builder: (context)=>TeamDetails(teamNames[index],orgName!))
                                                         );
                                                       },
                                                         child: Card(
@@ -256,7 +309,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
           ),
         ],
       ),
-      floatingActionButton: SizedBox(
+      floatingActionButton: orgName==null? SizedBox():SizedBox(
         width: 120,
         height: 40, // desired height
         child: FloatingActionButton.extended(
@@ -279,6 +332,14 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       ),
     );
 
+  }
+
+  void shareCode() {
+    String playStoreLink =
+        'https://play.google.com/store/apps/details?id=com.example.yourapp';
+    String message =
+        'Join our organization "${orgName}" using this code: "$org_id" \n Download the app: $playStoreLink';
+    Share.share(message);
   }
 }
 

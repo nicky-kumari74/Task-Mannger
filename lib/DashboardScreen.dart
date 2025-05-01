@@ -78,6 +78,16 @@ class _DashboardState extends State<Dashboard> {
                   onTap: () => print('Join Team tapped'),
                 ),
                 ListTile(
+                  leading: Icon(Icons.group,color: txtcolor,),
+                  title: Text('Join Organization',style: TextStyle(color: txtcolor)),
+                  onTap: () => print('Join Team tapped'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.group,color: txtcolor,),
+                  title: Text('Create Organization',style: TextStyle(color: txtcolor)),
+                  onTap: () => print('Join Team tapped'),
+                ),
+                ListTile(
                   leading: Icon(Icons.help,color: txtcolor,),
                   title: Text('Help',style: TextStyle(color: txtcolor)),
                   onTap: () => print('Help tapped'),

@@ -10,7 +10,8 @@ import 'package:taskmanager/Team_AssignTask.dart';
 
 class TeamDetails extends StatefulWidget{
   String teamname;
-  TeamDetails(this.teamname);
+  String orgName;
+  TeamDetails(this.teamname,this.orgName);
 
   @override
   State<TeamDetails> createState() => _TeamDetailsState();
@@ -200,7 +201,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
             memberNames.add(widget.teamname);
             Navigator.push(context,
                 MaterialPageRoute(
-                  builder: (context) => AssignTask(memberNames: memberNames),));
+                  builder: (context) => AssignTask(memberNames,widget.orgName),));
           },
           backgroundColor: btncolor,
           icon: Icon(Icons.add, color: bgcolor, size: 20), // smaller icon
@@ -356,7 +357,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   void fetchMemberEmail() async {
     final shareprefs = await SharedPreferences.getInstance();
     String? email = shareprefs.getString('email');
-    String? orgName = shareprefs.getString('organizationName');
+
     //print(email);
     List<Map<String, dynamic>> tempList = [];
     try {
@@ -370,7 +371,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
       if (snapshot.docs.isEmpty) {
         //print('No teams found for: $userEmail');
         final teamref = FirebaseFirestore.instance.collection('Personal Task')
-            .doc(userEmail).collection(orgName!)
+            .doc(userEmail).collection(widget.orgName)
             .doc(widget.teamname);
         final snapshot1 = await teamref.get();
         if (snapshot1.exists) {
