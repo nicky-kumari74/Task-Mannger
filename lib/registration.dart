@@ -266,7 +266,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         });
         /*var sharepref = await SharedPreferences.getInstance();
         sharepref.setString("name", Name.text.trim());*/
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => LoginScreen()),
         );

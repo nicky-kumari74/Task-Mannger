@@ -232,7 +232,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Task Assigned Successfully!")),
           );
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => TeamDetails(teamName,widget.orgName)),
           );

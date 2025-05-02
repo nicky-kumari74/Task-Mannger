@@ -278,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await sharepref.setBool("login", true);
         await sharepref.setString("email", email);
         await sharepref.setString("name", doc['name']);
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Dashboard()),
         );

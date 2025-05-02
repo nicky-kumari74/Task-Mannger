@@ -55,12 +55,8 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
         });
 
     }
-
       await Future.delayed(Duration(milliseconds: 100));
       fetchTeamNames();
-    }
-    if (orgName == null) {
-      //showorganizationDialogbox();
     }
   }
 
@@ -130,6 +126,9 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
 
       if (snapshot.docs.isEmpty) {
         print('No teams found for: $userEmail');
+        setState(() {
+          isLoading=false;
+        });
       } else {
         for (var doc in snapshot.docs) {
           //print('Team ID: ${doc.id}');
@@ -162,19 +161,14 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       final snapshot = await teamRef.get();
 
       if (snapshot.docs.isEmpty) {
-        print('No teams found for2: $userEmail');
+        print('No teams found for: $userEmail');
       } else {
         for (var doc in snapshot.docs) {
-          print('Team ID: ${doc.id}');
+          //print('Team ID: ${doc.id}');
           teamnm.add(doc.id);
           //print('Data: ${doc.data()}');
         }
       }
-      /*setState(() {
-        teamNames=teamnm;
-        print("teams $teamNames");
-        isLoading = false;
-      });*/
       fetchPersonalTeam();
     } catch (e) {
       print('Error fetching teams: $e');
@@ -321,8 +315,8 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
         ],
       ),
       floatingActionButton: orgName==null? SizedBox():SizedBox(
-        width: 120,
-        height: 40, // desired height
+        width: 135,
+        height: 50, // desired height
         child: FloatingActionButton.extended(
           onPressed: () {
             Navigator.push(
@@ -334,10 +328,10 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
             //handleAddOrganization();
           },
           backgroundColor: btncolor,
-          icon: Icon(Icons.add, color: bgcolor, size: 20), // smaller icon
+          icon: Icon(Icons.add, color: bgcolor, size: 25), // smaller icon
           label: Text(
-            'Add Team',
-            style: TextStyle(color: bgcolor, fontSize: 15), // smaller text
+            'Create Team  ',
+            style: TextStyle(color: bgcolor, fontSize: 17), // smaller text
           ),
         ),
       ),

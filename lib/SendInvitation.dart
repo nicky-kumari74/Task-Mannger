@@ -134,13 +134,13 @@ class _sendInvitationState extends State<sendInvitation> {
         appBar: AppBar(
           backgroundColor: bgcolor,
           toolbarHeight: 70,
-          title: Text('Send Invitation', style: TextStyle(color: txtcolor,),),
+          title: Text('Create Team', style: TextStyle(color: txtcolor,),),
           iconTheme: IconThemeData(color: txtcolor),
         ),
 
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(19),
+            padding: const EdgeInsets.all(40),
             child: Column(
               children: [
                 Expanded(
@@ -160,8 +160,12 @@ class _sendInvitationState extends State<sendInvitation> {
                               ),
                               //border: OutlineInputBorder(),
                               focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: btncolor)
-                              )
+                                  borderSide: BorderSide(color: btncolor),
+                                borderRadius: BorderRadius.circular(10)
+                              ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)
+                            )
                           ),
                         ),
                         SizedBox(height: 39,),
@@ -183,8 +187,10 @@ class _sendInvitationState extends State<sendInvitation> {
                                       border: OutlineInputBorder(
                                       ),
                                       focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: btncolor)
+                                          borderSide: BorderSide(color: btncolor)
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(10)
                                       )
                                   ),
                                   keyboardType: TextInputType.emailAddress,
@@ -206,7 +212,7 @@ class _sendInvitationState extends State<sendInvitation> {
                                   style: TextStyle(color: btncolor),))
                         ),
 
-                        SizedBox(height: 160,),
+                        SizedBox(height: 50,),
                         _isLoading
                             ? CircularProgressIndicator(color: btncolor)
                             : ElevatedButton(onPressed: () {
@@ -215,11 +221,11 @@ class _sendInvitationState extends State<sendInvitation> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: btncolor,
                             padding: EdgeInsets.symmetric(
-                                vertical: 16, horizontal: 31),
-                            textStyle: TextStyle(fontSize: 18),
+                                vertical: 12, horizontal: 70),
+                            textStyle: TextStyle(fontSize: 20),
                           ),
-                          child: Text("Send Invitation",
-                            style: TextStyle(color: txtcolor),),
+                          child: Text("Create",
+                            style: TextStyle(color: bgcolor,fontWeight: FontWeight.w500),),
                         )
                       ],
                     ),

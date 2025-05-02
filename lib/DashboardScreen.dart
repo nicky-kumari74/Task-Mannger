@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,6 +6,7 @@ import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/CreateOrg.dart';
 import 'package:taskmanager/JoinOrg.dart';
 import 'package:taskmanager/PersonalScreen.dart';
+import 'package:taskmanager/SendInvitation.dart';
 import 'package:taskmanager/TeamScreen.dart';
 
 import 'package:taskmanager/loginScreen.dart';
@@ -24,7 +26,6 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _loadUserData() async {
-    print("hello 1");
     var sharepref= await SharedPreferences.getInstance();
     setState(() {
       userName = sharepref.getString("name")?? "loading..."; // Default name
@@ -72,7 +73,26 @@ class _DashboardState extends State<Dashboard> {
                 ListTile(
                   leading: Icon(Icons.group_add,color: txtcolor,),
                   title: Text('Create Team',style: TextStyle(color: txtcolor),),
-                  onTap: () => print('Create Team tapped'),
+                  onTap: () async {
+                    final teamref = FirebaseFirestore.instance.collection(
+                        'Personal Task').doc(userEmail).collection(
+                        "organization");
+                    final snapshot = await teamref.get();
+                    if (snapshot.docs.isEmpty) {
+                      print('No teams found for: $userEmail');
+                    }
+                    else {
+                      var orgName;
+                      for (var doc in snapshot.docs) {
+                        orgName = doc.id;
+                      }
+                      print(orgName);
+                      Navigator.push(context,
+                        MaterialPageRoute(
+                          builder: (context) => sendInvitation(orgName: orgName ?? "njk"),),
+                      );
+                    }
+                  }
                 ),
                 ListTile(
                   leading: Icon(Icons.group,color: txtcolor,),
