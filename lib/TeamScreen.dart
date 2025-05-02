@@ -266,42 +266,42 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                                                     itemCount: teamNames.length,
                                                     itemBuilder: (context, index) {
                                                       return Container(
-                                                        height: 50, // increase height to fit extra text
-                                                        margin: EdgeInsets.only(left: 25,right: 25,top: 10),
-                                                        child:InkWell(
-                                                      onTap: (){
-                                                        Navigator.push(context,
-                                                        MaterialPageRoute(builder: (context)=>TeamDetails(teamNames[index],orgName!))
-                                                        );
-                                                      },
-                                                        child: Card(
-                                                          color: cardbg,
-                                                          elevation: 5,
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                                            child: Column(
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Icon(Icons.group, color: Colors.black54),
-                                                                    SizedBox(width: 10),
-                                                                    Expanded(
-                                                                      child: Text(
-                                                                        teamNames[index],
-                                                                        style: TextStyle(color: bgcolor, fontSize: 16),
+                                                          height: 50, // increase height to fit extra text
+                                                          margin: EdgeInsets.only(left: 25,right: 25,top: 10),
+                                                          child:InkWell(
+                                                        onTap: (){
+                                                          Navigator.push(context,
+                                                          MaterialPageRoute(builder: (context)=>TeamDetails(teamNames[index],orgName!))
+                                                          );
+                                                        },
+                                                          child: Card(
+                                                            color: cardbg,
+                                                            elevation: 5,
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                                              child: Column(
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      Icon(Icons.group, color: Colors.black54),
+                                                                      SizedBox(width: 10),
+                                                                      Expanded(
+                                                                        child: Text(
+                                                                          teamNames[index],
+                                                                          style: TextStyle(color: bgcolor, fontSize: 16),
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                    Icon(Icons.arrow_forward_ios, color: bgcolor, size: 15),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(height: 1),
+                                                                      Icon(Icons.arrow_forward_ios, color: bgcolor, size: 15),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(height: 1),
 
-                                                              ],
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                        )
-                                                      );
+                                                          )
+                                                        );
 
                                                     },
                                                   ),
@@ -314,24 +314,23 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
           ),
         ],
       ),
-      floatingActionButton: orgName==null? SizedBox():SizedBox(
-        width: 135,
-        height: 50, // desired height
+      floatingActionButton: orgName==null? SizedBox():
+      SizedBox(
+        width: 155,
+        height: 45, // desired height
         child: FloatingActionButton.extended(
           onPressed: () {
-            Navigator.push(
-              context,
+            Navigator.push(context,
               MaterialPageRoute(
                 builder: (context) => sendInvitation(orgName: orgName ?? "njk"),
               ),
             );
-            //handleAddOrganization();
           },
           backgroundColor: btncolor,
           icon: Icon(Icons.add, color: bgcolor, size: 25), // smaller icon
           label: Text(
             'Create Team  ',
-            style: TextStyle(color: bgcolor, fontSize: 17), // smaller text
+            style: TextStyle(color: bgcolor, fontSize: 18), // smaller text
           ),
         ),
       ),

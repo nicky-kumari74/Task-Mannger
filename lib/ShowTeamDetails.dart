@@ -68,120 +68,134 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                 ListView.builder(
                     itemCount: memberNames.length,
                     itemBuilder: (context, index) {
-                      return Card(
-                        color: inputBoxbgColor,
-                        elevation: 4,
-                        margin: EdgeInsets.symmetric(vertical: 8),
-                        child: Stack(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  remarkDialogueBox(index);
-                                },
-                                child: Column(
-                                  children: [
-                                    ListTile(
-                                      leading: Icon(
-                                        Icons.person, color: btncolor,),
-                                      title: Text(
-                                        memberNames[index] == userEmail
-                                            ? "You"
-                                            : memberNames[index],
-                                        style: TextStyle(color: btncolor,
-                                            fontWeight: FontWeight.w500),),
-                                    ),
-                                    allMemberData[index]['Task Name'] == null
-                                        ? Text("Task Not Assigned",
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 15),)
-                                        : Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 40),
-                                          child: Row(
-                                            children: [
-                                              Image.asset(
-                                                'lib/icons/clipboard.png',
-                                                width: 30,
-                                                height: 20,
-                                                color: textColor2,),
-                                              Text(
-                                                "${allMemberData[index]['Task Name']}",
-                                                style: TextStyle(
-                                                    color: txtcolor,
-                                                    fontSize: 15),),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(height: 10,),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 45),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.timer, color: textColor2,
-                                                size: 20,),
-                                              Text(
-                                                "${allMemberData[index]['Due date']}",
-                                                style: TextStyle(
-                                                    color: txtcolor,
-                                                    fontSize: 15),),
-                                            ],
-                                          ),
-                                        ),
-                                        //if(allMemberData[index]['Remark']!=null)Text("Task ${allMemberData[index]['Remark']}",style: TextStyle(color: txtcolor,fontSize: 15),),
-                                      ],
-                                    ),
-                                    Container(height: 20,)
-                                  ],
-                                ),
-                              ),
-                              Positioned(
-                                //top: 1,
-                                right: 1,
-                                child: allMemberData[index]['Status'] ==
-                                    'Pending'
-                                    ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        btncolor),
-                                    // Red color for the pending animation
-                                    strokeWidth: 3,
-                                    // Width of the spinner
-                                    semanticsLabel: 'Pending Task',
-                                    backgroundColor: Colors
-                                        .transparent, // To make the background transparent
-                                  ),
-                                )
-                                    : SizedBox
-                                    .shrink(), // If no pending, show nothing
-                              ),
-                              cremail != null && cremail != userEmail ? SizedBox
-                                  .shrink()
-                                  : Positioned(
-                                top: 1,
-                                right: 30,
-                                child: allMemberData[index]['Status'] ==
-                                    'Pending'
-                                    ? GestureDetector(
+                      return Dismissible(
+                        key: Key(memberNames[index]),
+                        direction: DismissDirection.endToStart,
+                        background: isDataLoaded==false?SizedBox(): cremail != null && cremail != userEmail ?SizedBox():
+                        Container(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Icon(Icons.delete, color: Colors.white),
+                        ),
+                        confirmDismiss: (direction) async {
+                          bool confirm = isDataLoaded==false?SizedBox(): cremail != null && cremail != userEmail ?null:await _showDeleteConfirmationDialog(context, memberNames[index]);
+                          return false;
+                        },
+                        child: Card(
+                          color: inputBoxbgColor,
+                          elevation: 4,
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          child: Stack(
+                              children: [
+                                GestureDetector(
                                   onTap: () {
-                                    EditTaskDialoguebox(index);
+                                    remarkDialogueBox(index);
                                   },
-                                  child: Icon(
-                                    Icons.edit_note,
-                                    size: 30,
-                                    color: btncolor,
-                                    semanticLabel: 'Edit Task',
+                                  child: Column(
+                                    children: [
+                                      ListTile(
+                                        leading: Icon(
+                                          Icons.person, color: btncolor,),
+                                        title: Text(
+                                          memberNames[index] == userEmail
+                                              ? "You"
+                                              : memberNames[index],
+                                          style: TextStyle(color: btncolor,
+                                              fontWeight: FontWeight.w500),),
+                                      ),
+                                      allMemberData[index]['Task Name'] == null
+                                          ? Text("Task Not Assigned",
+                                        style: TextStyle(
+                                            color: Colors.red, fontSize: 15),)
+                                          : Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 40),
+                                            child: Row(
+                                              children: [
+                                                Image.asset(
+                                                  'lib/icons/clipboard.png',
+                                                  width: 30,
+                                                  height: 20,
+                                                  color: textColor2,),
+                                                Text(
+                                                  "${allMemberData[index]['Task Name']}",
+                                                  style: TextStyle(
+                                                      color: txtcolor,
+                                                      fontSize: 15),),
+                                              ],
+                                            ),
+                                          ),
+                                          Container(height: 10,),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 45),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.timer, color: textColor2,
+                                                  size: 20,),
+                                                Text(
+                                                  "${allMemberData[index]['Due date']}",
+                                                  style: TextStyle(
+                                                      color: txtcolor,
+                                                      fontSize: 15),),
+                                              ],
+                                            ),
+                                          ),
+                                          //if(allMemberData[index]['Remark']!=null)Text("Task ${allMemberData[index]['Remark']}",style: TextStyle(color: txtcolor,fontSize: 15),),
+                                        ],
+                                      ),
+                                      Container(height: 20,)
+                                    ],
                                   ),
-                                )
-                                    : SizedBox
-                                    .shrink(), // If no pending, show nothing
-                              ),
-                            ]
+                                ),
+                                Positioned(
+                                  //top: 1,
+                                  right: 1,
+                                  child: allMemberData[index]['Status'] ==
+                                      'Pending'
+                                      ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          btncolor),
+                                      // Red color for the pending animation
+                                      strokeWidth: 3,
+                                      // Width of the spinner
+                                      semanticsLabel: 'Pending Task',
+                                      backgroundColor: Colors
+                                          .transparent, // To make the background transparent
+                                    ),
+                                  )
+                                      : SizedBox
+                                      .shrink(), // If no pending, show nothing
+                                ),
+                                cremail != null && cremail != userEmail ? SizedBox
+                                    .shrink()
+                                    : Positioned(
+                                  top: 1,
+                                  right: 30,
+                                  child: allMemberData[index]['Status'] ==
+                                      'Pending'
+                                      ? GestureDetector(
+                                    onTap: () {
+                                      EditTaskDialoguebox(index);
+                                    },
+                                    child: Icon(
+                                      Icons.edit_note,
+                                      size: 30,
+                                      color: btncolor,
+                                      semanticLabel: 'Edit Task',
+                                    ),
+                                  )
+                                      : SizedBox
+                                      .shrink(), // If no pending, show nothing
+                                ),
+                              ]
+                          ),
                         ),
                       );
                     }
@@ -199,7 +213,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
           onPressed: () {
             //handleAddOrganization();
             memberNames.add(widget.teamname);
-            Navigator.push(context,
+            Navigator.pushReplacement(context,
                 MaterialPageRoute(
                   builder: (context) => AssignTask(memberNames,widget.orgName),));
           },
@@ -467,9 +481,6 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   }
 
   updateTask(int index) {
-    //print(userEmail);
-    //print(widget.teamname);
-    //print(memberNames[index]);
         FirebaseFirestore.instance
             .collection("Teams")
             .doc(userEmail)
@@ -552,11 +563,9 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                                   .collection('Members').doc(emailcontroller.text.trim()).set({
                                 "Created At": FieldValue.serverTimestamp(),
                               }, SetOptions(merge: true));
-                              final shareprefs = await SharedPreferences.getInstance();
-                              final orgName = shareprefs.getString('organizationName');
-                              final personRef=FirebaseFirestore.instance.collection('Personal Task').doc(emailcontroller.text.trim()).collection(orgName!).doc(widget.teamname).set({
+                              final personRef=FirebaseFirestore.instance.collection('Personal Task').doc(emailcontroller.text.trim()).collection(widget.orgName).doc(widget.teamname).set({
                                 "creator email":userEmail
-                              },SetOptions(merge:true));;
+                              },SetOptions(merge:true));
                               fetchMemberEmail();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("Member added successfully!")),
@@ -581,5 +590,40 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
             ),
           ),
     );
+  }
+
+  _showDeleteConfirmationDialog(BuildContext context, String memberNam) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(backgroundColor: inputBoxbgColor,
+        title: Row(
+          children: [
+            Text("Delete Member",style: TextStyle(color: txtcolor),),
+            Container(width: 20,),
+            Icon(Icons.delete, color: Colors.red, size: 25)
+          ],
+        ),
+        content: Text("Do you want to delete member - $memberNam?",style: TextStyle(color: txtcolor,fontSize: 15),),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text("Cancel",style: TextStyle(color: btncolor),),
+          ),
+          TextButton(
+              onPressed: () {
+                FirebaseFirestore.instance.collection("Teams").doc(userEmail).collection("team name").
+                doc(widget.teamname).collection("Members").doc(memberNam).delete().then((_){
+                  print("deleted successfully");
+                  fetchMemberEmail();
+                }).catchError((error) {
+                  print("Failed to delete task: $error");
+                });
+                Navigator.pop(context, false);
+              },
+              child: Text("Delete", style: TextStyle(color: btncolor))),
+        ],
+      ),
+    ) ??
+        false;
   }
 }

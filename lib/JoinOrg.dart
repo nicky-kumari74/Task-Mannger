@@ -9,27 +9,39 @@ class JoinOrg{
     required BuildContext context,
   }) {
     var orgid=TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+    final ValueNotifier<String?> errorText = ValueNotifier<String?>(null);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(backgroundColor: inputBoxbgColor,
           title: Text("Join Organization\n",style: TextStyle(color: btncolor),),
-          content: TextField(
-            controller: orgid,
-            style: TextStyle(color: txtcolor),
-            decoration: InputDecoration(
-              fillColor: inputBoxbgColor,
-              labelText: "Enter organization code",
-              labelStyle: TextStyle(color: txtcolor,),
-              focusedBorder: OutlineInputBorder(                             // When user clicked on it then the color of border will change
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color:txtcolor, width: 2)
-              ),
-              enabledBorder: OutlineInputBorder(                             // Default border color when login page will open.
-                  borderSide: BorderSide(color: textColor2, width: 2),   // Change color for better experience
-                  borderRadius: BorderRadius.circular(10)
-              ),
-              border: OutlineInputBorder(),
+          content: Form(
+            key: _formKey,
+            child: ValueListenableBuilder<String?>(
+              valueListenable: errorText,
+              builder: (context, error, child) {
+                return TextFormField(
+                  controller: orgid,
+                  style: TextStyle(color: txtcolor),
+                  decoration: InputDecoration(
+                    fillColor: inputBoxbgColor,
+                    labelText: "Enter organization code",
+                    labelStyle: TextStyle(color: txtcolor),
+                    errorText: error,
+                    errorStyle: TextStyle(fontSize: 17),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: txtcolor, width: 2),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: textColor2, width: 2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                );
+              },
             ),
           ),
           actions: [
@@ -60,6 +72,7 @@ class JoinOrg{
                     Navigator.of(context).pop();
                   } else {
                     print('Document not found');
+                    errorText.value="Invalid Organization code";
                   }
                 }
               },

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/DashboardScreen.dart';
+import 'package:taskmanager/FirebaseServices.dart';
 import 'package:taskmanager/loginScreen.dart';
 import 'package:taskmanager/main.dart';
 
@@ -52,7 +53,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               Text("Create your account",style: TextStyle(color: textColor2,fontSize: 25,fontWeight: FontWeight.w400),),
               SizedBox(height: 40,),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
+                padding: const EdgeInsets.only(left: 35,right: 35),
                 child: TextField(
                   style: TextStyle(color: txtcolor),
                   controller: Name,
@@ -79,7 +80,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
               SizedBox(height: 20,),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
+                padding: const EdgeInsets.only(left: 35,right: 35),
                 child: TextField(
                   controller: Email,
                   keyboardType: TextInputType.emailAddress,
@@ -106,7 +107,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
               SizedBox(height: 20,),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
+                padding: const EdgeInsets.only(left: 35,right: 35),
                 child: TextField(
                   obscureText:_isObscure,
                   controller: Password,
@@ -148,10 +149,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 onPressed: _register,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: btncolor,
-                  padding: EdgeInsets.symmetric(horizontal: 90, vertical: 11),
+                  padding: EdgeInsets.symmetric(horizontal: 110, vertical: 11),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                child: Text('Sign Up', style: TextStyle(fontSize: 19, color: Colors.white)),
+                child: Text('Sign Up', style: TextStyle(fontSize: 19, color: bgcolor)),
               ),
 
               SizedBox(height: 50,),
@@ -161,20 +162,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: Row(
                     children:
                     [
-                      /*Container(
-                    height: 2,
-                     color: iconColor,
-                     margin: EdgeInsets.only(left: 1, right: 3),
-                     padding: EdgeInsets.only(left: 130),
-                   ),*/
                       Center(
-                          child: Text('___________ or continue with ___________ ', style: TextStyle(fontSize: 15,color: iconColor),)),
-                      /*Container(
-                     height: 2,
-                     color: iconColor,   // Color of horizontal lines
-                     margin: EdgeInsets.symmetric(horizontal: 5),  // Horizontally shift the line from left to right.
-                     padding: EdgeInsets.only(right: 177),
-                   ),*/
+                          child: Text('_________________ or _________________ ', style: TextStyle(fontSize: 15,color: iconColor),)),
                     ]
                 ),
               ),
@@ -184,25 +173,51 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                 children: [
 
-                  Container(
-                    margin: EdgeInsets.only(left: 90, top: 10),
-                    width: 70, height: 40,      // Same height width for square box.
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.transparent, width: 2),  // Border color and width, adjust for better experience.
-                      borderRadius: BorderRadius.circular(10), //optional, Rounded corner
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/google.png',),
-                          fit: BoxFit.fitHeight
+                  GestureDetector(
+                    onTap: () async {
+                      await FirebaseServices().signInwithGoogle();
+                      var name=FirebaseAuth.instance.currentUser!.displayName??'';
+                      var email=FirebaseAuth.instance.currentUser!.email??'';
+                      String docId = "users-${email.replaceAll('.', '-')}-data";
+                      await FirebaseFirestore.instance.collection('users').doc(docId).set({
+                        'name':name,
+                        'email': email,
+                        'createdAt': Timestamp.now(),
+                      });
+                      var sharepref= await SharedPreferences.getInstance();
+                      await sharepref.setBool("google", true);
+                      await sharepref.setBool("login", true);
+                      await sharepref.setString("email",email );
+                      await sharepref.setString("name", name);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(left: 40, top: 10),
+                      width: 275, height: 48,
+                      decoration: BoxDecoration(
+                        color: inputBoxbgColor,
+                        border: Border.all(color: Colors.transparent, width: 2),  // Border color and width, adjust for better experience.
+                        borderRadius: BorderRadius.circular(10), //optional, Rounded corner
                       ),
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(),));
-                      },
+                      child: Row(
+                        children: [
+                          SizedBox(width: 35),
+                          Image.asset(
+                            'assets/images/google.png',
+                            height: 28,
+                            width: 28,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Sign in with Google',
+                            style: TextStyle(fontSize: 17, color: txtcolor),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
-                  SizedBox(height: 20,),
+                  /*SizedBox(height: 20,),
                   Container(
                     margin: EdgeInsets.only(left:65, top:10),
                     width: 70, height: 50,  // Same height and wight for square box.
@@ -219,7 +234,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
                       },
                     ),
-                  ),
+                  ),*/
 
                   /*Container(
                     margin: EdgeInsets.only(left: 68, top: 10),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/CreateOrg.dart';
@@ -79,14 +80,14 @@ class _DashboardState extends State<Dashboard> {
                         "organization");
                     final snapshot = await teamref.get();
                     if (snapshot.docs.isEmpty) {
-                      print('No teams found for: $userEmail');
+                      print('Something went wrong');
+                      showDialogbox();
                     }
                     else {
                       var orgName;
                       for (var doc in snapshot.docs) {
                         orgName = doc.id;
                       }
-                      print(orgName);
                       Navigator.push(context,
                         MaterialPageRoute(
                           builder: (context) => sendInvitation(orgName: orgName ?? "njk"),),
@@ -126,10 +127,13 @@ class _DashboardState extends State<Dashboard> {
                     var prefs = await SharedPreferences.getInstance();
                     prefs.setBool("login", false);
                     prefs.remove("organizationName");
-                    Navigator.pushReplacement(
+                    prefs.remove("name");
+                    prefs.remove("email");
+                    signOut(context);
+                    /*Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => LoginScreen()),
-                    );
+                    );*/
                   },
                 ),
                 Divider(),
@@ -233,14 +237,27 @@ class _DashboardState extends State<Dashboard> {
 
   }
 
+  void showDialogbox() {
+    showDialog(context: context,
+        builder: (BuildContext context){
+      return AlertDialog(backgroundColor: inputBoxbgColor,
+        //title: Text("organization not created"),
+        content: Text("Please create or join organization to Make Team.....",style: TextStyle(color: txtcolor,fontSize: 20),),
+        actions: [
+          TextButton(
+              onPressed: (){Navigator.of(context).pop();},
+              child: Text("Ok",style: TextStyle(color: btncolor,fontSize: 20),))
+        ],
+      );
+        });
+  }
+
 }
 
 Future<void> signOut(BuildContext context) async {
   try {
-   // await GoogleSignIn().signIn(); // Sign out from Google
+    await GoogleSignIn().signIn(); // Sign out from Google
     await FirebaseAuth.instance.signOut(); // Sign out from Firebase
-
-    // Navigate to Login Screen
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
