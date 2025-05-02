@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/AddTeamTask.dart';
 import 'package:taskmanager/Colors.dart';
+import 'package:taskmanager/JoinOrg.dart';
 import 'package:taskmanager/SendInvitation.dart';
 import 'package:taskmanager/ShowTeamDetails.dart';
 import 'package:taskmanager/TeamMembersScreen.dart';
@@ -210,7 +211,10 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                     Text(
                       "To create organizations  ",style: TextStyle(color: txtcolor),),
                     GestureDetector(
-                      onTap:(){ CreateOrg.showCustomAlertDialog(context: context);},
+                      onTap:(){ CreateOrg.showCustomAlertDialog(context: context);
+                      setState(() {
+                      });
+                        },
                       child: Text(
                         "click here",style: TextStyle(color:btncolor,fontWeight: FontWeight.bold),),
                     ),
@@ -223,8 +227,15 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
                       "To join organizations  ",
                       style: TextStyle(color: txtcolor),
                     ),
-                    Text(
-                      "click here",style: TextStyle(color:btncolor,fontWeight: FontWeight.bold),),
+                    GestureDetector(
+                      onTap: (){
+                        JoinOrg.showCustomAlertDialog(context: context);
+                        setState(() {
+                        });
+                        },
+                      child: Text(
+                        "click here",style: TextStyle(color:btncolor,fontWeight: FontWeight.bold),),
+                    ),
                   ],
                 ),
               ],

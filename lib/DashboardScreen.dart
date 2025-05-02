@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
+import 'package:taskmanager/CreateOrg.dart';
+import 'package:taskmanager/JoinOrg.dart';
 import 'package:taskmanager/PersonalScreen.dart';
 import 'package:taskmanager/TeamScreen.dart';
 
@@ -80,12 +82,12 @@ class _DashboardState extends State<Dashboard> {
                 ListTile(
                   leading: Icon(Icons.group,color: txtcolor,),
                   title: Text('Join Organization',style: TextStyle(color: txtcolor)),
-                  onTap: () => print('Join Team tapped'),
+                  onTap: () => {JoinOrg.showCustomAlertDialog(context: context)},
                 ),
                 ListTile(
                   leading: Icon(Icons.group,color: txtcolor,),
                   title: Text('Create Organization',style: TextStyle(color: txtcolor)),
-                  onTap: () => print('Join Team tapped'),
+                  onTap: () => {CreateOrg.showCustomAlertDialog(context: context)},
                 ),
                 ListTile(
                   leading: Icon(Icons.help,color: txtcolor,),
