@@ -95,18 +95,18 @@ class _DashboardState extends State<Dashboard> {
                     }
                   }
                 ),
-                ListTile(
+                /*ListTile(
                   leading: Icon(Icons.group,color: txtcolor,),
                   title: Text('Join Team',style: TextStyle(color: txtcolor)),
                   onTap: () => print('Join Team tapped'),
-                ),
+                ),*/
                 ListTile(
-                  leading: Icon(Icons.group,color: txtcolor,),
+                  leading: Icon(Icons.apartment,color: txtcolor,),
                   title: Text('Join Organization',style: TextStyle(color: txtcolor)),
                   onTap: () => {JoinOrg.showCustomAlertDialog(context: context)},
                 ),
                 ListTile(
-                  leading: Icon(Icons.group,color: txtcolor,),
+                  leading: Icon(Icons.apartment,color: txtcolor,),
                   title: Text('Create Organization',style: TextStyle(color: txtcolor)),
                   onTap: () => {CreateOrg.showCustomAlertDialog(context: context)},
                 ),
@@ -256,8 +256,10 @@ class _DashboardState extends State<Dashboard> {
 
 Future<void> signOut(BuildContext context) async {
   try {
-    await GoogleSignIn().signIn(); // Sign out from Google
     await FirebaseAuth.instance.signOut(); // Sign out from Firebase
+    /*final googleSignIn = GoogleSignIn();
+    await googleSignIn.disconnect(); // Optional: to remove access completely
+    await googleSignIn.signOut();*/
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),

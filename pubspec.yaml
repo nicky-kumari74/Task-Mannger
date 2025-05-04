@@ -44,6 +44,7 @@ dependencies:
   mailer: ^6.4.1
   uuid: ^3.0.7
   share_plus: ^7.2.1
+  provider: ^6.1.5
 
 dev_dependencies:
   flutter_test:
