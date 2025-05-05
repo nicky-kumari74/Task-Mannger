@@ -251,11 +251,19 @@ class _DashboardState extends State<Dashboard> {
       );
         });
   }
-
 }
 
 Future<void> signOut(BuildContext context) async {
   try {
+    var sharepref= await SharedPreferences.getInstance();
+    var google=sharepref.getBool("google");
+    if(google==true){
+      sharepref.remove("google");
+      final googleSignIn = GoogleSignIn();
+      await googleSignIn.disconnect(); // Optional: to remove access completely
+      await googleSignIn.signOut();
+    }
+    else
     await FirebaseAuth.instance.signOut(); // Sign out from Firebase
     /*final googleSignIn = GoogleSignIn();
     await googleSignIn.disconnect(); // Optional: to remove access completely
