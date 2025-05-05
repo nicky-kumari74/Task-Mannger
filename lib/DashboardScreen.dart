@@ -48,32 +48,39 @@ class _DashboardState extends State<Dashboard> {
             color: inputBoxbgColor,
             child: Column(
               children: <Widget>[
-                UserAccountsDrawerHeader(
+                DrawerHeader(
                   decoration: BoxDecoration(
                     color: bgcolor, // ⚫ Set black background for account section
                   ),
-                  accountName: Text(
-                    userName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white, // White text on black
-                    ),
-                  ),
-                  accountEmail: Text(
-                    userEmail,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  currentAccountPicture: CircleAvatar(
+                  child:Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 35,
+                    backgroundColor: Colors.white,
                     child: Text(
                       userName.isNotEmpty ? userName[0].toUpperCase() : "N",
-                      style: TextStyle(fontSize: 25),
+                      style: TextStyle(fontSize: 25, color: bgcolor),
                     ),
-                    backgroundColor: Colors.white,
                   ),
-                ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Text(userName, style: TextStyle(fontWeight: FontWeight.bold, color: txtcolor,fontSize: 20),),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(userEmail, style: TextStyle(color: txtcolor,fontSize: 17),),
+                    ],
+                  ),
+                ],
+              ),
+            ),),
                 ListTile(
-                  leading: Icon(Icons.group_add,color: txtcolor,),
-                  title: Text('Create Team',style: TextStyle(color: txtcolor),),
+                  leading: Icon(Icons.group_add,color: btncolor,),
+                  title: Text('Create Team',style: TextStyle(color: btncolor),),
                   onTap: () async {
                     final teamref = FirebaseFirestore.instance.collection(
                         'Personal Task').doc(userEmail).collection(
@@ -81,7 +88,7 @@ class _DashboardState extends State<Dashboard> {
                     final snapshot = await teamref.get();
                     if (snapshot.docs.isEmpty) {
                       print('Something went wrong');
-                      showDialogbox();
+                      showDialogbox("Please create or join organization to Make Team.....");
                     }
                     else {
                       var orgName;
@@ -101,28 +108,28 @@ class _DashboardState extends State<Dashboard> {
                   onTap: () => print('Join Team tapped'),
                 ),*/
                 ListTile(
-                  leading: Icon(Icons.apartment,color: txtcolor,),
-                  title: Text('Join Organization',style: TextStyle(color: txtcolor)),
+                  leading: Icon(Icons.apartment,color: btncolor,),
+                  title: Text('Join Organization',style: TextStyle(color: btncolor)),
                   onTap: () => {JoinOrg.showCustomAlertDialog(context: context)},
                 ),
                 ListTile(
-                  leading: Icon(Icons.apartment,color: txtcolor,),
-                  title: Text('Create Organization',style: TextStyle(color: txtcolor)),
-                  onTap: () => {CreateOrg.showCustomAlertDialog(context: context)},
+                  leading: Icon(Icons.apartment,color: btncolor,),
+                  title: Text('Create Organization',style: TextStyle(color: btncolor)),
+                  onTap: () => {createOrg()},
                 ),
                 ListTile(
-                  leading: Icon(Icons.help,color: txtcolor,),
-                  title: Text('Help',style: TextStyle(color: txtcolor)),
+                  leading: Icon(Icons.help,color: btncolor,),
+                  title: Text('Help',style: TextStyle(color: btncolor)),
                   onTap: () => print('Help tapped'),
                 ),
                 ListTile(
-                  leading: Icon(Icons.settings,color: txtcolor,),
-                  title: Text('Settings',style: TextStyle(color: txtcolor)),
+                  leading: Icon(Icons.settings,color: btncolor,),
+                  title: Text('Settings',style: TextStyle(color: btncolor)),
                   onTap: () => print('Settings tapped'),
                 ),
                 ListTile(
-                  leading: Icon(Icons.logout,color: txtcolor,),
-                  title: Text('Logout',style: TextStyle(color: txtcolor)),
+                  leading: Icon(Icons.logout,color: btncolor,),
+                  title: Text('Logout',style: TextStyle(color: btncolor)),
                   onTap: () async {
                     var prefs = await SharedPreferences.getInstance();
                     prefs.setBool("login", false);
@@ -136,7 +143,7 @@ class _DashboardState extends State<Dashboard> {
                     );*/
                   },
                 ),
-                Divider(),
+                //Divider(),
               ],
             ),
           ),
@@ -237,12 +244,12 @@ class _DashboardState extends State<Dashboard> {
 
   }
 
-  void showDialogbox() {
+  void showDialogbox(String text) {
     showDialog(context: context,
         builder: (BuildContext context){
       return AlertDialog(backgroundColor: inputBoxbgColor,
         //title: Text("organization not created"),
-        content: Text("Please create or join organization to Make Team.....",style: TextStyle(color: txtcolor,fontSize: 20),),
+        content: Text(text,style: TextStyle(color: txtcolor,fontSize: 18),),
         actions: [
           TextButton(
               onPressed: (){Navigator.of(context).pop();},
@@ -250,6 +257,19 @@ class _DashboardState extends State<Dashboard> {
         ],
       );
         });
+  }
+
+  createOrg() async {
+    final shareprefs = await SharedPreferences.getInstance();
+    String? email=shareprefs.getString("email");
+    final teamref=FirebaseFirestore.instance.collection('Personal Task').doc(email).collection("organization");
+    final snapshot = await teamref.get();
+    if (snapshot.docs.isEmpty) {
+      CreateOrg.showCustomAlertDialog(context: context);
+    }
+    else{
+      showDialogbox("You have already in Organization");
+    }
   }
 }
 

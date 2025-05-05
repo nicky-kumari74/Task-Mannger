@@ -167,10 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ]
                ),
              ),
-                SizedBox(height: 18,),
-         
-          Row(
-           children: [
+             SizedBox(height: 40,),
              GestureDetector(
                onTap: () async {
                  await FirebaseServices().signInwithGoogle();
@@ -190,12 +187,12 @@ class _LoginScreenState extends State<LoginScreen> {
                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard(),));
                },
                child: Container(
-                   margin: EdgeInsets.only(left: 40, top: 10),
-                   width: 275, height: 48,
-                   decoration: BoxDecoration(
-                     //color: inputBoxbgColor,
-                     border: Border.all(color: CupertinoColors.systemGrey, width: 2),  // Border color and width, adjust for better experience.
-                     borderRadius: BorderRadius.circular(10), //optional, Rounded corner
+                 //margin: EdgeInsets.only(left: 40, top: 10),
+                 width: 275, height: 48,
+                 decoration: BoxDecoration(
+                   //color: inputBoxbgColor,
+                   border: Border.all(color: CupertinoColors.systemGrey, width: 2),  // Border color and width, adjust for better experience.
+                   borderRadius: BorderRadius.circular(10), //optional, Rounded corner
                  ),
                  child: Row(
                    children: [
@@ -214,8 +211,6 @@ class _LoginScreenState extends State<LoginScreen> {
                  ),
                ),
              ),
-             ],
-          ),
              SizedBox(height: 100,),
              Center(
                child: Row(

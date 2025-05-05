@@ -35,6 +35,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   var Name =  TextEditingController();
   var Email =  TextEditingController();
   var Password =  TextEditingController();
+  var phone=TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isObscure = true;
   bool _isLoading = false;
@@ -128,7 +129,41 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     validator: (value) =>provider.emailValidator(value),
                   ),
                 ),
-
+                SizedBox(height: 20,),
+                Padding(
+                  padding: const EdgeInsets.only(left: 35,right: 35),
+                  child: TextFormField(
+                    controller: phone,
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(color:Colors.white),
+                    decoration: InputDecoration(
+                      filled: true, // Enables the background color
+                      fillColor: inputBoxbgColor,
+                      labelText: 'Phone no.',
+                      labelStyle: TextStyle(
+                          color: textColor2, fontSize: 18),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: txtcolor, width: 1),
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.transparent, width: 1),
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: txtcolor, width: 1),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent, width: 1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      prefixIcon: Icon(Icons.call,color: iconColor),
+                      contentPadding: EdgeInsets.symmetric(vertical: 13, horizontal: 12),
+                    ),
+                    validator: (value) =>provider.phoneValidator(value),
+                  ),
+                ),
                 SizedBox(height: 20,),
                 Padding(
                   padding: const EdgeInsets.only(left: 35,right: 35),
@@ -173,7 +208,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                  ),
                 ),
 
-                SizedBox(height: 20,),
+                SizedBox(height: 40,),
 
                 _isLoading
                     ? CircularProgressIndicator(color: btncolor)
@@ -203,56 +238,51 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ]
                   ),
                 ),
-                SizedBox(height: 18,),
-
-                Row(
-
-                  children: [
-
-                    GestureDetector(
-                      onTap: () async {
-                        await FirebaseServices().signInwithGoogle();
-                        var name=FirebaseAuth.instance.currentUser!.displayName??'';
-                        var email=FirebaseAuth.instance.currentUser!.email??'';
-                        String docId = "users-${email.replaceAll('.', '-')}-data";
-                        await FirebaseFirestore.instance.collection('users').doc(docId).set({
-                          'name':name,
-                          'email': email,
-                          'createdAt': Timestamp.now(),
-                        });
-                        var sharepref= await SharedPreferences.getInstance();
-                        await sharepref.setBool("google", true);
-                        await sharepref.setBool("login", true);
-                        await sharepref.setString("email",email );
-                        await sharepref.setString("name", name);
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard(),));
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(left: 40, top: 10),
-                        width: 275, height: 48,
-                        decoration: BoxDecoration(
-                          //color: inputBoxbgColor,
-                          border: Border.all(color: CupertinoColors.systemGrey, width: 2),  // Border color and width, adjust for better experience.
-                          borderRadius: BorderRadius.circular(10), //optional, Rounded corner
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(width: 35),
-                            Image.asset(
-                              'assets/images/google.png',
-                              height: 28,
-                              width: 28,
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              'Sign in with Google',
-                              style: TextStyle(fontSize: 17, color: txtcolor),
-                            ),
-                          ],
-                        ),
-                      ),
+                SizedBox(height: 40,),
+                GestureDetector(
+                  onTap: () async {
+                    await FirebaseServices().signInwithGoogle();
+                    var name=FirebaseAuth.instance.currentUser!.displayName??'';
+                    var email=FirebaseAuth.instance.currentUser!.email??'';
+                    String docId = "users-${email.replaceAll('.', '-')}-data";
+                    await FirebaseFirestore.instance.collection('users').doc(docId).set({
+                      'name':name,
+                      'email': email,
+                      'createdAt': Timestamp.now(),
+                    });
+                    var sharepref= await SharedPreferences.getInstance();
+                    await sharepref.setBool("google", true);
+                    await sharepref.setBool("login", true);
+                    await sharepref.setString("email",email );
+                    await sharepref.setString("name", name);
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard(),));
+                  },
+                  child: Container(
+                    width: 275, height: 48,
+                    decoration: BoxDecoration(
+                      //color: inputBoxbgColor,
+                      border: Border.all(color: CupertinoColors.systemGrey, width: 2),  // Border color and width, adjust for better experience.
+                      borderRadius: BorderRadius.circular(10), //optional, Rounded corner
                     ),
-
+                    child: Row(
+                      children: [
+                        SizedBox(width: 35),
+                        Image.asset(
+                          'assets/images/google.png',
+                          height: 28,
+                          width: 28,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Sign in with Google',
+                          style: TextStyle(fontSize: 17, color: txtcolor),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
                     /*SizedBox(height: 20,),
                     Container(
                       margin: EdgeInsets.only(left:65, top:10),
@@ -311,11 +341,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (user != null) {
         String email=Email.text.trim();
         String docId = "users-${email.replaceAll('.', '-')}-data";
-        /*await FirebaseFirestore.instance.collection('users').doc(docId).set({
+        await FirebaseFirestore.instance.collection('users').doc(docId).set({
           'name':Name.text.trim(),
           'email': email,
+          'phone':phone.text.trim(),
           'createdAt': Timestamp.now(),
-        });*/
+        });
         /*var sharepref = await SharedPreferences.getInstance();
         sharepref.setString("name", Name.text.trim());*/
         RegistrationPopup();
