@@ -315,22 +315,25 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
         ],
       ),
       floatingActionButton: orgName==null? SizedBox():
-      SizedBox(
-        width: 155,
-        height: 45, // desired height
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => sendInvitation(orgName: orgName ?? "njk"),
-              ),
-            );
-          },
-          backgroundColor: btncolor,
-          icon: Icon(Icons.add, color: bgcolor, size: 25), // smaller icon
-          label: Text(
-            'Create Team  ',
-            style: TextStyle(color: bgcolor, fontSize: 18), // smaller text
+      Padding(
+        padding: const EdgeInsets.only(bottom: 30.0),
+        child: SizedBox(
+          width: 155,
+          height: 45, // desired height
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.push(context,
+                MaterialPageRoute(
+                  builder: (context) => sendInvitation(orgName: orgName ?? "njk"),
+                ),
+              );
+            },
+            backgroundColor: btncolor,
+            icon: Icon(Icons.add, color: bgcolor, size: 25), // smaller icon
+            label: Text(
+              'Create Team  ',
+              style: TextStyle(color: bgcolor, fontSize: 18), // smaller text
+            ),
           ),
         ),
       ),

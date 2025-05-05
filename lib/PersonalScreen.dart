@@ -188,18 +188,21 @@ class _PersonalTaskState extends State<PersonalTask> {
           );
         },
       ),
-      floatingActionButton: SizedBox(
-        width: 130,
-        height: 45, // desired height
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            showPersonaldialogbox();
-          },
-          backgroundColor: btncolor,
-          icon: Icon(Icons.add, color: bgcolor, size: 25), // smaller icon
-          label: Text(
-            'Add Task  ',
-            style: TextStyle(color: bgcolor, fontSize: 18), // smaller text
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 35.0),
+        child: SizedBox(
+          width: 130,
+          height: 48, // desired height
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              showPersonaldialogbox();
+            },
+            backgroundColor: btncolor,
+            icon: Icon(Icons.add, color: bgcolor, size: 25), // smaller icon
+            label: Text(
+              'Add Task  ',
+              style: TextStyle(color: bgcolor, fontSize: 18), // smaller text
+            ),
           ),
         ),
       ),

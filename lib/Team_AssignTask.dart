@@ -17,6 +17,7 @@ class AssignTask extends StatefulWidget {
 
 class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateMixin{
   var taskNmae=TextEditingController();
+  var taskDesc=TextEditingController();
   var dueDate=TextEditingController();
   var Remark=TextEditingController();
   late String teamName;
@@ -50,6 +51,26 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
               ),
               TextField(
                 controller: taskNmae,
+                style: TextStyle(color: txtcolor),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: inputBoxbgColor,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                ),
+              ),
+              SizedBox(height: 10,),
+              Container(width: 300,
+                  margin: EdgeInsets.only(left: 10),
+                  child: Text('Task Description :',style: TextStyle(color: txtcolor,fontSize: 18,fontWeight: FontWeight.w500),)
+              ),
+              TextField(
+                controller: taskDesc,
                 style: TextStyle(color: txtcolor),
                 decoration: InputDecoration(
                   filled: true,
@@ -100,11 +121,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
                   margin: EdgeInsets.only(left: 10),
                   child: Text('Due Date :',style: TextStyle(color: txtcolor,fontSize: 18,fontWeight: FontWeight.w500),)
               ),
-              Container(
-                width: 300,
-                height: 50,
-                margin: EdgeInsets.only(right: 50),
-                child: TextField(
+              TextField(
                   controller: dueDate,
                   readOnly: true,
                   style: TextStyle(fontSize: 18,color: txtcolor),
@@ -121,21 +138,31 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
                     contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   ),
                 ),
-              ),
               SizedBox(height: 10,),
         
               Container(width: 300,
                   margin: EdgeInsets.only(left: 10),
                   child: Text('Remark :',style: TextStyle(color: txtcolor,fontSize: 18,fontWeight: FontWeight.w500),)
               ),
-              Container(
+              TextField(
+                controller: Remark,
+                style: TextStyle(color: txtcolor),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: inputBoxbgColor,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                ),
+              ),
+              /*Container(
                 height: 150,
                 width: 300,
                 margin: EdgeInsets.only(right: 50),
-
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black)
-                ),
                 child: TextField(
                   controller: Remark,
                   style: TextStyle(fontSize: 20, color: txtcolor),    // increase font size
@@ -149,7 +176,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
                     )
                   ),
                 ),
-              ),
+              ),*/
               SizedBox(height: 30,),
               isLoading?CircularProgressIndicator(color: btncolor,)
               :ElevatedButton(onPressed: (){
@@ -157,7 +184,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
               },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: btncolor,    // change background color for better visibility.
-                      padding: EdgeInsets.only(left: 100,right: 100,top: 11,bottom: 11),
+                      padding: EdgeInsets.only(left: 110,right: 110,top: 11,bottom: 11),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
                   ),
                   child: Text('Assign',
@@ -197,6 +224,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
     }
     String taskname=taskNmae.text.trim();
     String duedate=dueDate.text.trim();
+    String taskdesc=taskDesc.text.trim();
     if(taskname.isEmpty)
       {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -223,6 +251,7 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
             .collection('Members').doc(selectedName[i]).set({
           'Task Name':taskname,
           'Due date':duedate,
+          'Task Desc':taskdesc,
           'Remark':Remark.text.trim(),
           'Status':'Pending'
 

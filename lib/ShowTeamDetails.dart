@@ -25,7 +25,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   bool isDataLoaded = false;
   var taskNmae=TextEditingController();
   var dueDate=TextEditingController();
-  var Remark=TextEditingController();
+  var taskDesc=TextEditingController();
   void initState() {
     super.initState();
     fetchMemberEmail();
@@ -213,7 +213,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
           onPressed: () {
             //handleAddOrganization();
             memberNames.add(widget.teamname);
-            Navigator.pushReplacement(context,
+            Navigator.push(context,
                 MaterialPageRoute(
                   builder: (context) => AssignTask(memberNames,widget.orgName),));
           },
@@ -231,7 +231,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   void EditTaskDialoguebox(int index) {
     taskNmae.text=allMemberData[index]['Task Name'];
     dueDate.text=allMemberData[index]['Due date'];
-    Remark.text=allMemberData[index]['Remark'];
+    taskDesc.text=allMemberData[index]['Task Desc'];
     showDialog(
       context: context,
       builder: (context) =>
@@ -300,13 +300,13 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                           ),
                         ),
                         SizedBox(height: 10),
-                        Text('Remark :',style: TextStyle(color: txtcolor,fontSize: 17,fontWeight: FontWeight.w500),),
+                        Text('Task Description :',style: TextStyle(color: txtcolor,fontSize: 17,fontWeight: FontWeight.w500),),
                         Container(
                           height: 100,
                           width: 300,
                           margin: EdgeInsets.only(right: 10),
                           child: TextField(
-                            controller: Remark,
+                            controller: taskDesc,
                             style: TextStyle(color: txtcolor),    // increase font size
                             maxLines: null,   // Allow multiple lines
                             expands: true, // Expands to fill the container
@@ -443,7 +443,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Remark",
+                        "Task Description",
                         style: TextStyle(
                           color: btncolor,
                           fontSize: 20,
@@ -451,13 +451,13 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                         ),
                       ),
                       SizedBox(height: 10),
-                      allMemberData[index]['Remark'] == null
+                      allMemberData[index]['Task Desc'] == null
                           ? Text(
-                        "No remark",
+                        "No description",
                         style: TextStyle(color: Colors.white),
                       )
                           : Text(
-                        allMemberData[index]['Remark'],
+                        allMemberData[index]['Task Desc'],
                         style: TextStyle(color: Colors.white),
                       ),
                       SizedBox(height: 15),
@@ -489,7 +489,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
             .collection('Members').doc(memberNames[index]).set({
           'Task Name':taskNmae.text.trim(),
           'Due date':dueDate.text.trim(),
-          'Remark':Remark.text.trim(),
+          'Task Desc':taskDesc.text.trim(),
           'Status':'Pending'
         }
         ).then((value) {
