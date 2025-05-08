@@ -23,6 +23,7 @@ class TeamTask extends StatefulWidget{
 class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin {
   String? orgName;
   String? org_id;
+  String? userEmail;
   List<String> teamNames = [];
   List<String> teamnm = [];
   bool isLoading = true;
@@ -38,7 +39,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
   }
   Future<void> loadOrgName() async {
     //final shareprefs = await SharedPreferences.getInstance();
-    final shareprefs = await SharedPreferences.getInstance();
+    final shareprefs =await SharedPreferences.getInstance();
     String? email=shareprefs.getString("email");
     final teamref=FirebaseFirestore.instance.collection('Personal Task').doc(email).collection("organization");
     final snapshot = await teamref.get();
@@ -52,6 +53,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
         setState(() {
           orgName=doc.id;
           org_id=data['org_id'];
+          userEmail=email;
         });
 
     }
@@ -119,28 +121,24 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
      );
   }
   Future<void> fetchPersonalTeam() async{
-    final String? userEmail = FirebaseAuth.instance.currentUser?.email;
+    //final String? userEmail = FirebaseAuth.instance.currentUser?.email;
     try{
       final teamref=FirebaseFirestore.instance.collection('Personal Task').doc(userEmail).collection(orgName!);
       final snapshot = await teamref.get();
 
       if (snapshot.docs.isEmpty) {
-        print('No teams found for: $userEmail');
-        setState(() {
-          isLoading=false;
-        });
+        print('No teams found for2: $userEmail');
       } else {
         for (var doc in snapshot.docs) {
           //print('Team ID: ${doc.id}');
           teamnm.add(doc.id);
           //print('Data: ${doc.data()}');
         }
-        setState(() {
-          teamNames=teamnm;
-          print("teams $teamNames");
-          isLoading = false;
-        });
       }
+      setState(() {
+        teamNames=teamnm;
+        isLoading = false;
+      });
 
     }catch (e) {
       print('Error fetching teams2: $e');
@@ -150,8 +148,8 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
     }
   }
   Future<void> fetchTeamNames() async {
-    final String? userEmail = FirebaseAuth.instance.currentUser?.email;
-
+    //final String? userEmail = FirebaseAuth.instance.currentUser?.email;
+    print("email : $userEmail");
     try {
       final teamRef = FirebaseFirestore.instance
           .collection('Team Task')
@@ -161,7 +159,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
       final snapshot = await teamRef.get();
 
       if (snapshot.docs.isEmpty) {
-        print('No teams found for: $userEmail');
+        print('No teams found for1: $userEmail');
       } else {
         for (var doc in snapshot.docs) {
           //print('Team ID: ${doc.id}');

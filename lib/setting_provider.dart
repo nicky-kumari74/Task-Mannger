@@ -33,4 +33,19 @@ class SettingProvider extends ChangeNotifier{
     }
     return null;
   }
+  emailValidator2(value){
+    if(!value.toString().isEmpty){
+      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+        return 'Enter valid email';
+      }
+    }
+    return null;
+  }
+  teamValidator(value){
+    if (value == null || value.trim().isEmpty)
+      {
+        return 'Please enter team name';
+      }
+      return null;
+    }
 }

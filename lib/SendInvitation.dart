@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
+import 'package:taskmanager/setting_provider.dart';
 
 import 'DashboardScreen.dart';
 
@@ -18,6 +19,7 @@ class sendInvitation extends StatefulWidget {
 
 class _sendInvitationState extends State<sendInvitation> {
   TextEditingController teamnameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   List<TextEditingController> emailControllers = [];
   bool _isLoading=false;
 
@@ -56,7 +58,7 @@ class _sendInvitationState extends State<sendInvitation> {
         controller.text.trim())
         .where((email) => email.isNotEmpty).toList();
 
-    if (teamname.isEmpty) {
+    /*if (teamname.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter a team name')),
       );
@@ -64,7 +66,7 @@ class _sendInvitationState extends State<sendInvitation> {
         _isLoading = false;
       });
       return;
-    }
+    }*/
     if (emailslist.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter at least two email')),
@@ -139,99 +141,120 @@ class _sendInvitationState extends State<sendInvitation> {
         ),
 
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(40),
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: teamnameController,
-                          style: TextStyle(color: txtcolor),
-                          decoration: InputDecoration(
-                              filled: true,
-                              fillColor: inputBoxbgColor,
-                              hintText: 'Enter Team Name',
-                              hintStyle: TextStyle(
-                                color: txtcolor,
-                                fontSize: 18,
-                              ),
-                              //border: OutlineInputBorder(),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: btncolor),
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 40,right: 40,bottom: 40),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20,),
+                          TextFormField(
+                            controller: teamnameController,
+                            style: TextStyle(color: txtcolor),
+                            decoration: InputDecoration(
+                                filled: true,
+                                fillColor: inputBoxbgColor,
+                              labelText: 'Enter Team Name',
+                              labelStyle: TextStyle(color: textColor2),
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: btncolor),
+                                  borderRadius: BorderRadius.circular(10)
+                                ),
+                              enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)
                               ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10)
-                            )
+                              prefixIcon: Icon(Icons.group,color: iconColor,),
+                            ),
+                            validator: (value)=>SettingProvider().teamValidator(value),
                           ),
-                        ),
-                        SizedBox(height: 39,),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: emailControllers.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.1),
-                                child: TextField(
-                                  style: TextStyle(color: txtcolor),
-                                  controller: emailControllers[index],
-                                  decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: inputBoxbgColor,
-                                      labelText: 'Enter Email ID',
-                                      labelStyle: TextStyle(color: txtcolor),
-                                      border: OutlineInputBorder(
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: btncolor)
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10)
-                                      )
+                          SizedBox(height: 39,),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: emailControllers.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 8.1),
+                                  child: TextFormField(
+                                    style: TextStyle(color: txtcolor),
+                                    controller: emailControllers[index],
+                                    decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: inputBoxbgColor,
+                                        labelText: 'Enter Email ID',
+                                        labelStyle: TextStyle(color: textColor2),
+                                        border: OutlineInputBorder(),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: btncolor),
+                                            borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.red),
+                                            borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        prefixIcon: Icon(Icons.email,color: iconColor),
+                                    ),
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: (value)=> SettingProvider().emailValidator2(value),
                                   ),
-                                  keyboardType: TextInputType.emailAddress,
-                                ),
-                              );
-                            }),
+                                );
+                              }),
 
-                        SizedBox(height: 20,),
+                          //SizedBox(height: 20,),
 
-                        Align(
-                            alignment: Alignment.topRight,
-                            child: InkWell(
-                                onTap: () {
-                                  if (emailControllers.length < 10) {
-                                    addEmailField();
-                                  }
-                                },
-                                child: Text('+ add more...',
-                                  style: TextStyle(color: btncolor),))
-                        ),
-
-                        SizedBox(height: 50,),
-                        _isLoading
-                            ? CircularProgressIndicator(color: btncolor)
-                            : ElevatedButton(onPressed: () {
-                          sendInvitation();
-                        },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: btncolor,
-                            padding: EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 110),
-                            textStyle: TextStyle(fontSize: 20),
+                          Align(
+                              alignment: Alignment.topRight,
+                              child: InkWell(
+                                  onTap: () {
+                                    if (emailControllers.length < 10) {
+                                      addEmailField();
+                                    }
+                                  },
+                                  child: Text('+ add more...',
+                                    style: TextStyle(color: btncolor),))
                           ),
-                          child: Text("Create",
-                            style: TextStyle(color: bgcolor,fontWeight: FontWeight.w500),),
-                        )
-                      ],
+                          Align(
+                              alignment: Alignment.topRight,
+                              child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      emailControllers.removeLast();
+                                    });
+                                  },
+                                  child: Text('- remove...',
+                                    style: TextStyle(color: btncolor),))
+                          ),
+                          SizedBox(height: 30,),
+                          _isLoading
+                              ? CircularProgressIndicator(color: btncolor)
+                              : ElevatedButton(onPressed: () {
+                                if(_formKey.currentState!.validate()) {
+                                  sendInvitation();
+                                }
+                          },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: btncolor,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 110),
+                              textStyle: TextStyle(fontSize: 20),
+                            ),
+                            child: Text("Create",
+                              style: TextStyle(color: bgcolor,fontWeight: FontWeight.w500),),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
