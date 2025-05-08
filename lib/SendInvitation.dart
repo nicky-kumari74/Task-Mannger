@@ -242,6 +242,7 @@ class _sendInvitationState extends State<sendInvitation> {
                           },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: btncolor,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                               padding: EdgeInsets.symmetric(
                                   vertical: 12, horizontal: 110),
                               textStyle: TextStyle(fontSize: 20),

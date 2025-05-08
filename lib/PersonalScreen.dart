@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskmanager/Add_PersonalTask.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/date_extension.dart';
 
@@ -154,8 +155,8 @@ class _PersonalTaskState extends State<PersonalTask> {
                                                   child: Container(
                                                     height: 20,
                                                     child: Text(
-                                                        taskData['Task Name'],
-                                                        //getFirstTwoWords(taskData['Task Name'] ?? ''),
+                                                        //taskData['Task Name'],
+                                                        getFirstTwoWords(taskData['Task Name'] ?? ''),
                                                         style: TextStyle(
                                                           color: bgcolor,
                                                           fontSize: 16,
@@ -166,7 +167,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                                               ),
                                               GestureDetector(
                                                 onTap: (){UpdateTask(taskId,taskData['Task Name']);},
-                                                  child: Icon(Icons.edit_note, color: Colors.black54, size: 23)),
+                                                  child: Icon(Icons.arrow_forward_ios, color: bgcolor,size: 15,)),
                                             ],
                                           ),
                                         ),
@@ -195,7 +196,8 @@ class _PersonalTaskState extends State<PersonalTask> {
           height: 48, // desired height
           child: FloatingActionButton.extended(
             onPressed: () {
-              showPersonaldialogbox();
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask()));
+              //showPersonaldialogbox();
             },
             backgroundColor: btncolor,
             icon: Icon(Icons.add, color: bgcolor, size: 25), // smaller icon
@@ -247,7 +249,7 @@ class _PersonalTaskState extends State<PersonalTask> {
             TextButton(onPressed: () {
               String Task = Taskname.text.trim();
               if (Task.isNotEmpty) {
-                addTask(Task);
+                //addTask(Task);
                 setState(() {
                   //teams.add(newTeam);
                   //saveTeams();
@@ -303,21 +305,6 @@ class _PersonalTaskState extends State<PersonalTask> {
     ) ??
         false;
   }
-  void addTask(String task) async {
-    var sharepref= await SharedPreferences.getInstance();
-    var email=sharepref.getString("email");
-    FirebaseFirestore.instance.collection('Personal Task').doc(email).collection("Tasks").add({
-      'Task Name': task,
-      'status':"pending",
-      'checked':false,
-      'Date':DateTime.now(),
-    }).then((value) {
-      print("Task Added");
-    }).catchError((error) {
-      print("Failed to add user: $error");
-    });
-  }
-
   void _deleteTask(String taskId) {
     if (email == null) {
       print("Email not found. Cannot delete task.");
