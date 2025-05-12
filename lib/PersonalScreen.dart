@@ -33,161 +33,169 @@ class _PersonalTaskState extends State<PersonalTask> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgcolor,
-      body: email == null
-          ? Center(child: CircularProgressIndicator()) // Show loader until email is fetched
-          : StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('Personal Task').doc(email).collection('Tasks').orderBy('Date', descending: true).snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator()); // Loading state
-          }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text("No tasks available!",style: TextStyle(color: txtcolor),));
-          }
-
-          var tasks = snapshot.data!.docs;
-          print("id ${tasks[0].id}");
-// Group tasks by date
-          Map<String, List<Map<String, dynamic>>> groupedTasks = {};
-
-          for (var task in tasks) {
-            var taskData = task.data() as Map<String, dynamic>;
-            print(taskData);
-            // Check if the 'date' field exists and is a Timestamp
-            if (taskData['Date'] != null && taskData['Date'] is Timestamp) {
-              DateTime taskDate = (taskData['Date'] as Timestamp).toDate();
-              String dateKey = "${taskDate.year}-${taskDate.month.toString().padLeft(2, '0')}-${taskDate.day.toString().padLeft(2, '0')}";
-
-              // Group tasks by date
-              if (!groupedTasks.containsKey(dateKey)) {
-                groupedTasks[dateKey] = [];
-              }
-              groupedTasks[dateKey]!.add(taskData);
-            } else {
-              // Handle the case where date is missing or invalid
-              print("Task has no valid date: ${taskData['Task Name']}");
+      body: SingleChildScrollView(
+        child: email == null
+            ? Center(child: CircularProgressIndicator()) // Show loader until email is fetched
+            : StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('Personal Task').doc(email).collection('Tasks').orderBy('Date', descending: true).snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator()); // Loading state
             }
-          }
-
-          return Padding(
-            padding: const EdgeInsets.only(right: 25, left: 25),
-            child: Column(
-              children: [
-                //const SizedBox(height: 10),
-                // Loop through each date group
-                ...groupedTasks.entries.map((entry) {
-                  String dateKey = entry.key;
-                  List<Map<String, dynamic>> dayTasks = entry.value;
-
-                  // Format the date for display
-                  DateTime date = DateTime.parse(dateKey);
-                  String formattedDate = (date.isToday)
-                      ? "Today"
-                      : (date.isYesterday)
-                      ? "Yesterday"
-                      : "${date.day}/${date.month}/${date.year}";
-
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Card(
-                      color: inputBoxbgColor,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top:5,left: 12,right: 12),
-                        child: Column(
-                          children: [
-                            Text(formattedDate, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,color: btncolor)),
-                            // ListView of tasks for this date
-                            ListView.builder(
-                              padding: EdgeInsets.zero,
-                              shrinkWrap: true,  // Important: makes ListView take only needed height
-                              physics: const NeverScrollableScrollPhysics(), // Prevents ListView from scrolling separately
-                              itemCount: dayTasks.length,
-                              itemBuilder: (context, index) {
-                                var taskData = dayTasks[index];
-                                String taskId = tasks[index].id;
-                                return Dismissible(
-                                  key: Key(taskId),
-                                  direction: DismissDirection.endToStart, // Swipe left to delete
-                                  background: Container(
-                                    alignment: Alignment.centerRight,
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                    child: Icon(Icons.delete, color: Colors.white),
-                                  ),
-                                  confirmDismiss: (direction) async {
-                                    bool confirm = await _showDeleteConfirmationDialog(context, taskId,"Delete Task");
-
-                                    return false;
-                                  },
-                                  child: Container(
-                                    height: 50,  // Adjusted for better spacing
-                                    margin: const EdgeInsets.symmetric(horizontal: 10,),
-                                    child: InkWell(
-                                      onTap: () {
-                                        // Handle onTap if needed
-                                      },
-                                      child: Card(
-                                        color: cardbg,
-                                        elevation: 3,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                                          child: Row(
-                                            children: [
-                                              GestureDetector(
-                                              onTap: ()async{
-                                                bool confirm = await _showDeleteConfirmationDialog(context, taskId,"Completed");
-                                                //return false;
-                                              },
-                                                child: Image.asset(
-                                                  'lib/icons/time.png',
-                                                  color: taskData['status'] == "pending" ? Colors.red : iconColor,
-                                                  width: 20,
-                                                  height: 15,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 12),
-                                              Expanded(
-                                                //width: 100,
-                                                child: GestureDetector(
-                                                  onTap: (){TaskDetails(taskData['Task Name'],taskId);},
-                                                  child: Container(
-                                                    height: 20,
-                                                    child: Text(
-                                                        //taskData['Task Name'],
-                                                        getFirstTwoWords(taskData['Task Name'] ?? ''),
-                                                        style: TextStyle(
-                                                          color: bgcolor,
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return Center(child: Text("No tasks available!",style: TextStyle(color: txtcolor),));
+            }
+        
+            var tasks = snapshot.data!.docs;
+            print("id ${tasks[0].id}");
+        // Group tasks by date
+            Map<String, List<Map<String, dynamic>>> groupedTasks = {};
+        
+            for (var task in tasks) {
+              var taskData = task.data() as Map<String, dynamic>;
+              print(taskData);
+              // Check if the 'date' field exists and is a Timestamp
+              if (taskData['Date'] != null && taskData['Date'] is Timestamp) {
+                DateTime taskDate = (taskData['Date'] as Timestamp).toDate();
+                String dateKey = "${taskDate.year}-${taskDate.month.toString().padLeft(2, '0')}-${taskDate.day.toString().padLeft(2, '0')}";
+        
+                // Group tasks by date
+                if (!groupedTasks.containsKey(dateKey)) {
+                  groupedTasks[dateKey] = [];
+                }
+                groupedTasks[dateKey]!.add(taskData);
+              } else {
+                // Handle the case where date is missing or invalid
+                print("Task has no valid date: ${taskData['Task Name']}");
+              }
+            }
+        
+            return Padding(
+              padding: const EdgeInsets.only(right: 25, left: 25),
+              child: Column(
+                children: [
+                  //const SizedBox(height: 10),
+                  // Loop through each date group
+                  ...groupedTasks.entries.map((entry) {
+                    String dateKey = entry.key;
+                    List<Map<String, dynamic>> dayTasks = entry.value;
+        
+                    // Format the date for display
+                    DateTime date = DateTime.parse(dateKey);
+                    String formattedDate = (date.isToday)
+                        ? "Today"
+                        : (date.isYesterday)
+                        ? "Yesterday"
+                        : "${date.day}/${date.month}/${date.year}";
+        
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Card(
+                        color: inputBoxbgColor,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top:5,left: 12,right: 12),
+                          child: Column(
+                            children: [
+                              Text(formattedDate, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,color: btncolor)),
+                              // ListView of tasks for this date
+                              ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,  // Important: makes ListView take only needed height
+                                physics: const NeverScrollableScrollPhysics(), // Prevents ListView from scrolling separately
+                                itemCount: dayTasks.length,
+                                itemBuilder: (context, index) {
+                                  var taskData = dayTasks[index];
+                                  String taskId = tasks[index].id;
+                                  return Dismissible(
+                                    key: Key(taskId),
+                                    direction: DismissDirection.endToStart, // Swipe left to delete
+                                    background: Container(
+                                      alignment: Alignment.centerRight,
+                                      padding: EdgeInsets.symmetric(horizontal: 20),
+                                      child: Icon(Icons.delete, color: Colors.white),
+                                    ),
+                                    confirmDismiss: (direction) async {
+                                      bool confirm = await _showDeleteConfirmationDialog(context, taskId,"Delete Task");
+        
+                                      return false;
+                                    },
+                                    child: Container(
+                                      height: 50,  // Adjusted for better spacing
+                                      margin: const EdgeInsets.symmetric(horizontal: 10,),
+                                      child: InkWell(
+                                        onTap: () {
+                                          // Handle onTap if needed
+                                        },
+                                        child: Card(
+                                          color: cardbg,
+                                          elevation: 3,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                                            child: Row(
+                                              children: [
+                                                GestureDetector(
+                                                onTap: ()async{
+                                                  bool confirm = await _showDeleteConfirmationDialog(context, taskId,"Completed");
+                                                  //return false;
+                                                },
+                                                  child: Image.asset(
+                                                    'lib/icons/time.png',
+                                                    color: taskData['status'] == "pending" ? Colors.red : iconColor,
+                                                    width: 20,
+                                                    height: 15,
                                                   ),
                                                 ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: (){UpdateTask(taskId,taskData['Task Name']);},
-                                                  child: Icon(Icons.arrow_forward_ios, color: bgcolor,size: 15,)),
-                                            ],
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  //width: 100,
+                                                  child: GestureDetector(
+                                                    onTap: (){
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask(taskData['Task Name'],taskId)));
+                                                      //TaskDetails(taskData['Task Name'],taskId);
+                                                      },
+                                                    child: Container(
+                                                      height: 20,
+                                                      child: Text(
+                                                          //taskData['Task Name'],
+                                                          getFirstTwoWords(taskData['Task Name'] ?? ''),
+                                                          style: TextStyle(
+                                                            color: bgcolor,
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: (){
+                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask(taskData['Task Name'],taskId)));
+                                                    //UpdateTask(taskId,taskData['Task Name']);
+                                                    },
+                                                    child: Icon(Icons.arrow_forward_ios, color: bgcolor,size: 15,)),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 15),
-                          ],
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 15),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ],
-            ),
-          );
-        },
+                    );
+                  }).toList(),
+                ],
+              ),
+            );
+          },
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 35.0),
@@ -196,7 +204,7 @@ class _PersonalTaskState extends State<PersonalTask> {
           height: 48, // desired height
           child: FloatingActionButton.extended(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask("","")));
               //showPersonaldialogbox();
             },
             backgroundColor: btncolor,
@@ -321,120 +329,5 @@ class _PersonalTaskState extends State<PersonalTask> {
     }).catchError((error) {
       print("Failed to delete task: $error");
     });
-  }
-
-  void showTask(taskData) {}
-  void UpdateTask(String taskId,String taskname){
-    TextEditingController Taskname = TextEditingController();
-    TextEditingController inviteMembers = TextEditingController();
-    Taskname.text=taskname;
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(title: Text("Update Task",style: TextStyle(color: btncolor,fontWeight: FontWeight.w600),),backgroundColor: inputBoxbgColor,
-        content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.8,  // This make dialog box width responsive.
-          child: Column(
-            mainAxisSize: MainAxisSize.min,  // Help to shrink the dialog box height according to content.
-            children: [
-              //Container(height: 10,),
-              Container(width:220,child: Text("Task Name",style: TextStyle(color: txtcolor,fontSize: 18,fontWeight:FontWeight.w400 ),)),
-              TextField(
-                controller: Taskname,
-                style: TextStyle(color: txtcolor),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color:textColor2,width: 2),
-                      borderRadius: BorderRadius.circular(10)
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color:textColor2,width: 1),
-                      borderRadius: BorderRadius.circular(10)
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 12),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop((context)),   // close dialog box
-            child: Text('Cancel',style: TextStyle(fontSize: 18,color: btncolor)),
-          ),
-          TextButton(onPressed: () {
-            String Task = Taskname.text.trim();
-            if (Task.isNotEmpty) {
-              FirebaseFirestore.instance
-                  .collection('Personal Task')
-                  .doc(email)
-                  .collection("Tasks")
-                  .doc(taskId) // <-- Replace with the actual task document ID
-                  .update({
-                'Task Name':Taskname.text.toString().trim(),
-                'status': 'pending',
-                'checked': false
-              }).then((value) {
-                print("Task Updated");
-              }).catchError((error) {
-                print("Failed to update task: $error");
-              });
-              //addTask(Task);
-              setState(() {
-                //teams.add(newTeam);
-                //saveTeams();
-              });
-              Navigator.pop(context);   // Close dialog box
-            }
-          }, child: Text("Update",style: TextStyle(fontSize: 18,color: btncolor),),
-          ),
-        ],
-
-      );
-    });
-  }
-
-  void TaskDetails(String taskData,String taskId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Container(width: 150,),
-              //Text("Task Name",style: TextStyle(color: btncolor,fontWeight: FontWeight.w400),),
-              Image.asset(
-                'lib/icons/time.png',
-                color: btncolor,
-                width: 23,
-                height: 20,
-              ),
-              Container(width: 20,),
-              GestureDetector(
-                  onTap: (){UpdateTask(taskId,taskData);},
-                  child: Icon(Icons.edit_note, color: btncolor, size: 30)),
-            ],
-          ),backgroundColor: inputBoxbgColor,
-          content: RichText(
-            text: TextSpan(
-              style: TextStyle(fontSize: 18),
-              children: [
-                TextSpan(text: 'Task Name:\n\n',style: TextStyle(color: txtcolor,fontWeight: FontWeight.bold)),
-                TextSpan(
-                  text: '${taskData ?? "No Task"} ',
-                  style: TextStyle(color: textColor2),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text("OK",style: TextStyle(color: btncolor,fontSize: 18),),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

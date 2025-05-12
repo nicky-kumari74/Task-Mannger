@@ -6,6 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 
 class AddPersonalTask extends StatefulWidget{
+  final taskdata;
+  final taskid;
+  AddPersonalTask(this.taskdata,this.taskid);
   @override
   State<AddPersonalTask> createState() => _AddAddPersonalTaskState();
 }
@@ -13,14 +16,44 @@ class AddPersonalTask extends StatefulWidget{
 class _AddAddPersonalTaskState extends State<AddPersonalTask>{
   var task=TextEditingController();
   bool _isLoading=false;
+  String? email;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    task.text=widget.taskdata;
+    _getEmail();
+  }
+  Future<void> _getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      email = prefs.getString("email");
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgcolor,
       appBar: AppBar(
         backgroundColor: bgcolor,
-        title: Text("Add Task",style: TextStyle(color: txtcolor,),),
+        //title: Text("Add Task",style: TextStyle(color: txtcolor,),),
         iconTheme: IconThemeData(color: txtcolor),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: TextButton(onPressed: (){
+              widget.taskdata.toString().isEmpty?AddTask():UpdateTask();
+            },
+                child: Text(widget.taskdata.toString().isEmpty?"Save":"Update",style: TextStyle(color: btncolor,fontSize: 18,fontWeight: FontWeight.bold),)),
+            /*child:IconButton(
+              icon: Icon(Icons.edit,color: btncolor,),
+              iconSize: 35,
+              onPressed: () {
+               // MemberAdd();
+              },
+            ),*/
+          ),
+        ],
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -28,12 +61,12 @@ class _AddAddPersonalTaskState extends State<AddPersonalTask>{
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: Padding(
-                padding: const EdgeInsets.only(left: 35,right: 35,top: 10),
+                padding: const EdgeInsets.only(left: 30,right: 30,top: 10),
                 child: Column(
                   children: [
                     SizedBox(
-                      //height: constraints.maxHeight,   //Make TextField fill the screen
-                      height: 540,
+                      height: constraints.maxHeight,   //Make TextField fill the screen
+                      //height: 540,
                       child: TextField(
                         controller: task,
                         expands: true,
@@ -100,10 +133,39 @@ class _AddAddPersonalTaskState extends State<AddPersonalTask>{
       'checked':false,
       'Date':DateTime.now(),
     }).then((value) {
-      print("Task Added");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Task Saved successfully",style: TextStyle(color: btncolor,fontSize: 18),),backgroundColor: Colors.transparent,)
+      );
     }).catchError((error) {
-      print("Failed to add user: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to Save Task",style: TextStyle(color: Colors.red,fontSize: 18),),backgroundColor: Colors.transparent,)
+      );
     });
+  }
+
+  UpdateTask() {
+    String Task = task.text.trim();
+    if (Task.isNotEmpty) {
+      FirebaseFirestore.instance
+          .collection('Personal Task')
+          .doc(email)
+          .collection("Tasks")
+          .doc(widget.taskid) // <-- Replace with the actual task document ID
+          .update({
+        'Task Name': Task,
+        'status': 'pending',
+        'checked': false
+      }).then((value) {
+        //print("Task Updated");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Task Updated successfully",style: TextStyle(color: btncolor,fontSize: 18),),backgroundColor: Colors.transparent,)
+        );
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Faild to update Task",style: TextStyle(color: Colors.red,fontSize: 18),),backgroundColor: Colors.transparent,)
+        );
+      });
+    }
   }
 
 }
