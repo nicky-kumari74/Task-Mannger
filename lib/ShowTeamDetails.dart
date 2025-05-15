@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/Team_AssignTask.dart';
@@ -157,42 +158,33 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                                   child: allMemberData[index]['Status'] ==
                                       'Pending'
                                       ? SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          btncolor),
-                                      // Red color for the pending animation
-                                      strokeWidth: 3,
-                                      // Width of the spinner
-                                      semanticsLabel: 'Pending Task',
-                                      backgroundColor: Colors
-                                          .transparent, // To make the background transparent
-                                    ),
+                                    width: 40,
+                                    height: 40,
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        if(memberNames[index] == userEmail){
+                                          completeTask(memberNames[index]);
+                                          print("completed");
+                                        }
+                                          },
+                                      child: Lottie.asset('assets/pending.json',repeat: true,width: 50),
+                                    )
                                   )
-                                      : SizedBox
-                                      .shrink(), // If no pending, show nothing
+                                      : allMemberData[index]['Status'] ==
+                                      'Completed'?Image.asset('lib/icons/checkmark.png',width: 27, height: 40,color: btncolor,): SizedBox.shrink() // If no pending, show nothing
                                 ),
-                                cremail != null && cremail != userEmail ? SizedBox
-                                    .shrink()
+                                cremail != null && cremail != userEmail ? SizedBox.shrink()
                                     : Positioned(
                                   top: 1,
-                                  right: 30,
-                                  child: allMemberData[index]['Status'] ==
-                                      'Pending'
+                                  right: 8,
+                                  bottom: 13,
+                                  child: allMemberData[index]['Status'] == 'Pending'
                                       ? GestureDetector(
                                     onTap: () {
                                       EditTaskDialoguebox(index);
                                     },
-                                    child: Icon(
-                                      Icons.edit_note,
-                                      size: 30,
-                                      color: btncolor,
-                                      semanticLabel: 'Edit Task',
-                                    ),
-                                  )
-                                      : SizedBox
-                                      .shrink(), // If no pending, show nothing
+                                    child: Icon(Icons.edit_note, size: 25, color: btncolor, semanticLabel: 'Edit Task',),
+                                  ) : SizedBox.shrink(), // If no pending, show nothing
                                 ),
                               ]
                           ),
@@ -229,9 +221,9 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
   }
 
   void EditTaskDialoguebox(int index) {
-    taskNmae.text=allMemberData[index]['Task Name'];
-    dueDate.text=allMemberData[index]['Due date'];
-    taskDesc.text=allMemberData[index]['Task Desc'];
+    taskNmae.text=allMemberData[index]['Task Name']??'';
+    dueDate.text=allMemberData[index]['Due date']??'';
+    taskDesc.text=allMemberData[index]['Task Desc']??'';
     showDialog(
       context: context,
       builder: (context) =>
@@ -244,7 +236,7 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                 filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
+                    color: Colors.white.withOpacity(0.18),
                     // Glassy semi-transparent effect
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.white.withOpacity(0.2)),
@@ -311,27 +303,28 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
                             maxLines: null,   // Allow multiple lines
                             expands: true, // Expands to fill the container
                             decoration: InputDecoration(
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: textColor2)
-                                ),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: textColor2)
+                              ),
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: textColor2)
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 20),
                         Row(
                           children: [
                             TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: Text(
-                                  "Close",
-                                  style: TextStyle(color: btncolor),
-                                ),
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text(
+                                "Close",
+                                style: TextStyle(color: btncolor),
                               ),
+                            ),
+                            SizedBox(width: 50,),
                             ElevatedButton(onPressed: (){
-                              updateTask(index);
+                              //updateTask(index);
                             },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: boxColor,    // change background color for better visibility.
@@ -625,5 +618,77 @@ class _TeamDetailsState extends State<TeamDetails> with SingleTickerProviderStat
       ),
     ) ??
         false;
+  }
+
+  Future<String> fetchName(String memberEmail) async {
+    String name;
+    String docId = "users-${memberEmail.replaceAll('.', '-')}-data";
+    final orgref = FirebaseFirestore.instance.collection(
+        "users").doc(docId);
+    final docSnapshot = await orgref.get();
+    if(docSnapshot.exists){
+      final data = docSnapshot.data();
+      name = data?['name'];
+      return name.toString();
+    }
+    return "".toString();
+  }
+
+  void completeTask(String memberEmail) {
+    showDialog(
+      context: context,
+      builder: (context) =>
+          Dialog(
+            backgroundColor: Colors.transparent,
+            // Transparent background for glass effect
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.20),
+                    // Glassy semi-transparent effect
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  ),
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Mark as Completed???", style: TextStyle(color: txtcolor, fontSize: 18,),),
+                      SizedBox(height: 15),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () async{
+                            try{
+                              FirebaseFirestore.instance
+                                  .collection("Teams")
+                                  .doc(cremail)
+                                  .collection('team name')
+                                  .doc(widget.teamname)
+                                  .collection('Members').doc(memberEmail).update({
+                                'Status':'Completed'
+                              });
+                              fetchMemberEmail();
+                              Navigator.pop(context);
+                            }catch(e){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Failed to update member")),
+                              );
+                            }
+                          },
+                          child: Text("yes", style: TextStyle(color: btncolor,fontSize: 18),),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+    );
   }
 }

@@ -77,6 +77,7 @@ flutter:
     - lib/icons/clipboard.png
     - assets/forgot-password.json
     - assets/password.json
+    - assets/pending.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -94,24 +94,27 @@ class _AssignTaskState extends State<AssignTask> with SingleTickerProviderStateM
                     shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context , index){
-                      return Container(
-                        //width: 50,
-                        height: 35,
-                        child: Row(
-                          children: [
-                            Checkbox(
-                                value: checked[index],
-                                onChanged: (bool?value){
-                                  setState(() {
-                                    checked[index]=value!;
-                                  });
-                                },
-                              side: BorderSide(color: btncolor,width: 2),
-                              activeColor: btncolor,
-                              checkColor: bgcolor,
-                            ),
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          //width: 50,
+                          height: 35,
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                  value: checked[index],
+                                  onChanged: (bool?value){
+                                    setState(() {
+                                      checked[index]=value!;
+                                    });
+                                  },
+                                side: BorderSide(color: btncolor,width: 2),
+                                activeColor: btncolor,
+                                checkColor: bgcolor,
+                              ),
                             Text(widget.memberNames[index],style: TextStyle(color: textColor2,fontSize: 18))
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     }
