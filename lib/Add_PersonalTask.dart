@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 
@@ -32,19 +33,26 @@ class _AddAddPersonalTaskState extends State<AddPersonalTask>{
   }
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: bgcolor,
       appBar: AppBar(
         backgroundColor: bgcolor,
         //title: Text("Add Task",style: TextStyle(color: txtcolor,),),
-        iconTheme: IconThemeData(color: txtcolor),
+        iconTheme: IconThemeData(color: btncolor),
         actions: [
+          GestureDetector(
+            onTap: (){shareTask();},
+              child: Icon(Icons.share,color: btncolor,)
+          ),
+          SizedBox(width: 15,),
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
             child: TextButton(onPressed: (){
               widget.taskdata.toString().isEmpty?AddTask():UpdateTask();
             },
-                child: Text(widget.taskdata.toString().isEmpty?"Save":"Update",style: TextStyle(color: btncolor,fontSize: 18,fontWeight: FontWeight.bold),)),
+                child: Text(widget.taskdata.toString().isEmpty?"Save":"Update",style: TextStyle(color: btncolor,fontSize: 16,fontWeight: FontWeight.bold),)
+            ),
             /*child:IconButton(
               icon: Icon(Icons.edit,color: btncolor,),
               iconSize: 35,
@@ -57,64 +65,83 @@ class _AddAddPersonalTaskState extends State<AddPersonalTask>{
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 30,right: 30,top: 10),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: constraints.maxHeight,   //Make TextField fill the screen
-                      //height: 540,
-                      child: TextField(
-                        controller: task,
-                        expands: true,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        textInputAction: TextInputAction.newline,
-                        textAlignVertical: TextAlignVertical.top,
-                        cursorColor: btncolor,
-                        style: TextStyle(color: txtcolor,fontSize: 18),
-                        decoration: InputDecoration(
-                          hintText: "Enter tasks......",
-                          hintStyle: TextStyle(color: textColor2),
-                          filled: true,
-                          fillColor: inputBoxbgColor,
-                          border: InputBorder.none,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)
+          return Stack(
+            children: [
+              /*Container(
+                width: constraints.maxWidth,
+                height: constraints.maxHeight,
+                margin: EdgeInsets.only(top:5),
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: AssetImage('assets/images/page2.jpg'),fit: BoxFit.cover),
+                ),
+              ),*/
+              /*Divider(
+                color: Colors.grey,
+                thickness: 2,
+              ),*/
+            SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20,right: 20,top:5.65),
+                  child: Column(
+                    children: [
+                      Container(
+                        //height: constraints.maxHeight, //Make TextField fill the screen
+                        //height: 610,
+                        height: screenHeight-105,
+                        child: TextField(
+                          controller: task,
+                          expands: true,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          textInputAction: TextInputAction.newline,
+                          textAlignVertical: TextAlignVertical.top,
+                          cursorColor: btncolor,
+                          style: TextStyle(color: txtcolor,fontSize: 18),
+                          decoration: InputDecoration(
+                            hintText: "Enter tasks......",
+                            hintStyle: TextStyle(color: textColor2,fontSize: 18),
+                              border: InputBorder.none,
+                              filled: true,
+                              fillColor: inputBoxbgColor,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.transparent)
+                            ),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.transparent)
+                              )
                           ),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)
-                            )
                         ),
                       ),
-                    ),
-                    SizedBox(height: 15,),
-                    _isLoading
-                        ? CircularProgressIndicator(color: btncolor)
-                        : ElevatedButton(onPressed: () {
-                      AddTask();
-                    },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: btncolor,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 100),
-                        textStyle: TextStyle(fontSize: 20),
-                      ),
-                      child: Text("Add",
-                        style: TextStyle(color: bgcolor,fontWeight: FontWeight.w500),),
-                    ),
-                    //SizedBox(height: 20,)
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
+    ]
           );
         },
       ),
+        floatingActionButton: !widget.taskdata.toString().isEmpty?SizedBox():Padding(
+        padding: const EdgeInsets.only(bottom: 35.0),
+    child: SizedBox(
+    width: 50,
+    height: 50, // desired height
+    child: FloatingActionButton(
+    onPressed: () {
+      AddTask();
+    //showPersonaldialogbox();
+    },
+    backgroundColor: btncolor,
+    child: Icon(Icons.check, color: bgcolor, size: 30),
+      tooltip: 'Add Task',
+    ),
+
+    ),
+        )
     );
   }
   Future<void> AddTask() async {
@@ -165,6 +192,18 @@ class _AddAddPersonalTaskState extends State<AddPersonalTask>{
             SnackBar(content: Text("Faild to update Task",style: TextStyle(color: Colors.red,fontSize: 18),),backgroundColor: Colors.transparent,)
         );
       });
+    }
+  }
+
+  void shareTask() {
+    String tsk=task.text.trim();
+    if(tsk.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please Enter Message",style: TextStyle(color: btncolor,fontSize: 18),),backgroundColor: Colors.transparent,)
+      );
+    }
+    else{
+      Share.share(tsk);
     }
   }
 

@@ -201,7 +201,7 @@ class _PersonalTaskState extends State<PersonalTask> {
         padding: const EdgeInsets.only(bottom: 35.0),
         child: SizedBox(
           width: 130,
-          height: 48, // desired height
+          height: 45, // desired height
           child: FloatingActionButton.extended(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask("","")));
