@@ -234,7 +234,7 @@ class _TeamTaskState extends State<TeamTask> with SingleTickerProviderStateMixin
             ),
           )
               : Padding(
-            padding: const EdgeInsets.only(top: 30, right: 25, left: 25),
+            padding: const EdgeInsets.only(top: 5, right: 25, left: 25),
             child: Column(
               children: [
                 Container(height: 10,),

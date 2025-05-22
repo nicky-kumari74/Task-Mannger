@@ -30,16 +30,24 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
           color : bgcolor,  // Change background color for better experience
         child: Center(
-            child: Container(
-              width: 288,
-              margin: EdgeInsets.only(left: 9),
-              child: Text('Task Manager:Smart Planning for Busy Lives',
-                style: TextStyle(
-                    fontSize: 23,       //Optional, change text size for better visibility
-                    fontWeight: FontWeight.w600, // Optional, change weight for better visibility
-                    color: Colors.white   // Change text color for better experiences
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Task M",style: TextStyle(color: btncolor,fontSize: 23,fontWeight: FontWeight.w600),),
+                Container(height: 130,),
+                Container(
+                  width: 288,
+                  margin: EdgeInsets.only(left: 20,right: 20),
+                  child: Text('Task Manager : Smart Planning for Busy Lives',
+                    style: TextStyle(
+                        fontSize: 23,       //Optional, change text size for better visibility
+                        fontWeight: FontWeight.w600, // Optional, change weight for better visibility
+                        color: Colors.white   // Change text color for better experiences
+                    ),
+                  ),
                 ),
-              ),
+                Container(height: 100,),
+              ],
             )
         ),
       ),
