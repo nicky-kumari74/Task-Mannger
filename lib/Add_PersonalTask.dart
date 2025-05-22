@@ -89,7 +89,7 @@ class _AddAddPersonalTaskState extends State<AddPersonalTask>{
                       Container(
                         //height: constraints.maxHeight, //Make TextField fill the screen
                         //height: 610,
-                        height: screenHeight-105,
+                        height: screenHeight-115,
                         child: TextField(
                           controller: task,
                           expands: true,
@@ -163,6 +163,7 @@ class _AddAddPersonalTaskState extends State<AddPersonalTask>{
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Task Saved successfully",style: TextStyle(color: btncolor,fontSize: 18),),backgroundColor: Colors.transparent,)
       );
+      Navigator.pop(context);
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to Save Task",style: TextStyle(color: Colors.red,fontSize: 18),),backgroundColor: Colors.transparent,)

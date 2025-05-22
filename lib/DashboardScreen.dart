@@ -8,6 +8,7 @@ import 'package:taskmanager/CreateOrg.dart';
 import 'package:taskmanager/JoinOrg.dart';
 import 'package:taskmanager/PersonalScreen.dart';
 import 'package:taskmanager/SendInvitation.dart';
+import 'package:taskmanager/Setting_screen.dart';
 import 'package:taskmanager/TeamScreen.dart';
 
 import 'package:taskmanager/loginScreen.dart';
@@ -125,7 +126,9 @@ class _DashboardState extends State<Dashboard> {
                 ListTile(
                   leading: Icon(Icons.settings,color: btncolor,),
                   title: Text('Settings',style: TextStyle(color: btncolor)),
-                  onTap: () => print('Settings tapped'),
+                  onTap: () => {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Setting()))
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.logout,color: btncolor,),
