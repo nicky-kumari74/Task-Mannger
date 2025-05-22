@@ -5,6 +5,8 @@ import 'package:lottie/lottie.dart';
 import 'package:taskmanager/Colors.dart';
 
 class ForgetPasswdScreen extends StatefulWidget{
+  final data;
+   ForgetPasswdScreen(this.data);
 
   @override
   State<ForgetPasswdScreen> createState() => _ForgetPasswdScreenState();
@@ -22,7 +24,7 @@ class _ForgetPasswdScreenState extends State<ForgetPasswdScreen> {
         centerTitle: true,
         toolbarHeight: 70,
         iconTheme: IconThemeData(color: Colors.white),
-        title: Text('Forgot Password',
+        title: Text(widget.data,
           style: TextStyle(color: Colors.white),),
         backgroundColor: bgcolor, // change color for better experience
       ),

@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                margin: EdgeInsets.only(left: 210),
                child: InkWell(
                  onTap: (){
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => ForgetPasswdScreen(),)   // this will help to navigate forgetpsswd screen when user click on Forget Password.
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => ForgetPasswdScreen("Forgot Password"),)   // this will help to navigate forgetpsswd screen when user click on Forget Password.
                    );
                  },
                  child: Text(
