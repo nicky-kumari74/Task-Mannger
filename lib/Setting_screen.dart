@@ -1,7 +1,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:taskmanager/Colors.dart';
+import 'package:taskmanager/forgetPasswdScreen.dart';
 
 class Setting extends StatefulWidget{
   @override
@@ -11,6 +13,7 @@ class Setting extends StatefulWidget{
 class _Setting extends State<Setting>{
   @override
   Widget build(BuildContext context){
+    String link="https://play.google.com/store/apps/details?id=com.example.yourapp";
     return Scaffold(
       backgroundColor: bgcolor,
       appBar: AppBar(
@@ -31,6 +34,9 @@ class _Setting extends State<Setting>{
                   borderRadius: BorderRadius.circular(10)
                 ),
                 child: GestureDetector(
+                  onTap: ()=>{
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgetPasswdScreen("Reset Password")))
+                  },
                   child: Padding(
                     padding: EdgeInsets.only(top: 10,bottom: 10,left: 8,right: 10),
                     child: Row(
@@ -73,6 +79,9 @@ class _Setting extends State<Setting>{
                       borderRadius: BorderRadius.circular(10)
                   ),
                   child: GestureDetector(
+                    onTap: ()=>{
+                      Share.share("Download the App: \n $link")
+                    },
                     child: Padding(
                       padding: EdgeInsets.only(top: 10,bottom: 10,left: 8,right: 10),
                       child: Row(
