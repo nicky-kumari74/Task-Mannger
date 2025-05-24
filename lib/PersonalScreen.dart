@@ -47,13 +47,12 @@ class _PersonalTaskState extends State<PersonalTask> {
             }
         
             var tasks = snapshot.data!.docs;
-            print("id ${tasks[0].id}");
         // Group tasks by date
             Map<String, List<Map<String, dynamic>>> groupedTasks = {};
         
             for (var task in tasks) {
               var taskData = task.data() as Map<String, dynamic>;
-              print(taskData);
+              taskData['id']=task.id;
               // Check if the 'date' field exists and is a Timestamp
               if (taskData['Date'] != null && taskData['Date'] is Timestamp) {
                 DateTime taskDate = (taskData['Date'] as Timestamp).toDate();
@@ -64,12 +63,12 @@ class _PersonalTaskState extends State<PersonalTask> {
                   groupedTasks[dateKey] = [];
                 }
                 groupedTasks[dateKey]!.add(taskData);
+
               } else {
                 // Handle the case where date is missing or invalid
                 print("Task has no valid date: ${taskData['Task Name']}");
               }
             }
-        
             return Padding(
               padding: const EdgeInsets.only(right: 25, left: 25),
               child: Column(
@@ -79,7 +78,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                   ...groupedTasks.entries.map((entry) {
                     String dateKey = entry.key;
                     List<Map<String, dynamic>> dayTasks = entry.value;
-        
+
                     // Format the date for display
                     DateTime date = DateTime.parse(dateKey);
                     String formattedDate = (date.isToday)
@@ -105,9 +104,8 @@ class _PersonalTaskState extends State<PersonalTask> {
                                 itemCount: dayTasks.length,
                                 itemBuilder: (context, index) {
                                   var taskData = dayTasks[index];
-                                  String taskId = tasks[index].id;
                                   return Dismissible(
-                                    key: Key(taskId),
+                                    key: Key(tasks[index].id),
                                     direction: DismissDirection.endToStart, // Swipe left to delete
                                     background: Container(
                                       alignment: Alignment.centerRight,
@@ -115,8 +113,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                                       child: Icon(Icons.delete, color: Colors.white),
                                     ),
                                     confirmDismiss: (direction) async {
-                                      bool confirm = await _showDeleteConfirmationDialog(context, taskId,"Delete Task");
-        
+                                      bool confirm = await _showDeleteConfirmationDialog(context, taskData['id'],"Delete Task");
                                       return false;
                                     },
                                     child: Container(
@@ -138,7 +135,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                                               children: [
                                                 GestureDetector(
                                                 onTap: ()async{
-                                                  bool confirm = await _showDeleteConfirmationDialog(context, taskId,"Completed");
+                                                  bool confirm = await _showDeleteConfirmationDialog(context, taskData['id'],"Completed");
                                                   //return false;
                                                 },
                                                   child: Image.asset(
@@ -153,8 +150,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                                                   //width: 100,
                                                   child: GestureDetector(
                                                     onTap: (){
-                                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask(taskData['Task Name'],taskId)));
-                                                      //TaskDetails(taskData['Task Name'],taskId);
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask(taskData['Task Name'],taskData['id'])));
                                                       },
                                                     child: Container(
                                                       height: 20,
@@ -171,7 +167,7 @@ class _PersonalTaskState extends State<PersonalTask> {
                                                 ),
                                                 GestureDetector(
                                                   onTap: (){
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask(taskData['Task Name'],taskId)));
+                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPersonalTask(taskData['Task Name'],taskData['id'])));
                                                     //UpdateTask(taskId,taskData['Task Name']);
                                                     },
                                                     child: Icon(Icons.arrow_forward_ios, color: bgcolor,size: 15,)),
