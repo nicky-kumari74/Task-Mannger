@@ -66,7 +66,9 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Row(
+                  Text(userName, style: TextStyle(fontWeight: FontWeight.bold, color: txtcolor,fontSize: 20),),
+                  Text(userEmail, style: TextStyle(color: txtcolor,fontSize: 17),),
+                  /*Row(
                     children: [
                       Text(userName, style: TextStyle(fontWeight: FontWeight.bold, color: txtcolor,fontSize: 20),),
                     ],
@@ -75,7 +77,7 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       Text(userEmail, style: TextStyle(color: txtcolor,fontSize: 17),),
                     ],
-                  ),
+                  ),*/
                 ],
               ),
             ),),
@@ -127,7 +129,7 @@ class _DashboardState extends State<Dashboard> {
                   leading: Icon(Icons.settings,color: btncolor,),
                   title: Text('Settings',style: TextStyle(color: btncolor)),
                   onTap: () => {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Setting()))
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Setting()))
                   },
                 ),
                 ListTile(
@@ -181,7 +183,7 @@ class _DashboardState extends State<Dashboard> {
     preferredSize: Size.fromHeight(60),
     child: Theme(
     data: Theme.of(context).copyWith(
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: TabBarThemeData(
     dividerColor: Colors.transparent, // Removes thin white line
     ),
     ),

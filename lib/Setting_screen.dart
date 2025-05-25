@@ -1,9 +1,13 @@
 
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/forgetPasswdScreen.dart';
+import "package:store_redirect/store_redirect.dart";
+import 'package:url_launcher/url_launcher.dart';
 
 class Setting extends StatefulWidget{
   @override
@@ -11,6 +15,10 @@ class Setting extends StatefulWidget{
 }
 
 class _Setting extends State<Setting>{
+  final Uri emailUri=Uri(
+    scheme: 'mailto',
+    path: 'fixtappsfirebase@gmail.com'
+  );
   @override
   Widget build(BuildContext context){
     String link="https://play.google.com/store/apps/details?id=com.example.yourapp";
@@ -58,6 +66,9 @@ class _Setting extends State<Setting>{
                       borderRadius: BorderRadius.circular(10)
                   ),
                   child: GestureDetector(
+                    onTap: ()=>{
+                      showAdminDialogueBox()
+                    },
                     child: Padding(
                       padding: EdgeInsets.only(top: 10,bottom: 10,left: 8,right: 10),
                       child: Row(
@@ -124,13 +135,16 @@ class _Setting extends State<Setting>{
                       borderRadius: BorderRadius.circular(10)
                   ),
                   child: GestureDetector(
+                    onTap: (){
+                      StoreRedirect.redirect(androidAppId: 'shri.complete.fitness.gymtrainingapp',iOSAppId: 'com.example.taskmanager');
+                    },
                     child: Padding(
                       padding: EdgeInsets.only(top: 10,bottom: 10,left: 8,right: 10),
                       child: Row(
                         children: [
                           Icon(Icons.messenger_outline,color: btncolor,size: 23,),
                           SizedBox(width: 10,),
-                          Expanded(child: Text("Feedback",style: TextStyle(color: btncolor,fontSize: 17),)),
+                          Expanded(child: Text("Rate App",style: TextStyle(color: btncolor,fontSize: 17),)),
                           Icon(Icons.arrow_forward_ios, color: btncolor,size: 15,),
                         ],
                       ),
@@ -162,6 +176,57 @@ class _Setting extends State<Setting>{
           ),
         ),
       ),
+    );
+  }
+
+  showAdminDialogueBox() {
+    showDialog(
+      context: context,
+      builder: (context) =>
+          Dialog(
+            backgroundColor: Colors.transparent,
+            // Transparent background for glass effect
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    // Glassy semi-transparent effect
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  ),
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("If you have any query then you can contact with admin on this given Email:\n",style: TextStyle(fontSize: 17,color: txtcolor),),
+                      GestureDetector(
+                        onTap: () async {
+                          if (await canLaunchUrl(emailUri)) {
+                            await launchUrl(emailUri);
+                          }
+                        },
+                          child: Text("fixtappsfirebase@gmail.com",style: TextStyle(color: btncolor,fontWeight: FontWeight.bold),)
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(
+                            "Close",
+                            style: TextStyle(color: btncolor),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
     );
   }
 }
