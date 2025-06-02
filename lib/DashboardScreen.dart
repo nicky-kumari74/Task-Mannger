@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskmanager/Colors.dart';
 import 'package:taskmanager/CreateOrg.dart';
@@ -37,6 +38,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    String link="https://play.google.com/store/apps/details?id=com.example.yourapp";
     return Scaffold(
       extendBodyBehindAppBar: true,
       /*appBar: AppBar(
@@ -121,15 +123,17 @@ class _DashboardState extends State<Dashboard> {
                   onTap: () => {createOrg()},
                 ),
                 ListTile(
-                  leading: Icon(Icons.help,color: btncolor,),
-                  title: Text('Help',style: TextStyle(color: btncolor)),
-                  onTap: () => print('Help tapped'),
-                ),
-                ListTile(
                   leading: Icon(Icons.settings,color: btncolor,),
                   title: Text('Settings',style: TextStyle(color: btncolor)),
                   onTap: () => {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Setting()))
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Setting()))
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.share,color: btncolor,),
+                  title: Text('Share App',style: TextStyle(color: btncolor)),
+                  onTap: () => (){
+                    Share.share("Download the App: \n $link");
                   },
                 ),
                 ListTile(

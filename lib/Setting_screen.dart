@@ -136,7 +136,7 @@ class _Setting extends State<Setting>{
                   ),
                   child: GestureDetector(
                     onTap: (){
-                      StoreRedirect.redirect(androidAppId: 'shri.complete.fitness.gymtrainingapp',iOSAppId: 'com.example.taskmanager');
+                      StoreRedirect.redirect(androidAppId: 'com.example.taskmanager',iOSAppId: 'com.example.taskmanager');
                     },
                     child: Padding(
                       padding: EdgeInsets.only(top: 10,bottom: 10,left: 8,right: 10),
@@ -209,7 +209,13 @@ class _Setting extends State<Setting>{
                             await launchUrl(emailUri);
                           }
                         },
-                          child: Text("fixtappsfirebase@gmail.com",style: TextStyle(color: btncolor,fontWeight: FontWeight.bold),)
+                          child: Text("fixtappsfirebase@gmail.com \n",
+                            style: TextStyle(
+                                color: btncolor,fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.underline,
+                              decorationColor: btncolor,
+                              fontSize: 17
+                            ),)
                       ),
                       Align(
                         alignment: Alignment.centerRight,
