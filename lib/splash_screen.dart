@@ -33,12 +33,13 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Task M",style: TextStyle(color: btncolor,fontSize: 23,fontWeight: FontWeight.w600),),
+                Image.asset('assets/images/splash icon.png',height:75,width: 400,),
+                //Text("Task M",style: TextStyle(color: btncolor,fontSize: 23,fontWeight: FontWeight.w600),),
                 Container(height: 130,),
                 Container(
                   width: 288,
-                  margin: EdgeInsets.only(left: 20,right: 20),
-                  child: Text('Task Manager : Smart Planning for Busy Lives',
+                  margin: EdgeInsets.only(left: 50,right: 50),
+                  child: Text('\t\t Task Master : Smart Planning for Busy Lives',
                     style: TextStyle(
                         fontSize: 23,       //Optional, change text size for better visibility
                         fontWeight: FontWeight.w600, // Optional, change weight for better visibility
@@ -57,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void whereToGo() async {
     var sharepref= await SharedPreferences.getInstance();
     var isLoggedIn=sharepref.getBool(KEYLOGIN);
-    Timer(Duration(seconds: 2), () {
+    Timer(Duration(seconds: 3), () {
       if(isLoggedIn!=null) {
         if(isLoggedIn)
         Navigator.pushReplacement(

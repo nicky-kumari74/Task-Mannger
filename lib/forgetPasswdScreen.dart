@@ -21,12 +21,17 @@ class _ForgetPasswdScreenState extends State<ForgetPasswdScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+        //centerTitle: true,
         toolbarHeight: 70,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(widget.data,
           style: TextStyle(color: Colors.white),),
         backgroundColor: bgcolor, // change color for better experience
+        actions: [
+          Padding(padding: const EdgeInsets.only(right: 20),
+            child: Image.asset('assets/images/task_master.jpg',height: 50,width: 60,),
+          )
+        ],
       ),
       backgroundColor:bgcolor,
       body: SingleChildScrollView(

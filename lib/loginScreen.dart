@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _focusNode = FocusNode();
   Color enableborderColor =  Colors.black;
   Color labelTextColor =  Colors.black;
-  bool _isLoading=false;
+  bool _isLoading=false;bool _isLoading2=false;
 
   @override
   void initState(){
@@ -53,6 +53,11 @@ class _LoginScreenState extends State<LoginScreen> {
    return Scaffold(
      appBar: AppBar(
        backgroundColor: bgcolor,
+       actions: [
+         Padding(padding: const EdgeInsets.only(right: 20),
+           child: Image.asset('assets/images/task_master.jpg',height: 50,width: 60,),
+         )
+       ],
      ),
      backgroundColor: bgcolor,
      body: Center(
@@ -168,23 +173,10 @@ class _LoginScreenState extends State<LoginScreen> {
                ),
              ),
              SizedBox(height: 40,),
-             GestureDetector(
-               onTap: () async {
-                 await FirebaseServices().signInwithGoogle();
-                 var name=FirebaseAuth.instance.currentUser!.displayName??'';
-                 var email=FirebaseAuth.instance.currentUser!.email??'';
-                 String docId = "users-${email.replaceAll('.', '-')}-data";
-                 await FirebaseFirestore.instance.collection('users').doc(docId).set({
-                   'name':name,
-                   'email': email,
-                   'createdAt': Timestamp.now(),
-                 });
-                 var sharepref= await SharedPreferences.getInstance();
-                 await sharepref.setBool("google", true);
-                 await sharepref.setBool("login", true);
-                 await sharepref.setString("email",email );
-                 await sharepref.setString("name", name);
-                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard(),));
+             _isLoading2?CircularProgressIndicator(color: btncolor)
+             :GestureDetector(
+               onTap: () {
+                 googleSignin();
                },
                child: Container(
                  //margin: EdgeInsets.only(left: 40, top: 10),
@@ -293,6 +285,27 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> googleSignin() async{
+    setState(() {
+      _isLoading2=true;
+    });
+    await FirebaseServices().signInwithGoogle();
+    var name=FirebaseAuth.instance.currentUser!.displayName??'';
+    var email=FirebaseAuth.instance.currentUser!.email??'';
+    String docId = "users-${email.replaceAll('.', '-')}-data";
+    await FirebaseFirestore.instance.collection('users').doc(docId).set({
+      'name':name,
+      'email': email,
+      'createdAt': Timestamp.now(),
+    });
+    var sharepref= await SharedPreferences.getInstance();
+    await sharepref.setBool("google", true);
+    await sharepref.setBool("login", true);
+    await sharepref.setString("email",email );
+    await sharepref.setString("name", name);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard(),));
   }
 
 }
