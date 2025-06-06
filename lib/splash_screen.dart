@@ -35,19 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 Image.asset('assets/images/splash icon.png',height:75,width: 400,),
                 //Text("Task M",style: TextStyle(color: btncolor,fontSize: 23,fontWeight: FontWeight.w600),),
-                Container(height: 130,),
-                Container(
-                  width: 288,
-                  margin: EdgeInsets.only(left: 50,right: 50),
-                  child: Text('\t\t Task Master : Smart Planning for Busy Lives',
-                    style: TextStyle(
-                        fontSize: 23,       //Optional, change text size for better visibility
-                        fontWeight: FontWeight.w600, // Optional, change weight for better visibility
-                        color: Colors.white   // Change text color for better experiences
-                    ),
-                  ),
-                ),
-                Container(height: 100,),
+                //Container(height: 100,),
               ],
             )
         ),
